@@ -13,6 +13,8 @@ Tracing is off by default. ``--trace`` uses the course's Langfuse setup;
 ``--trace-openai`` opts into OpenAI hosted tracing (requires OPENAI_API_KEY
 and is unavailable for zero-data-retention organizations). Pick one destination.
 ``--debug`` prints tool calls locally and works independently of tracing.
+``--output PATH`` appends HW1 draft records with TODO assessments; in this
+mode each message starts a fresh, single-turn conversation.
 
 The role picks a default demo user (shopper 1, merchant 9001, support 9501);
 --user overrides it. The auth context comes from the users table, exactly as
@@ -31,6 +33,9 @@ import argparse
 import asyncio
 import json
 import time
+from contextlib import nullcontext
+from pathlib import Path
+from typing import Any, TextIO
 
 try:  # readline transparently upgrades input(): arrow keys, ctrl-a/e/k/w,
     import readline  # noqa: F401  # and up-arrow recall within this session
@@ -53,6 +58,71 @@ SESSIONS_DB = REPO_ROOT / ".sessions.db"
 _tracer = trace.get_tracer("cartwheel.cli")
 
 
+def _tool_arguments(item: RunItem) -> Any:
+    raw = item.raw_item
+    args = (
+        raw.get("arguments")
+        if isinstance(raw, dict)
+        else getattr(raw, "arguments", None)
+    )
+    if isinstance(args, str):
+        try:
+            return json.loads(args)
+        except json.JSONDecodeError:
+            return args
+    return args
+
+
+def _collect_tool_calls(new_items: list[RunItem]) -> list[dict[str, Any]]:
+    """Pair observed function calls with their outputs by call ID."""
+    outputs = {
+        item.call_id: item.output
+        for item in new_items
+        if item.type == "tool_call_output_item" and item.call_id is not None
+    }
+    calls = []
+    for item in new_items:
+        if item.type != "tool_call_item":
+            continue
+        if item.call_id not in outputs:
+            raise ValueError(f"missing result for tool call {item.call_id!r}")
+        output = outputs[item.call_id]
+        if isinstance(output, str):
+            try:
+                output = json.loads(output)
+            except json.JSONDecodeError:
+                pass  # Preserve an observed non-JSON result as text.
+        calls.append({
+            "name": item.tool_name,
+            "arguments": _tool_arguments(item),
+            "result": output,
+        })
+    return calls
+
+
+def _record_hw1(
+    file: TextIO,
+    ctx: AuthContext,
+    request: str,
+    response: str,
+    new_items: list[RunItem],
+) -> None:
+    record = {
+        "role": ctx.role,
+        "user_id": ctx.user_id,
+        "store_id": ctx.store_id if ctx.role == "merchant" else None,
+        "request": request,
+        "tool_calls": _collect_tool_calls(new_items),
+        "response": response,
+        "expected": "TODO",
+        "requirement": "TODO",
+        "met_requirement": "TODO",
+        "problem_source": "TODO",
+    }
+    file.write(json.dumps(record, ensure_ascii=False, allow_nan=False) + "\n")
+    file.flush()
+
+
 def _print_tool_calls(new_items: list[RunItem]) -> None:
     """Print each tool call and its result from one run's new items.
 
@@ -67,17 +137,7 @@ def _print_tool_calls(new_items: list[RunItem]) -> None:
     }
     for item in new_items:
         if item.type == "tool_call_item":
-            raw = item.raw_item
-            args = (
-                raw.get("arguments")
-                if isinstance(raw, dict)
-                else getattr(raw, "arguments", None)
-            )
-            if isinstance(args, str):
-                try:
-                    args = json.loads(args)
-                except json.JSONDecodeError:
-                    pass
+            args = _tool_arguments(item)
             print(f"  [tool] {item.tool_name}({args})")
             if item.call_id in outputs:
                 print(f"    -> {outputs[item.call_id]}")
@@ -102,11 +162,12 @@ async def chat(
     defenses: bool = False,
     debug: bool = False,
     tracing: bool = False,
+    record_file: TextIO | None = None,
 ) -> None:
     agent = build_agent(ctx, model=model, defenses=defenses)
     # main() enables callbacks for Langfuse or explicit OpenAI tracing.
     run_config = RunConfig(tracing_disabled=not tracing)
-    session = SQLiteSession(
+    session = None if record_file is not None else SQLiteSession(
         f"cli-{ctx.role}-{ctx.user_id}-{int(time.time())}", str(SESSIONS_DB)
     )
     version = prompt_version()
@@ -115,6 +176,8 @@ async def chat(
         f"store={ctx.store_id} prompt_version={version} defenses={'on' if defenses else 'off'}"
     )
     print("Type a message, or 'quit' to exit.\n")
+    if record_file is not None:
+        print("Recording HW1 drafts: each message is a fresh conversation; assessments are TODO.\n")
     while True:
         try:
             line = input(f"{ctx.role}> ").strip()
@@ -177,9 +240,12 @@ async def chat(
         if debug:
             _print_tool_calls(result.new_items)
         print(f"\nagent> {result.final_output}\n")
+        if record_file is not None:
+            _record_hw1(record_file, ctx, line, result.final_output, result.new_items)
+            print("Saved conversation; complete its TODO assessments before submission.\n")
 
 
-def main() -> None:
+def main(default_output: Path | None = None) -> None:
     parser = argparse.ArgumentParser(description="Chat with the Cartwheel support agent.")
     parser.add_argument("--role", choices=["shopper", "merchant", "support"], default="shopper")
     parser.add_argument("--user", type=int, default=None, help="user id (defaults per role)")
@@ -206,6 +272,12 @@ def main() -> None:
         action="store_true",
         help="print each tool call's name, arguments, and result",
     )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=default_output,
+        help="append HW1 draft JSONL to this file; each message starts a fresh conversation",
+    )
     args = parser.parse_args()
 
     load_env()
@@ -218,9 +290,30 @@ def main() -> None:
         except ValueError as exc:
             parser.error(str(exc))
     ctx = resolve_auth(args.role, args.user)
-    asyncio.run(
-        chat(ctx, args.model, defenses=args.defenses, debug=args.debug, tracing=tracing)
-    )
+    try:
+        output = (
+            args.output.open("a", encoding="utf-8", newline="\n")
+            if args.output is not None else nullcontext(None)
+        )
+    except OSError as exc:
+        parser.error(f"cannot open recording output: {exc}")
+    with output as record_file:
+        if record_file is not None:
+            try:
+                with args.output.open("rb") as existing:
+                    if existing.seek(0, 2) > 0:
+                        existing.seek(-1, 2)
+                        if existing.read(1) != b"\n":
+                            record_file.write("\n")
+                            record_file.flush()
+            except OSError as exc:
+                parser.error(f"cannot prepare recording output: {exc}")
+        asyncio.run(
+            chat(
+                ctx, args.model, defenses=args.defenses, debug=args.debug,
+                tracing=tracing, record_file=record_file,
+            )
+        )
 
 
 if __name__ == "__main__":

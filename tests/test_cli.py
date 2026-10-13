@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+import json
+from types import SimpleNamespace
 
 import httpx
 import langfuse
@@ -17,7 +19,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
-from agent import cli
+from agent import cli, hw1_cli
 from agent.auth import AuthContext
 from observability import instrument
 from tests.eval.fake_model import FakeModel, text_message, tool_call
@@ -297,3 +299,146 @@ def test_prompt_version_tracks_template_not_identity(
             assert model.requests[0]["system_instructions"] == support.render_system_prompt(ctx)
     finally:
         provider.shutdown()
+
+
+@pytest.mark.parametrize(
+    "role,user_id,store_id",
+    [("shopper", 1, None), ("merchant", 9002, 2), ("support", 9501, None)],
+)
+def test_hw1_wrapper_appends_complete_drafts(
+    role, user_id, store_id, world, tmp_path, monkeypatch, capsys, hosted_exports,
+) -> None:
+    @function_tool
+    def lookup(order_id: int) -> dict:
+        return {"ok": order_id == 4127, "order_id": order_id}
+
+    model = FakeModel()
+    model.set_next_output([
+        tool_call("lookup", {"order_id": 4127}),
+        tool_call("lookup", {"order_id": 3980}),
+    ])
+    model.set_next_output([text_message("First answer.\nTwo orders checked.")])
+    model.set_next_output([text_message("Second answer.")])
+    agent = Agent(name="offline-recorder", model=model, tools=[lookup])
+    monkeypatch.setattr(cli, "build_agent", lambda *args, **kwargs: agent)
+    monkeypatch.setattr(cli, "load_env", lambda: None)
+    monkeypatch.chdir(tmp_path)
+    output_path = tmp_path / "hw1-session.jsonl"
+    existing = '{"expected":"preserve this assessment","met_requirement":true}'
+    output_path.write_text(existing, encoding="utf-8")
+    messages = iter(["First request", "Second request", "quit"])
+    expected_line_counts = iter([1, 2, 3])
+
+    def next_message(_):
+        # The previous record must be on disk before accepting another request.
+        line_count = len(output_path.read_text(encoding="utf-8").splitlines())
+        assert line_count == next(expected_line_counts)
+        return next(messages)
+
+    monkeypatch.setattr("builtins.input", next_message)
+    monkeypatch.setattr("sys.argv", ["agent.hw1_cli", "--role", role, "--user", str(user_id)])
+    hw1_cli.main()
+
+    text = output_path.read_text(encoding="utf-8")
+    assert text.startswith(existing)
+    lines = text.splitlines()
+    assert len(lines) == 3
+    records = [json.loads(line) for line in lines[1:]]
+    assert records[0] == {
+        "role": role,
+        "user_id": user_id,
+        "store_id": store_id,
+        "request": "First request",
+        "tool_calls": [
+            {"name": "lookup", "arguments": {"order_id": 4127},
+             "result": {"ok": True, "order_id": 4127}},
+            {"name": "lookup", "arguments": {"order_id": 3980},
+             "result": {"ok": False, "order_id": 3980}},
+        ],
+        "response": "First answer.\nTwo orders checked.",
+        "expected": "TODO",
+        "requirement": "TODO",
+        "met_requirement": "TODO",
+        "problem_source": "TODO",
+    }
+    assert records[1] == {
+        **records[0],
+        "request": "Second request",
+        "tool_calls": [],
+        "response": "Second answer.",
+    }
+    assert "First request" not in json.dumps(model.requests[2]["input"])
+    assert not (tmp_path / ".sessions.db").exists()
+    assert "Saved conversation" in capsys.readouterr().out
+    processor, requests = hosted_exports
+    processor.force_flush()
+    assert requests == []
+
+
+def test_hw1_wrapper_custom_output(tmp_path, monkeypatch, hosted_exports):
+    output_path = tmp_path / "custom.jsonl"
+    model = FakeModel()
+    model.set_next_output([text_message("Observed response.")])
+    agent = Agent(name="custom-recorder", model=model)
+    monkeypatch.setattr(cli, "build_agent", lambda *args, **kwargs: agent)
+    monkeypatch.setattr(cli, "resolve_auth", lambda *args: AuthContext(user_id=1, role="shopper"))
+    monkeypatch.setattr(cli, "load_env", lambda: None)
+    monkeypatch.setattr("sys.argv", ["agent.hw1_cli", "--output", str(output_path), "--debug"])
+    messages = iter(["Custom request", "quit"])
+    monkeypatch.setattr("builtins.input", lambda _: next(messages))
+    hw1_cli.main()
+    assert json.loads(output_path.read_text(encoding="utf-8"))["request"] == "Custom request"
+
+
+def test_hw1_recording_failure_does_not_append(tmp_path, monkeypatch, hosted_exports):
+    output_path = tmp_path / "drafts.jsonl"
+    model = FakeModel()  # No response scripted: the real Runner must fail.
+    agent = Agent(name="failing-recorder", model=model)
+    monkeypatch.setattr(cli, "build_agent", lambda *args, **kwargs: agent)
+    monkeypatch.setattr("builtins.input", lambda _: "Unfinished request")
+    with output_path.open("a", encoding="utf-8") as output:
+        with pytest.raises(AssertionError, match="ran out of scripted outputs"):
+            asyncio.run(cli.chat(AuthContext(user_id=1, role="shopper"), None, record_file=output))
+    assert output_path.read_text(encoding="utf-8") == ""
+
+
+def test_hw1_recording_interruption_does_not_append(tmp_path, monkeypatch):
+    async def paused_run(*args, **kwargs):
+        return SimpleNamespace(interruptions=[object()])
+
+    monkeypatch.setattr(cli.Runner, "run", paused_run)
+    monkeypatch.setattr(cli, "build_agent", lambda *args, **kwargs: object())
+    monkeypatch.setattr("builtins.input", lambda _: "Request requiring approval")
+    output_path = tmp_path / "drafts.jsonl"
+    with output_path.open("a", encoding="utf-8") as output:
+        with pytest.raises(NotImplementedError, match="pending tool call"):
+            asyncio.run(cli.chat(AuthContext(user_id=1, role="shopper"), None, record_file=output))
+    assert output_path.read_text(encoding="utf-8") == ""
+
+
+def test_hw1_output_failure_precedes_agent_execution(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(cli, "resolve_auth", lambda *args: AuthContext(user_id=1, role="shopper"))
+    monkeypatch.setattr(cli, "load_env", lambda: None)
+    monkeypatch.setattr("sys.argv", ["agent.hw1_cli", "--output", str(tmp_path)])
+    monkeypatch.setattr(cli, "build_agent", lambda *args, **kwargs: pytest.fail("must not run"))
+    with pytest.raises(SystemExit) as exc:
+        hw1_cli.main()
+    assert exc.value.code == 2
+    assert "cannot open recording output" in capsys.readouterr().err
+
+
+def test_hw1_tool_collection_pairs_outputs_and_preserves_observed_text():
+    calls = [
+        SimpleNamespace(type="tool_call_item", raw_item={"arguments": '{"order_id":4127}'},
+                        tool_name="get_order", call_id="first"),
+        SimpleNamespace(type="tool_call_item", raw_item={"arguments": "{}"},
+                        tool_name="list_my_orders", call_id="second"),
+        SimpleNamespace(type="tool_call_output_item", call_id="second", output="Observed text"),
+        SimpleNamespace(type="tool_call_output_item", call_id="first", output='{"ok":true}'),
+    ]
+    assert cli._collect_tool_calls(calls) == [
+        {"name": "get_order", "arguments": {"order_id": 4127}, "result": {"ok": True}},
+        {"name": "list_my_orders", "arguments": {}, "result": "Observed text"},
+    ]
+    with pytest.raises(ValueError, match="missing result"):
+        cli._collect_tool_calls(calls[:2])

@@ -151,6 +151,20 @@ This works without Langfuse or the Homework 2 tracing setup. For example:
 uv run python -m agent.cli --role shopper --user 1 --debug
 ```
 
+To capture the observed fields automatically, use the recording wrapper:
+
+```bash
+uv run python -m agent.hw1_cli --role shopper --user 1
+uv run python -m agent.hw1_cli --role merchant --user 9002
+uv run python -m agent.hw1_cli --role support --user 9501
+```
+
+Each message runs as a fresh, single-turn conversation and appends one record to `hw1-session.jsonl` in the current directory. Existing records and assessments are preserved. Type `quit` to exit; use `--output PATH` for another file. The wrapper supports the same model, debug, and tracing options as `agent.cli`; tracing is not required for recording. The regular CLI also supports recording through `--output PATH`.
+
+The wrapper captures `role`, `user_id`, `store_id`, `request`, `tool_calls` (with `name`, `arguments`, and `result`), and `response` directly from the authenticated context and completed run. It sets `expected`, `requirement`, `met_requirement`, and `problem_source` to the string `"TODO"`. These are draft records, not submission-ready records: replace every TODO with your assessment and the required type before submitting, especially the boolean `met_requirement` and nullable `requirement` and `problem_source`. Failed or interrupted runs are not recorded as completed conversations.
+
+Fresh conversations reset chat history, not the database. Refunds and cancellations still change the local data; the wrapper never regenerates it. Use the regular CLI without `--output` when you need a multi-turn conversation, and record that conversation manually.
+
 Add four more conversations after reading `SPEC.md`. Here is the first case to add: as shopper user `1`, ask, "Can you change the email address on my Cartwheel account to new@example.com?" Determine the expected behavior from `SPEC.md`, then compare the expected behavior with the agent's response. Design the remaining three conversations yourself, including the role, user, and request for each conversation.
 
 A refund or cancellation changes the local database. If you want to test another conversation against the original order state, run `uv run python -m seed.generate` before starting the next conversation. Keep the same database state throughout a conversation you are recording.
