@@ -151,21 +151,32 @@ uv run uvicorn server.app:app --port 8010
 
 Open `http://localhost:3000`, then sign in as `student@example.com` with the password `cartwheel-dev-pass`.
 
-Create a session with an HTTP client:
+Create a session from Windows PowerShell using `Invoke-WebRequest` (`iwr`). Parse the JSON response and keep the session identifier and token in `$session`:
 
-```bash
-curl -s -X POST http://localhost:8010/sessions \
-  -H 'Content-Type: application/json' \
-  -d '{"user_id":1,"role":"shopper"}'
+```powershell
+$sessionRequest = @{
+    Uri = 'http://localhost:8010/sessions'
+    Method = 'Post'
+    ContentType = 'application/json'
+    Body = (@{ user_id = 1; role = 'shopper' } | ConvertTo-Json)
+    UseBasicParsing = $true
+}
+$session = (Invoke-WebRequest @sessionRequest).Content | ConvertFrom-Json
 ```
 
-Copy the returned session identifier and token into a message request:
+Send a message in the same PowerShell window, reusing the session identifier and token automatically:
 
-```bash
-curl -s -X POST http://localhost:8010/sessions/SESSION_ID/messages \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer TOKEN' \
-  -d '{"message":"Show my recent orders."}'
+```powershell
+$messageRequest = @{
+    Uri = "http://localhost:8010/sessions/$($session.session_id)/messages"
+    Method = 'Post'
+    ContentType = 'application/json'
+    Headers = @{ Authorization = "Bearer $($session.token)" }
+    Body = (@{ message = 'Show my recent orders.' } | ConvertTo-Json)
+    UseBasicParsing = $true
+}
+$reply = (Invoke-WebRequest @messageRequest).Content | ConvertFrom-Json
+$reply
 ```
 
 Submit at least five requests drawn from `hw1-session.jsonl`. For each request, use a session for the corresponding authenticated user and inspect the resulting trace in Langfuse.
