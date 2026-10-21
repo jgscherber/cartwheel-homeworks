@@ -105,8 +105,8 @@ Validate the file, then run the scenarios on your selected model. Replace `YOUR_
 ```bash
 uv run python -m scenarios.validate scenarios/pilot_scenarios.jsonl
 
-uv run python -m scenarios.runner scenarios/pilot_scenarios.jsonl \
-  --model YOUR_MODEL --output scenarios/pilot-results.jsonl
+uv run python -m scenarios.runner scenarios/pilot_scenarios.jsonl `
+  --model claude-haiku-4-5 --output scenarios/pilot-results.jsonl
 ```
 
 Review at least 10 pilot results in Langfuse. Start with difficult scenarios and cases where the model used an unexpected tool, changed data, or gave an answer that conflicts with the recorded extra metadata.
