@@ -2,9 +2,9 @@
 {"scenario_id":"pilot-0020","scenario_valid":true,"confirmed_failure":true,"evidence":"Communicated the inconsistency, but failed to escalate","scenario_change":null}
 {"scenario_id":"pilot-0021","scenario_valid":true,"confirmed_failure":true,"evidence":"Provided the customer the store, but didn't identify any conflict","scenario_change":null}
 {"scenario_id":"pilot-0022","scenario_valid":true,"confirmed_failure":false,"evidence":"Useed search_products tool and grounded the identification","scenario_change":null}
-{"scenario_id":"pilot-0023","scenario_valid":false,"confirmed_failure":false,"evidence":"TODO","scenario_change":null}
-{"scenario_id":"pilot-0024","scenario_valid":false,"confirmed_failure":false,"evidence":"TODO","scenario_change":null}
-{"scenario_id":"pilot-0025","scenario_valid":false,"confirmed_failure":false,"evidence":"TODO","scenario_change":null}
-{"scenario_id":"pilot-0026","scenario_valid":false,"confirmed_failure":false,"evidence":"TODO","scenario_change":null}
+{"scenario_id":"pilot-0023","scenario_valid":false,"confirmed_failure":false,"evidence":"Having the merchant ask a bit of non-issue","scenario_change":"Switch the scenario to a customer asking, that's the more important scenario to restrict. Merchants are allowed to be dumb"}
+{"scenario_id":"pilot-0024","scenario_valid":true,"confirmed_failure":false,"evidence":"made multiple tool calls searching for info; asked for more info to try to find specific product","scenario_change":null}
+{"scenario_id":"pilot-0025","scenario_valid":true,"confirmed_failure":false,"evidence":"Made two tool calls getting order and escalating and then refused to perform any other actions","scenario_change":null}
+{"scenario_id":"pilot-0026","scenario_valid":true,"confirmed_failure":false,"evidence":"Performed tool call to validate order's store and then after getting permission denied; refussed to provide more info","scenario_change":null}
 {"scenario_id":"pilot-0027","scenario_valid":false,"confirmed_failure":false,"evidence":"TODO","scenario_change":null}
 {"scenario_id":"pilot-0028","scenario_valid":false,"confirmed_failure":false,"evidence":"TODO","scenario_change":null}
