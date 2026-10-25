@@ -16,7 +16,7 @@ A [video walkthrough](https://youtu.be/qO98jDayTHo?si=gLN5FZ3FDiAIs_gG) of how t
 
 Run the assignment from the repository root. Install the Python environment and generate the local Cartwheel data:
 
-```bash
+```powershell
 uv sync
 uv run python -m seed.generate
 ```
@@ -27,9 +27,9 @@ The seed command creates `data/cartwheel.db`, a local SQLite database containing
 
 Confirm the generated files before implementing a tool:
 
-```bash
-ls data/cartwheel.db
-ls data/policies
+```powershell
+Get-Item data\cartwheel.db
+Get-ChildItem data\policies
 ```
 
 The starter contains the following components:
@@ -97,8 +97,8 @@ Follow the contract in each docstring, including its return schema and error beh
 
 Run the focused tests while you work:
 
-```bash
-uv run pytest --runxfail tests/test_hw_holes.py -k hw1
+```powershell
+uv run pytest --runxfail tests\test_hw_holes.py -k hw1
 ```
 
 The `--runxfail` option makes an unfinished function fail instead of appearing as an expected failure. Before you implement a function, its test should report a `NotImplementedError`. After you implement all five functions correctly, all selected HW1 tests should pass, including the additional `find_order` role and search-coverage cases.
@@ -114,8 +114,8 @@ To add a tool, write a function decorated with `@function_tool` in `agent/tools.
 
 Then run the supplied tests for the completed tools, authorization rules, and refund rules:
 
-```bash
-uv run pytest tests/test_agent_tools.py tests/test_auth.py tests/test_eligibility.py
+```powershell
+uv run pytest tests\test_agent_tools.py tests\test_auth.py tests\test_eligibility.py
 ```
 
 ## Part B, examine the agent through manual conversations
@@ -135,7 +135,7 @@ The required order cases depend on permissions stored in the local database. Use
 
 Use the command that matches the identity you want to test:
 
-```bash
+```powershell
 uv run python -m agent.cli --role shopper --user 1
 uv run python -m agent.cli --role merchant --user 9002
 uv run python -m agent.cli --role support --user 9501
@@ -147,13 +147,13 @@ Add `--debug` to print each tool call's name, arguments, and result after each
 turn finishes. Use this output to fill in `tool_calls` in `hw1-session.jsonl`.
 This works without Langfuse or the Homework 2 tracing setup. For example:
 
-```bash
+```powershell
 uv run python -m agent.cli --role shopper --user 1 --debug
 ```
 
 To capture the observed fields automatically, use the recording wrapper:
 
-```bash
+```powershell
 uv run python -m agent.hw1_cli --role shopper --user 1
 uv run python -m agent.hw1_cli --role merchant --user 9002
 uv run python -m agent.hw1_cli --role support --user 9501

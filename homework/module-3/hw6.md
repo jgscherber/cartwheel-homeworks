@@ -34,24 +34,24 @@ The supplied dataset adapter converts `eval_cases/cases.jsonl` into Harbor tasks
 
 Run these commands from the repository root:
 
-```bash
+```powershell
 uv sync
 uv tool install 'harbor==0.23.0'
 ```
 
 Choose the model you want Cartwheel to use and set `CARTWHEEL_MODEL` in your shell. Use a small model, preferably the one from Homework 3, so that your cases observe the failures you found; frontier models rarely fail in this synthetic world. Keep the same model for the baseline, CI, and trial-count comparison so the results describe one system.
 
-```bash
-export CARTWHEEL_MODEL="YOUR_MODEL"
+```powershell
+$env:CARTWHEEL_MODEL = 'YOUR_MODEL'
 ```
 
 Set the provider key required by that model in `.env`. The model is your choice, but prefer a small model such as `gpt-4o-mini` or `claude-haiku-4-5`. For a provider not named in `.env.example`, use its LiteLLM `provider/model` name so the adapter can identify the key. The agent model is separate from the frozen model used by an accepted Homework 5 judge.
 
 If you did not finish Homework 5 or did not accept a judge, download the Git LFS files and apply the reference bundle:
 
-```bash
+```powershell
 git lfs pull
-git apply homework/module-3/hw5-reference.patch
+git apply homework\module-3\hw5-reference.patch
 ```
 
 The reference judge detects unsupported policy claims and uses Claude. Use it only for that failure mode. A local or CI run that uses the reference judge needs `ANTHROPIC_API_KEY`, even when the Cartwheel agent uses a different provider.
@@ -96,22 +96,23 @@ Use a code check when the result is an exact tool call or database value. Use an
 
 Run one unclassified case five times:
 
-```bash
-uv run python scripts/export_harbor_tasks.py \
-  --baseline \
+```powershell
+uv run python scripts\export_harbor_tasks.py `
+  --baseline `
   --case e-001
-PYTHONPATH="$PWD" harbor run \
-  --env-file .env \
-  -p .harbor/tasks \
-  -a harbor_adapter.agent:CartwheelAgent \
-  -m "$CARTWHEEL_MODEL" \
-  -e docker \
-  --n-attempts 5 \
-  --job-name hw6-baseline-e-001 \
-  --jobs-dir .harbor/jobs
-uv run python scripts/summarize_harbor_job.py \
-  .harbor/jobs/hw6-baseline-e-001 \
-  --expected-attempts 5 \
+$env:PYTHONPATH = (Get-Location).Path
+harbor run `
+  --env-file .env `
+  -p .harbor\tasks `
+  -a harbor_adapter.agent:CartwheelAgent `
+  -m "$env:CARTWHEEL_MODEL" `
+  -e docker `
+  --n-attempts 5 `
+  --job-name hw6-baseline-e-001 `
+  --jobs-dir .harbor\jobs
+uv run python scripts\summarize_harbor_job.py `
+  .harbor\jobs\hw6-baseline-e-001 `
+  --expected-attempts 5 `
   --classify
 ```
 
@@ -136,8 +137,8 @@ Implement three functions in `tests/eval/passk.py`:
 
 Run the supplied checks:
 
-```bash
-uv run pytest --runxfail tests/test_hw_holes.py -k "hw6_pass or hw6_case"
+```powershell
+uv run pytest --runxfail tests\test_hw_holes.py -k "hw6_pass or hw6_case"
 ```
 
 You should see three passing tests.
@@ -148,8 +149,8 @@ A regression case passed five times during its baseline, but future runs can sti
 
 Generate the final Harbor tasks. The command rejects any case that is still missing its classification.
 
-```bash
-uv run python scripts/export_harbor_tasks.py
+```powershell
+uv run python scripts\export_harbor_tasks.py
 ```
 
 Complete `.github/workflows/evals.yml`. The pull request job must:
@@ -161,17 +162,18 @@ Complete `.github/workflows/evals.yml`. The pull request job must:
 5. Run `scripts/summarize_harbor_job.py` with `--expected-attempts 5` and `if: always()`.
 6. Upload `.harbor/jobs/hw6-evals` as a workflow artifact with `if: always()`.
 
-Use the supplied adapter and a fixed job location:
+Use the supplied adapter and a fixed job location. Set `shell: pwsh` on the GitHub Actions step that runs this PowerShell block. `Join-Path` keeps its paths valid on the supplied Ubuntu runner as well as Windows:
 
-```bash
-PYTHONPATH="$PWD" harbor run \
-  -p .harbor/tasks \
-  -a harbor_adapter.agent:CartwheelAgent \
-  -m "$CARTWHEEL_MODEL" \
-  -e docker \
-  --n-attempts 5 \
-  --job-name hw6-evals \
-  --jobs-dir .harbor/jobs \
+```powershell
+$env:PYTHONPATH = (Get-Location).Path
+harbor run `
+  -p (Join-Path .harbor tasks) `
+  -a harbor_adapter.agent:CartwheelAgent `
+  -m "$env:CARTWHEEL_MODEL" `
+  -e docker `
+  --n-attempts 5 `
+  --job-name hw6-evals `
+  --jobs-dir (Join-Path .harbor jobs) `
   --yes
 ```
 
@@ -194,27 +196,28 @@ Both runs must come from the same pull request. The first run must reach the ver
 
 Run one capability case 15 times:
 
-```bash
-PYTHONPATH="$PWD" harbor run \
-  --env-file .env \
-  -p .harbor/tasks \
-  --include-task-name "*YOUR_CASE_ID" \
-  -a harbor_adapter.agent:CartwheelAgent \
-  -m "$CARTWHEEL_MODEL" \
-  -e docker \
-  --n-attempts 15 \
-  --job-name hw6-capability-15 \
-  --jobs-dir .harbor/jobs \
+```powershell
+$env:PYTHONPATH = (Get-Location).Path
+harbor run `
+  --env-file .env `
+  -p .harbor\tasks `
+  --include-task-name "*YOUR_CASE_ID" `
+  -a harbor_adapter.agent:CartwheelAgent `
+  -m "$env:CARTWHEEL_MODEL" `
+  -e docker `
+  --n-attempts 15 `
+  --job-name hw6-capability-15 `
+  --jobs-dir .harbor\jobs `
   --yes
 ```
 
 Create the analysis file:
 
-```bash
-uv run python scripts/analyze_harbor_job.py \
-  .harbor/jobs/hw6-capability-15 \
-  --case YOUR_CASE_ID \
-  --out eval_results/YOUR_CASE_ID-15.json
+```powershell
+uv run python scripts\analyze_harbor_job.py `
+  .harbor\jobs\hw6-capability-15 `
+  --case YOUR_CASE_ID `
+  --out eval_results\YOUR_CASE_ID-15.json
 ```
 
 The file reports:

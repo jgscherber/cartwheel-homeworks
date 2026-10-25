@@ -32,8 +32,8 @@ Continue in the same repository from Homework 2. Homework 3 needs the Homework 2
 
 Homework 2 was optional. If you did not complete it, apply the reference implementation of its four functions before starting the server:
 
-```bash
-git apply homework/module-1/hw2-reference.patch
+```powershell
+git apply homework\module-1\hw2-reference.patch
 ```
 
 If you completed Homework 2, keep your own implementation and do not apply the patch.
@@ -42,14 +42,14 @@ Choose one model provider and confirm that its key is in `.env`. Set `CARTWHEEL_
 
 Generate the local data and start Langfuse:
 
-```bash
+```powershell
 uv run python -m seed.generate
-docker compose -f observability/docker-compose.yml up -d
+docker compose -f observability\docker-compose.yml up -d
 ```
 
 Start the Cartwheel endpoint in a second terminal and leave it running:
 
-```bash
+```powershell
 uv run uvicorn server.app:app --port 8010
 ```
 
@@ -83,11 +83,20 @@ The *coverage set* includes ordinary and difficult requests across every importa
 
 Record the group in `scenario_group` as either `coverage` or `challenge`. Do not include prompt injection or malicious documents, because Homework 8 covers deliberate attacks.
 
-The seeded database contains six deliberately damaged records. Read them before planning the challenge set:
+The seeded database contains six deliberately damaged records. Read them before planning the challenge set. This command uses Python's built-in SQLite support and opens the database read-only:
 
-```bash
-sqlite3 -header -column data/cartwheel.db `
-  'SELECT case_id, entity_type, entity_id, description, expected_handling FROM data_quality_cases ORDER BY case_id;'
+```powershell
+@'
+import json
+import sqlite3
+from pathlib import Path
+
+uri = Path(r"data\cartwheel.db").resolve().as_uri() + "?mode=ro"
+with sqlite3.connect(uri, uri=True) as connection:
+    connection.row_factory = sqlite3.Row
+    rows = connection.execute("SELECT case_id, entity_type, entity_id, description, expected_handling FROM data_quality_cases ORDER BY case_id")
+    print(json.dumps([dict(row) for row in rows], indent=2))
+'@ | uv run python -
 ```
 
 A scenario about a damaged record must use an authenticated user who may access the record. It must also record the matching `case_id` in `data_quality_case_id`. Scenarios that do not target a damaged record should set `data_quality_case_id` to `null`.
@@ -102,11 +111,11 @@ Each scenario must record what the agent should do and the source that supports 
 
 Validate the file, then run the scenarios on your selected model. Replace `claude-haiku-4-5` with the value of `CARTWHEEL_MODEL` in `.env`:
 
-```bash
-uv run python -m scenarios.validate scenarios/pilot_scenarios.jsonl
+```powershell
+uv run python -m scenarios.validate scenarios\pilot_scenarios.jsonl
 
-uv run python -m scenarios.runner scenarios/pilot_scenarios.jsonl `
-  --model claude-haiku-4-5 --output scenarios/pilot-results.jsonl
+uv run python -m scenarios.runner scenarios\pilot_scenarios.jsonl `
+  --model claude-haiku-4-5 --output scenarios\pilot-results.jsonl
 ```
 
 Review at least 10 pilot results in Langfuse. Start with difficult scenarios and cases where the model used an unexpected tool, changed data, or gave an answer that conflicts with the recorded extra metadata.
@@ -148,8 +157,8 @@ Select 50 of the final scenarios for a later comparison. Include both groups and
 
 Validate the final file:
 
-```bash
-uv run python -m scenarios.validate scenarios/support_scenarios.jsonl --final
+```powershell
+uv run python -m scenarios.validate scenarios\support_scenarios.jsonl --final
 ```
 
 The command checks the schema, unique identifiers, group counts, turn counts, duplicate conversations, and damaged record coverage. Repair every reported error before starting the final run, because the run makes model calls for every scenario.
@@ -160,31 +169,33 @@ You will run all 250 scenarios on the model selected during the pilot. Using one
 
 Reset the development data first. The pilot changed order states through refunds and cancellations, and the extra metadata assumes the seeded state:
 
-```bash
+```powershell
 uv run python -m seed.generate
 ```
 
 Then run the final set:
 
-```bash
-uv run python -m scenarios.runner scenarios/support_scenarios.jsonl `
-  --model claude-haiku-4-5 --output scenarios/final-results.jsonl
+```powershell
+uv run python -m scenarios.runner scenarios\support_scenarios.jsonl `
+  --model claude-haiku-4-5 --output scenarios\final-results.jsonl
 ```
 
 Check the runner output for errors. A scenario whose request times out or fails is recorded with a status other than `completed`. Fix the cause, then rerun only the affected scenarios into the same output file:
 
-```bash
-uv run python -m scenarios.runner scenarios/support_scenarios.jsonl `
-  --model claude-haiku-4-5 --output scenarios/final-results.jsonl --resume
+```powershell
+uv run python -m scenarios.runner scenarios\support_scenarios.jsonl `
+  --model claude-haiku-4-5 --output scenarios\final-results.jsonl --resume
 ```
 
 The `--resume` flag keeps every completed record and reruns the scenarios whose record is missing or has another status. To rerun named scenarios instead, e.g., because Part E reports a scenario without a trace, pass `--ids support-0153,support-0201`; their records replace the earlier ones. A rerun does not reset the data, so before rerunning a scenario that refunds or cancels an order, check that the first attempt did not already change the order. If many scenarios failed, reset the data and run the full set again.
 
 Confirm that all 250 runs completed:
 
-```bash
-jq -s 'group_by(.status) | map({status: .[0].status, count: length})' `
-  scenarios/final-results.jsonl
+```powershell
+Get-Content scenarios\final-results.jsonl |
+    ForEach-Object { $_ | ConvertFrom-Json } |
+    Group-Object -Property status |
+    Select-Object @{Name = 'status'; Expression = { $_.Name }}, Count
 ```
 
 Keep the coverage and challenge counts separate when you summarize the run. The challenge set contains more difficult requests by design.
@@ -193,18 +204,19 @@ Keep the coverage and challenge counts separate when you summarize the run. The 
 
 You will check that the run completed, then export the traces for Homework 4.
 
-```bash
-docker compose -f observability/docker-compose.yml exec -T clickhouse `
-  clickhouse-client --user clickhouse --password clickhouse --database default `
-  --multiquery --format PrettyCompact < reports/smoke.sql `
-  | tee reports/smoke-output.txt
+```powershell
+Get-Content -Raw reports\smoke.sql |
+    docker compose -f observability\docker-compose.yml exec -T clickhouse `
+      clickhouse-client --user clickhouse --password clickhouse --database default `
+      --multiquery --format PrettyCompact |
+    Tee-Object -FilePath reports\smoke-output.txt
 ```
 
 The report counts traces per scenario and per role, errors, escalations, tokens and cost, the longest traces, tool calls, and permission denials. It describes what ran, not how well the agent did.
 
-```bash
+```powershell
 uv run python -m scenarios.export_langfuse `
-  scenarios/support_scenarios.jsonl traces/support_traces.json
+  scenarios\support_scenarios.jsonl traces\support_traces.json
 ```
 
 The command fails when a final scenario has no matching trace, which happens when the server stopped before its spans were sent. Rerun the scenarios it names with `--ids` (Part D) until the export succeeds. A successful export contains traces for all 250 final scenario identifiers, which gives Homework 4 more than the required 200 traces.
@@ -232,9 +244,9 @@ Record one continuous screen video of no more than 5 minutes. Show the following
 3. Open one complete final trace and show its scenario identifier and tool activity.
 4. Regenerate the number of final scenario identifiers:
 
-```bash
-jq '[.traces[].cartwheel_scenario_id] | unique | length' `
-  traces/support_traces.json
+```powershell
+$export = Get-Content -Raw traces\support_traces.json | ConvertFrom-Json
+@($export.traces.cartwheel_scenario_id | Sort-Object -Unique).Count
 ```
 
 Every statement in the video must agree with the committed files and the Langfuse traces shown on screen.

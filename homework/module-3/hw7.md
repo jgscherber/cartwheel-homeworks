@@ -29,9 +29,9 @@ Start from your completed Homework 6 repository. Confirm that `scenarios/monitor
 
 If you did not finish Homework 6, apply the reference mechanics:
 
-```bash
+```powershell
 git lfs pull
-git apply homework/module-3/hw6-reference.patch
+git apply homework\module-3\hw6-reference.patch
 ```
 
 The patch implements the pass metrics and Harbor workflow. It does not invent evaluation cases or model results.
@@ -40,9 +40,9 @@ Choose one judge that you froze, tested, and decided to use in Homework 5. The m
 
 If you did not finish Homework 5 or did not choose a judge, apply the reference judge:
 
-```bash
+```powershell
 git lfs pull
-git apply homework/module-3/hw5-reference.patch
+git apply homework\module-3\hw5-reference.patch
 ```
 
 The reference judge detects `unsupported_policy_claim` and is pinned to `claude-opus-4-6`. Confirm that your course credits or provider account cover this model. A run with the reference judge needs `ANTHROPIC_API_KEY`.
@@ -63,7 +63,7 @@ monitoring/chart.py
 
 Install the dependencies from the repository root:
 
-```bash
+```powershell
 uv sync
 ```
 
@@ -75,14 +75,14 @@ The first period is the original Homework 3 run. Find one complete time range in
 
 The second period is one new run of the current agent. Reset the database, start the server, and record the UTC time before and after the run:
 
-```bash
+```powershell
 uv run python -m seed.generate
 uv run uvicorn server.app:app --port 8010
 ```
 
-```bash
-uv run python -m scenarios.runner scenarios/monitoring_scenarios.jsonl \
-  --model YOUR_MODEL --output scenarios/hw7-after-results.jsonl
+```powershell
+uv run python -m scenarios.runner scenarios\monitoring_scenarios.jsonl `
+  --model YOUR_MODEL --output scenarios\hw7-after-results.jsonl
 ```
 
 Confirm that all 50 new scenario results completed. Both time ranges must contain every scenario ID. A scenario with several turns may create several traces.
@@ -147,8 +147,8 @@ Use 1 when the failure is present and 0 when it is absent.
 
 Run the sampling test:
 
-```bash
-uv run pytest --runxfail tests/test_hw_holes.py -k hw7_sampling
+```powershell
+uv run pytest --runxfail tests\test_hw_holes.py -k hw7_sampling
 ```
 
 ## Part C, estimate the failure rate
@@ -172,13 +172,13 @@ The score IDs must be stable. If a trace is in both selections, it receives both
 
 Run the focused tests:
 
-```bash
-uv run pytest --runxfail tests/test_hw_holes.py -k "hw7_corrected or hw7_score"
+```powershell
+uv run pytest --runxfail tests\test_hw_holes.py -k "hw7_corrected or hw7_score"
 ```
 
 Run the monitor for both periods:
 
-```bash
+```powershell
 uv run python -m monitoring.run --period before
 uv run python -m monitoring.run --period after
 ```
@@ -208,7 +208,7 @@ If the time window contains no eligible conversations, the command must record a
 
 The scheduled command must support this form:
 
-```bash
+```powershell
 uv run python -m monitoring.run --last-hours 24
 ```
 

@@ -14,9 +14,9 @@ Paste the following prompt once. Continue in the same conversation for Parts A t
 
 Homework 5 uses the failure modes and labels from Homework 4. If you did not complete Homework 4, apply the reference bundle:
 
-```bash
+```powershell
 git lfs pull
-git apply homework/module-2/hw4-reference.patch
+git apply homework\module-2\hw4-reference.patch
 ```
 
 The bundle provides one reviewed failure mode, 100 labels, and a review summary. If you completed Homework 4, keep your own work and do not apply the patch.
@@ -25,9 +25,9 @@ The bundle provides one reviewed failure mode, 100 labels, and a review summary.
 
 Install the two skills from the course repository:
 
-```bash
-npx skills add https://github.com/ai-evals-course/evals-skills --skill write-judge-prompt
-npx skills add https://github.com/ai-evals-course/evals-skills --skill validate-evaluator
+```powershell
+npx.cmd skills add https://github.com/ai-evals-course/evals-skills --skill write-judge-prompt
+npx.cmd skills add https://github.com/ai-evals-course/evals-skills --skill validate-evaluator
 ```
 
 | Skill | What you use it for |
@@ -103,8 +103,8 @@ Check that you have one input record for every eligible label.
 
 Set the export path:
 
-```bash
-export CARTWHEEL_JUDGE_TRACE_SOURCE="$PWD/analysis/state/hw5_trace_inputs.json"
+```powershell
+$env:CARTWHEEL_JUDGE_TRACE_SOURCE = Join-Path (Get-Location).Path 'analysis\state\hw5_trace_inputs.json'
 ```
 
 With that setting, you use the saved export even when you have Langfuse configured. Keep the export unchanged after your first prompt run. You can resume from the same inputs without fetching traces again.

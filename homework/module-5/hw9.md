@@ -27,20 +27,20 @@ You will first find which model calls cost the most. You will then try three way
 
 Run every command from the repository root. Pull the latest starter code, because `optimize.runner` now also reports cached tokens:
 
-```bash
+```powershell
 git pull
 uv sync
 ```
 
 Confirm that your Homework 8 results are present:
 
-```bash
-test -f optimize/state/final_version.json
+```powershell
+Test-Path -Path optimize\state\final_version.json -PathType Leaf
 ```
 
 In this handout, your **Homework 8 final run** is the development result saved with `--candidate final` in `optimize/results/`. If you did not finish Homework 8, follow the Preparation section of `hw8.md` to create the case split, including the reference cases patch if you have fewer than six cases. Then run the unchanged agent once, and use that run wherever this handout says Homework 8 final run:
 
-```bash
+```powershell
 uv run python -m optimize.runner --split development --candidate starting
 ```
 
@@ -48,7 +48,7 @@ Use only development cases in this homework. You already used the test cases in 
 
 Every run in this homework uses `optimize.runner`, which reports the development score, `write_pass_5`, input tokens, cached input tokens, output tokens, cost per 100 conversations, and median latency. Before you use a model for the first time, add its prices to `prices_per_million_tokens_usd` in `optimize/config.json`. Then test it with one request, e.g., "What is your return policy?", and confirm that `--debug` prints a tool call:
 
-```bash
+```powershell
 uv run python -m agent.cli --model MODEL_NAME --debug
 ```
 
@@ -79,7 +79,7 @@ Every model call is billed by the tokens it reads and writes. Look at a few trac
 
 Make one change that removes the extra text, e.g., return fewer fields from `get_order` in `agent/tools.py`. Commit the change, then run the development cases with your Homework 8 development model:
 
-```bash
+```powershell
 uv run python -m optimize.runner --split development --candidate fewer-tokens
 ```
 
@@ -103,13 +103,13 @@ OpenAI models cache automatically once the prefix is at least 1,024 tokens. Othe
 
 Run the development cases with the current prompt:
 
-```bash
+```powershell
 uv run python -m optimize.runner --split development --candidate cache-before --model OPENAI_MODEL
 ```
 
 Then move the `## Session context` block to the end of `SYSTEM_PROMPT_TEMPLATE` in `agent/agent.py`, without changing any wording. Commit the change and run the same cases again:
 
-```bash
+```powershell
 uv run python -m optimize.runner --split development --candidate cache-after --model OPENAI_MODEL
 ```
 

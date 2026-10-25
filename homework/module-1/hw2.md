@@ -77,8 +77,8 @@ The signed token must contain `session_id`, `user_id`, `role`, `store_id`, and `
 
 After implementing, run the session creation test:
 
-```bash
-uv run pytest --runxfail -vv tests/test_hw_holes.py -k "create_session_binds"
+```powershell
+uv run pytest --runxfail -vv tests\test_hw_holes.py -k "create_session_binds"
 ```
 
 ## Part C, implement the traced message endpoint
@@ -113,14 +113,14 @@ The tests must not require Langfuse, Docker, or a model provider key. Check trac
 
 Run the supplied session creation test:
 
-```bash
-uv run pytest --runxfail tests/test_hw_holes.py -k hw2
+```powershell
+uv run pytest --runxfail tests\test_hw_holes.py -k hw2
 ```
 
 Then run your tests and the complete suite:
 
-```bash
-uv run pytest tests/test_observability.py
+```powershell
+uv run pytest tests\test_observability.py
 uv run pytest
 ```
 
@@ -144,8 +144,8 @@ OpenLLMetry also creates an `Agent Workflow` span around the SDK run. The span g
 
 Start Langfuse and the agent server in separate terminals:
 
-```bash
-docker compose -f observability/docker-compose.yml up -d
+```powershell
+docker compose -f observability\docker-compose.yml up -d
 uv run uvicorn server.app:app --port 8010
 ```
 

@@ -24,24 +24,26 @@ Run every command from the repository root. Homework 8 uses the evaluation cases
 
 Confirm that `.env` contains the keys for your selected models and judges. The supplied model choices use `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, and `TOGETHER_API_KEY`.
 
-```bash
+```powershell
 uv sync
 ```
 
 Confirm that the earlier work is present:
 
-```bash
-wc -l eval_cases/cases.jsonl
-grep -c '"kind": "regression"' eval_cases/cases.jsonl
-grep -c '"kind": "capability"' eval_cases/cases.jsonl
+```powershell
+$cases = @(Get-Content eval_cases\cases.jsonl |
+    ForEach-Object { $_ | ConvertFrom-Json })
+$cases.Count
+@($cases | Where-Object kind -eq 'regression').Count
+@($cases | Where-Object kind -eq 'capability').Count
 ```
 
 Homework 8 needs at least six evaluation cases, including at least two regression cases and two capability cases, so that both the development set and the test set contain each kind. Homework 6 required at least one of each. When you have fewer, add cases and classify them with five baseline runs, as in Homework 6, before continuing.
 
 If you did not finish Homework 6, apply the reference cases:
 
-```bash
-git apply homework/module-5/hw8-reference-cases.patch
+```powershell
+git apply homework\module-5\hw8-reference-cases.patch
 ```
 
 If you did not accept a judge in Homework 5, use cases scored only by code checks, or the reference `unsupported_policy_claim` judge included in the starter.
@@ -72,7 +74,7 @@ Enter the current input and output token prices for every selected comparison mo
 
 Check that every selected model can finish one case. The check does not use the search budget:
 
-```bash
+```powershell
 uv run python -m optimize.check_models
 ```
 
@@ -80,7 +82,7 @@ Replace any model the check reports, because the model selection cannot change a
 
 Create the fixed case split and the automated search budget:
 
-```bash
+```powershell
 uv run python -m optimize.prepare
 ```
 
@@ -112,7 +114,7 @@ If you use the reference judge, set `prevalence` to the share of `store_predicti
 
 Commit all work completed so far, then run the unchanged starting agent configuration on the development cases with your selected development model:
 
-```bash
+```powershell
 uv run python -m optimize.runner --split development --candidate starting
 uv run python -m optimize.save_version starting
 ```
@@ -135,9 +137,9 @@ Do not weaken the permission checks in `agent/auth.py`.
 
 ### 2. Test each change against the development cases
 
-Before editing each layer, add the predicted effect to `optimize/results/manual.csv`. Apply and commit one change, run the command below, and then keep or revert the change before moving to the next layer. Commit only the agent files, and revert with `git checkout <previous commit> -- agent/`:
+Before editing each layer, add the predicted effect to `optimize/results/manual.csv`. Apply and commit one change, run the command below, and then keep or revert the change before moving to the next layer. Commit only the agent files, and revert with `git checkout PREVIOUS_COMMIT -- agent\`, replacing `PREVIOUS_COMMIT` with the earlier commit's hash:
 
-```bash
+```powershell
 uv run python -m optimize.runner --split development --candidate SHORT_NAME
 ```
 
@@ -170,7 +172,7 @@ Both methods can use only the development case identifiers in `optimize/state/sp
 
 Install the optional dependency, run the smoke test, and then run the supplied adapter:
 
-```bash
+```powershell
 uv sync --extra optimization
 uv run python -m optimize.gepa_adapter --smoke
 uv run python -m optimize.gepa_adapter
@@ -186,7 +188,7 @@ The adapter runs the Cartwheel agent with the development model and uses the GEP
 
 Ask your coding agent to use `.agents/skills/improve-loop/SKILL.md`, a general autoresearch loop, with `optimize/program.md` as its Cartwheel setup. We have already written `optimize/program.md` for you; to practice writing it yourself, delete it, rename `optimize/program_skeleton.md` to `optimize/program.md`, and fill it in. Note that this step is totally optional. The skill runs the following budgeted command after each proposed change:
 
-```bash
+```powershell
 uv run python -m optimize.runner --split development --candidate SHORT_NAME --search
 ```
 
@@ -202,7 +204,7 @@ Commit the automated search records, including `optimize/state/search_budget.jso
 
 Choose the candidate that best addresses the Part A failure mode, then break ties with development score and `write_pass_5`. The final candidate does not need the highest mean score, e.g., a candidate that fixes the target failure mode and raises `write_pass_5` may be worth a small drop in mean score. Explain your reasoning in the video. Apply the candidate, commit, and rerun:
 
-```bash
+```powershell
 uv run python -m optimize.runner --split development --candidate final
 uv run python -m optimize.save_version final --layer LAYER --method METHOD
 ```
@@ -215,7 +217,7 @@ Save the final configuration before seeing the test results, or your work may be
 
 Create the plan for the four configurations:
 
-```bash
+```powershell
 uv run python -m optimize.frontier plan
 ```
 
@@ -232,7 +234,7 @@ Configurations 1 through 3 differ only by model, so their results show the effec
 
 Review `optimize/state/test_plan.json`, confirm that every commit and model is correct, and then run the planned batch once:
 
-```bash
+```powershell
 uv run python -m optimize.frontier run
 ```
 
