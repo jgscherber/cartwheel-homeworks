@@ -86,7 +86,7 @@ Record the group in `scenario_group` as either `coverage` or `challenge`. Do not
 The seeded database contains six deliberately damaged records. Read them before planning the challenge set:
 
 ```bash
-sqlite3 -header -column data/cartwheel.db \
+sqlite3 -header -column data/cartwheel.db `
   'SELECT case_id, entity_type, entity_id, description, expected_handling FROM data_quality_cases ORDER BY case_id;'
 ```
 
@@ -167,14 +167,14 @@ uv run python -m seed.generate
 Then run the final set:
 
 ```bash
-uv run python -m scenarios.runner scenarios/support_scenarios.jsonl \
+uv run python -m scenarios.runner scenarios/support_scenarios.jsonl `
   --model claude-haiku-4-5 --output scenarios/final-results.jsonl
 ```
 
 Check the runner output for errors. A scenario whose request times out or fails is recorded with a status other than `completed`. Fix the cause, then rerun only the affected scenarios into the same output file:
 
 ```bash
-uv run python -m scenarios.runner scenarios/support_scenarios.jsonl \
+uv run python -m scenarios.runner scenarios/support_scenarios.jsonl `
   --model claude-haiku-4-5 --output scenarios/final-results.jsonl --resume
 ```
 
@@ -183,7 +183,7 @@ The `--resume` flag keeps every completed record and reruns the scenarios whose 
 Confirm that all 250 runs completed:
 
 ```bash
-jq -s 'group_by(.status) | map({status: .[0].status, count: length})' \
+jq -s 'group_by(.status) | map({status: .[0].status, count: length})' `
   scenarios/final-results.jsonl
 ```
 
@@ -194,16 +194,16 @@ Keep the coverage and challenge counts separate when you summarize the run. The 
 You will check that the run completed, then export the traces for Homework 4.
 
 ```bash
-docker compose -f observability/docker-compose.yml exec -T clickhouse \
-  clickhouse-client --user clickhouse --password clickhouse --database default \
-  --multiquery --format PrettyCompact < reports/smoke.sql \
+docker compose -f observability/docker-compose.yml exec -T clickhouse `
+  clickhouse-client --user clickhouse --password clickhouse --database default `
+  --multiquery --format PrettyCompact < reports/smoke.sql `
   | tee reports/smoke-output.txt
 ```
 
 The report counts traces per scenario and per role, errors, escalations, tokens and cost, the longest traces, tool calls, and permission denials. It describes what ran, not how well the agent did.
 
 ```bash
-uv run python -m scenarios.export_langfuse \
+uv run python -m scenarios.export_langfuse `
   scenarios/support_scenarios.jsonl traces/support_traces.json
 ```
 
@@ -233,7 +233,7 @@ Record one continuous screen video of no more than 5 minutes. Show the following
 4. Regenerate the number of final scenario identifiers:
 
 ```bash
-jq '[.traces[].cartwheel_scenario_id] | unique | length' \
+jq '[.traces[].cartwheel_scenario_id] | unique | length' `
   traces/support_traces.json
 ```
 
