@@ -100,7 +100,7 @@ Have the coding agent generate `scenarios/pilot_scenarios.jsonl` with the skill:
 
 Each scenario must record what the agent should do and the source that supports the answer. For example, if an order has no delivery date, the scenario records that the agent must not calculate a return deadline and cites the damaged record. The scenario skill shows the required JSON fields.
 
-Validate the file, then run the scenarios on your selected model. Replace `YOUR_MODEL` with the value of `CARTWHEEL_MODEL` in `.env`:
+Validate the file, then run the scenarios on your selected model. Replace `claude-haiku-4-5` with the value of `CARTWHEEL_MODEL` in `.env`:
 
 ```bash
 uv run python -m scenarios.validate scenarios/pilot_scenarios.jsonl
@@ -168,14 +168,14 @@ Then run the final set:
 
 ```bash
 uv run python -m scenarios.runner scenarios/support_scenarios.jsonl \
-  --model YOUR_MODEL --output scenarios/final-results.jsonl
+  --model claude-haiku-4-5 --output scenarios/final-results.jsonl
 ```
 
 Check the runner output for errors. A scenario whose request times out or fails is recorded with a status other than `completed`. Fix the cause, then rerun only the affected scenarios into the same output file:
 
 ```bash
 uv run python -m scenarios.runner scenarios/support_scenarios.jsonl \
-  --model YOUR_MODEL --output scenarios/final-results.jsonl --resume
+  --model claude-haiku-4-5 --output scenarios/final-results.jsonl --resume
 ```
 
 The `--resume` flag keeps every completed record and reruns the scenarios whose record is missing or has another status. To rerun named scenarios instead, e.g., because Part E reports a scenario without a trace, pass `--ids support-0153,support-0201`; their records replace the earlier ones. A rerun does not reset the data, so before rerunning a scenario that refunds or cancels an order, check that the first attempt did not already change the order. If many scenarios failed, reset the data and run the full set again.
