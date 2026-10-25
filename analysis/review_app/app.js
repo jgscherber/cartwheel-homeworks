@@ -1,6 +1,6 @@
 "use strict";
 
-let data, currentSession, view = "conversation", pending = null, busy = false;
+let data, currentSession, view = "conversation", pending = null, busy = false, recoveryKey = null;
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -48,6 +48,10 @@ async function act(payload) {
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Save failed");
     localStorage.removeItem(backupKey());
+    if (payload.action === "note" && recoveryKey) {
+      localStorage.removeItem(recoveryKey);
+      recoveryKey = null;
+    }
     data = await getData();
     render();
     if (!result.ok) throw new Error(result.message);
@@ -60,7 +64,13 @@ async function act(payload) {
 
 function render() {
   const count = data.sessions.length;
-  $("#status").textContent = `${data.offline_reason ? `OFFLINE: ${data.offline_reason}. Labels save locally only.` : "Live Langfuse. Confirmed labels have been read back from the canonical store."} ${count} conversations / ${traces().length} traces.`;
+  const source = data.trace_source === "local_export"
+    ? `Local trace export: ${data.trace_path}. Re-export and restart to refresh.`
+    : "Live Langfuse trace snapshot.";
+  const sync = data.sync_mode === "langfuse"
+    ? "Judgments synchronize with Langfuse; confirmed labels have been read back."
+    : `OFFLINE: ${data.offline_reason}. Labels save locally only.`;
+  $("#status").textContent = `${source} ${sync} ${count} conversations / ${traces().length} traces.`;
   document.querySelectorAll("[data-view]").forEach(b => b.classList.toggle("active", b.dataset.view === view));
   renderNavigator();
   const main = $("#main");
@@ -224,6 +234,7 @@ function openNote(trace_id, anchor = "trace", quote = "", id = null, text = "", 
 function cancelNote() {
   if (pending?.mark?.isConnected) pending.mark.replaceWith(...pending.mark.childNodes);
   pending = null;
+  recoveryKey = null;
   $("#annotation").hidden = true;
 }
 
@@ -448,13 +459,23 @@ window.addEventListener("beforeunload", event => {
 });
 
 refresh().then(() => {
-  const backup = localStorage.getItem(backupKey());
+  let key = backupKey();
+  let backup = localStorage.getItem(key);
+  if (!backup && data.legacy_identity) {
+    key = `cartwheel-review:${data.legacy_identity}`;
+    backup = localStorage.getItem(key);
+  }
   if (!backup) return;
   const draft = JSON.parse(backup);
+  if (draft.payload.action === "note" && !traces().some(t => t.trace_id === draft.payload.trace_id)) {
+    fail(new Error("A browser draft belongs to a trace outside this export. It remains saved; use --live-traces or its original export to recover it."));
+    return;
+  }
   if (draft.payload.action === "note" && confirm("A browser note backup exists. Recover it for review (not automatically saved)?")) {
     const p = draft.payload;
     goTrace(p.trace_id);
     openNote(p.trace_id, p.anchor, p.quote, p.id, p.note, null, p.start);
+    recoveryKey = key;
   } else if (draft.revision !== data.revision) {
     fail(new Error("An older browser backup exists. It has not been replayed over newer server state."));
   }

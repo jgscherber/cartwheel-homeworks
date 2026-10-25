@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
+import sys
 import threading
 from pathlib import Path
 from types import SimpleNamespace
@@ -13,8 +15,10 @@ from urllib.request import Request, urlopen
 import pytest
 
 from analysis.helpers import _state
+from analysis.helpers.langfuse_io import LangfuseNotConfigured
+from analysis.review_app import server as review_server
 from analysis.review_app.loader import graph, load_records, sessions
-from analysis.review_app.server import Conflict, ReviewStore, make_server
+from analysis.review_app.server import Conflict, ReviewStore, make_server, parse_args
 
 
 def trace(identifier="a" * 32, session="session-a", timestamp="2026-07-01T12:00:00Z"):
@@ -48,7 +52,8 @@ def store(tmp_path):
         trace(), trace("b" * 32, timestamp="2026-07-01T12:01:00+00:00"),
         trace("c" * 32, session="session-b"),
     ])
-    return ReviewStore(traces, tmp_path / "state", offline_reason="Offline test fixture")
+    return ReviewStore(traces, tmp_path / "state", offline_reason="Offline test fixture",
+                       source=str((tmp_path / "traces.json").resolve()))
 
 
 def change(store, action, **payload):
@@ -127,6 +132,132 @@ def test_live_loading_deduplicates_summary_pages_and_skips_noncourse_traces():
     )
     assert len(load_records(None, client)) == 100
     assert client.api.trace.get.call_count == 101
+
+
+def test_local_export_never_reads_trace_api(tmp_path):
+    load(tmp_path, [trace()])
+    client = Mock()
+    client.api.trace.list.side_effect = AssertionError("Must not fetch live traces")
+    client.api.trace.get.side_effect = AssertionError("Must not fetch live traces")
+    assert len(load_records(tmp_path / "traces.json", client)) == 1
+    client.api.trace.list.assert_not_called()
+    client.api.trace.get.assert_not_called()
+
+
+@pytest.mark.parametrize("switches", [
+    ["--traces", "saved.json", "--live-traces"],
+    ["--offline", "saved.json", "--traces", "other.json", "--offline-reason", "outage"],
+    ["--offline", "saved.json", "--live-traces", "--offline-reason", "outage"],
+    ["--offline", "saved.json"],
+    ["--offline-reason", "outage"],
+])
+def test_source_switches_and_offline_reason_are_unambiguous(switches):
+    with pytest.raises(SystemExit) as error:
+        parse_args(switches)
+    assert error.value.code == 2
+
+
+def test_default_export_is_anchored_to_repository_not_working_directory(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    expected = Path(review_server.__file__).resolve().parents[2] / "traces" / "support_traces.json"
+    assert parse_args([]).traces == expected
+
+
+@pytest.mark.parametrize("mode", ["default", "export", "live", "offline"])
+def test_startup_separates_trace_source_from_score_client(tmp_path, monkeypatch, mode):
+    records = load(tmp_path, [trace()])
+    export = tmp_path / "traces.json"
+    flags = {
+        "default": [], "export": ["--traces", str(export)], "live": ["--live-traces"],
+        "offline": ["--offline", str(export), "--offline-reason", "temporary outage"],
+    }[mode]
+    client = Mock()
+    client.api.trace.list.return_value = SimpleNamespace(data=[SimpleNamespace(id="a" * 32)])
+    client.api.trace.get.return_value = trace()
+    factory = Mock(return_value=client)
+    listener = Mock(server_port=8021)
+    make = Mock(return_value=listener)
+    monkeypatch.setattr(review_server, "DEFAULT_EXPORT", export)
+    monkeypatch.setattr(review_server.langfuse_io, "_client", factory)
+    monkeypatch.setattr(review_server._state, "state_root", lambda: tmp_path / "state")
+    monkeypatch.setattr(review_server, "make_server", make)
+    monkeypatch.setattr("observability.instrument.load_env", lambda: None)
+    monkeypatch.setattr(sys, "argv", ["review-app", *flags])
+    review_server.main()
+    opened = make.call_args.args[0]
+    assert opened.client is (None if mode == "offline" else client)
+    assert set(opened.traces) == {records[0]["trace_id"]}
+    if mode == "offline":
+        factory.assert_not_called()
+    else:
+        factory.assert_called_once()
+        client.shutdown.assert_called_once()
+    if mode == "live":
+        client.api.trace.list.assert_called_once()
+        assert opened.source == "langfuse"
+    else:
+        client.api.trace.list.assert_not_called()
+        client.api.trace.get.assert_not_called()
+        assert opened.source == str(export.resolve())
+    assert not opened.root.exists()
+    listener.serve_forever.assert_called_once()
+    listener.server_close.assert_called_once()
+
+
+def test_local_source_does_not_silently_disable_sync_without_credentials(tmp_path, monkeypatch):
+    load(tmp_path, [trace()])
+    monkeypatch.setattr(sys, "argv", ["review-app", "--traces", str(tmp_path / "traces.json")])
+    monkeypatch.setattr("observability.instrument.load_env", lambda: None)
+    factory = Mock(side_effect=LangfuseNotConfigured("Missing Langfuse credentials"))
+    monkeypatch.setattr(review_server.langfuse_io, "_client", factory)
+    with pytest.raises(LangfuseNotConfigured):
+        review_server.main()
+
+
+def test_missing_default_export_does_not_fall_back_to_live(tmp_path, monkeypatch):
+    client = Mock()
+    monkeypatch.setattr(review_server, "DEFAULT_EXPORT", tmp_path / "missing.json")
+    monkeypatch.setattr(review_server.langfuse_io, "_client", Mock(return_value=client))
+    monkeypatch.setattr("observability.instrument.load_env", lambda: None)
+    monkeypatch.setattr(sys, "argv", ["review-app"])
+    with pytest.raises(FileNotFoundError):
+        review_server.main()
+    client.api.trace.list.assert_not_called()
+    client.api.trace.get.assert_not_called()
+    client.shutdown.assert_called_once()
+
+
+def test_source_sync_metadata_and_legacy_backup_keys_are_independent(store):
+    old_offline_key = hashlib.sha256(f"{store.root.resolve()}:{store.source}".encode()).hexdigest()
+    local = store.snapshot()
+    assert local["trace_source"] == "local_export"
+    assert local["sync_mode"] == "local_only"
+    assert local["identity"] == old_offline_key
+    assert local["legacy_identity"] is None
+    store.client = Mock()
+    local_synced = store.snapshot()
+    old_live_key = hashlib.sha256(f"{store.root.resolve()}:langfuse".encode()).hexdigest()
+    assert local_synced["trace_source"] == "local_export"
+    assert local_synced["sync_mode"] == "langfuse"
+    assert local_synced["identity"] == old_offline_key
+    assert local_synced["legacy_identity"] == old_live_key
+    live = ReviewStore(list(store.traces.values()), store.root, client=store.client).snapshot()
+    assert live["identity"] == old_live_key
+    assert live["trace_source"] == "live"
+    assert live["trace_path"] is None
+
+
+def test_new_picks_keep_export_provenance_without_rewriting_old_picks(store):
+    prior_pick = {"trace_id": "b" * 32, "reason": "previous live selection"}
+    store.write("sample_manifest.json", {"picks": [prior_pick], "source": "langfuse", "custom": 42})
+    change(store, "select", trace_id="a" * 32, reason="from saved export")
+    manifest = store.read("sample_manifest.json", {})
+    assert manifest["picks"][0] == prior_pick
+    assert manifest["source"] == "langfuse"
+    assert manifest["custom"] == 42
+    assert manifest["picks"][1]["source"] == store.source
+    assert manifest["picks"][1]["trace_source"] == "local_export"
+    assert manifest["trace_path"] == store.source
 
 
 def test_read_only_use_does_not_write_existing_state(store):

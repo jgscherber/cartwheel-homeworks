@@ -1,4 +1,8 @@
-"""Run with ``uv run python -m analysis.review_app.server`` from the repo root."""
+"""Review traces/support_traces.json; synchronize judgments with Langfuse.
+
+Run ``uv run python -m analysis.review_app.server`` from the repository root.
+Use --live-traces to fetch traces from Langfuse instead of the saved export.
+"""
 
 from __future__ import annotations
 
@@ -17,6 +21,7 @@ from analysis.helpers import _state, langfuse_io
 from analysis.review_app.loader import graph, load_records, sessions
 
 ASSETS = Path(__file__).parent
+DEFAULT_EXPORT = ASSETS.parent.parent / "traces" / "support_traces.json"
 MODE = re.compile(r"[a-z][a-z0-9_]*")
 
 
@@ -79,6 +84,14 @@ class ReviewStore:
                     current[f"{path.stem}:{row['trace_id']}"] = {**row, "mode": path.stem}
         return current
 
+    def source_info(self) -> dict[str, Any]:
+        return {
+            "source": self.source,
+            "trace_source": "live" if self.source == "langfuse" else "local_export",
+            "trace_path": None if self.source == "langfuse" else self.source,
+            "sync_mode": "langfuse" if self.client is not None else "local_only",
+        }
+
     def snapshot(self) -> dict[str, Any]:
         with self.lock:
             patterns = self.read("patterns.json", {"modes": []})
@@ -100,7 +113,11 @@ class ReviewStore:
                 "annotations": annotations, "patterns": patterns, "suggestions": suggestions,
                 "manifest": manifest, "labels": labels, "graph": self.graph,
                 "identity": hashlib.sha256(f"{self.root.resolve()}:{self.source}".encode()).hexdigest(),
-                "source": self.source, "offline_reason": self.offline_reason,
+                "legacy_identity": (
+                    hashlib.sha256(f"{self.root.resolve()}:langfuse".encode()).hexdigest()
+                    if self.source != "langfuse" and self.client is not None else None
+                ),
+                **self.source_info(), "offline_reason": self.offline_reason,
                 "progress": {
                     "selected": len(selected), "reviewed": len(reviewed), "missing": missing,
                     "pending_suggestions": sum(s.get("status", "pending") == "pending" for s in suggestions),
@@ -144,9 +161,13 @@ class ReviewStore:
                 manifest = self.read("sample_manifest.json", {"picks": []})
                 picks = list(manifest.get("picks", []))
                 if not any(p["trace_id"] == trace_id for p in picks):
-                    picks.append({"trace_id": trace_id, "reason": reason, "selected_at": now()})
+                    picks.append({
+                        "trace_id": trace_id, "reason": reason, "selected_at": now(),
+                        **self.source_info(),
+                    })
                 self.write("sample_manifest.json", {
-                    **manifest, "picks": picks, "source": self.source,
+                    **manifest, **self.source_info(), "picks": picks,
+                    "source": manifest.get("source", self.source),
                     "offline_reason": self.offline_reason,
                 })
                 return {"ok": True}
@@ -357,14 +378,25 @@ def make_server(store: ReviewStore, port: int = 8021) -> ThreadingHTTPServer:
     return ThreadingHTTPServer(("127.0.0.1", port), Handler)
 
 
-def main() -> None:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8021)
-    parser.add_argument("--offline", type=Path, help="Complete Module 1 JSON/JSONL trace export")
+    sources = parser.add_mutually_exclusive_group()
+    sources.add_argument("--traces", type=Path, help="Saved trace export (default: traces\\support_traces.json)")
+    sources.add_argument("--live-traces", action="store_true", help="Fetch traces directly from Langfuse")
+    sources.add_argument("--offline", type=Path, help="Saved export with local-only judgments; requires --offline-reason")
     parser.add_argument("--offline-reason", default="")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.offline and not args.offline_reason.strip():
         parser.error("--offline requires --offline-reason")
+    if args.offline_reason and not args.offline:
+        parser.error("--offline-reason requires --offline")
+    args.traces = None if args.live_traces else args.offline or args.traces or DEFAULT_EXPORT
+    return args
+
+
+def main() -> None:
+    args = parse_args()
     from observability.instrument import load_env
 
     load_env()
@@ -372,14 +404,16 @@ def main() -> None:
     if not args.offline:
         client = langfuse_io._client()
     try:
-        traces = load_records(args.offline, client)
+        traces = load_records(args.traces, client)
         store = ReviewStore(traces, _state.state_root(), client=client,
                             offline_reason=args.offline_reason,
-                            source=str(args.offline.resolve()) if args.offline else "langfuse")
+                            source=str(args.traces.resolve()) if args.traces else "langfuse")
         server = make_server(store, args.port)
         print(f"Review interface: http://127.0.0.1:{server.server_port}", flush=True)
         print(f"{len(traces)} traces in {len(store.conversations)} conversations; "
-              f"{'OFFLINE: ' + args.offline_reason if args.offline else 'live Langfuse'}", flush=True)
+              f"trace source: {store.source}", flush=True)
+        print(f"Judgments: {'local only; OFFLINE: ' + args.offline_reason if args.offline else 'Langfuse synchronization enabled'}",
+              flush=True)
         try:
             server.serve_forever()
         except KeyboardInterrupt:
