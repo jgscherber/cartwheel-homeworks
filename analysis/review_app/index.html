@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cartwheel conversation review</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Cartwheel conversation review</h1>
+    <nav aria-label="Views">
+      <button data-view="conversation">Conversations</button>
+      <button data-view="taxonomy">Taxonomy</button>
+      <button data-view="labels">Labeling</button>
+      <button data-view="suggestions">AI suggestions</button>
+      <button data-view="progress">Progress</button>
+      <button data-view="map">Map</button>
+    </nav>
+    <button id="refresh">Refresh state</button>
+  </header>
+  <div id="status" role="status">Loading full conversation evidence...</div>
+  <div id="error" role="alert" hidden></div>
+  <div id="updates" hidden>New review state is available. Save your draft, then refresh.</div>
+  <div class="layout">
+    <aside id="navigator">
+      <label>Find a conversation <input id="search" type="search" placeholder="Session, scenario, role, or trace ID"></label>
+      <div id="sessions"></div>
+    </aside>
+    <main id="main" tabindex="-1"></main>
+  </div>
+  <form id="annotation" hidden>
+    <label>Free-text observation <input id="annotation-text" required autocomplete="off"></label>
+    <button type="submit">Save note</button>
+    <button type="button" id="cancel-note">Cancel</button>
+  </form>
+</body>
+</html>
