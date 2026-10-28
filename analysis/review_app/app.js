@@ -1,6 +1,6 @@
 "use strict";
 
-let data, currentSession, view = "conversation", pending = null, busy = false, recoveryKey = null;
+let data, currentSession, view = "conversation", pending = null, busy = false, recoveryKey = null, hideNoted = false;
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -14,6 +14,13 @@ const finals = () => modes().filter(m => m.status === "final");
 const judgment = (id, mode) => data.labels[`${mode}:${id}`];
 const noteKey = a => `note-${a.id}`;
 const backupKey = () => `cartwheel-review:${data.identity}`;
+
+function nextTrace(id) {
+  const ordered = traces();
+  const index = ordered.findIndex(t => t.trace_id === id);
+  if (index < 0) throw new Error("The source trace is not in this dataset.");
+  return ordered.slice(index + 1).find(t => !hideNoted || !notes(t.trace_id).length) || null;
+}
 
 function fail(error) {
   $("#error").textContent = error.message || String(error);
@@ -87,13 +94,15 @@ function renderNavigator() {
   $("#sessions").innerHTML = data.sessions.map(session => {
     const first = session.traces[0];
     const reviewed = session.traces.filter(t => notes(t.trace_id).length).length;
+    if (hideNoted && reviewed === session.traces.length) return "";
+    const start = hideNoted ? session.traces.find(t => !notes(t.trace_id).length).trace_id : "";
     const title = `${first.meta.scenario_id || "No scenario"} / ${first.meta.role || "Unknown role"}`;
     const search = `${session.id} ${session.traces.map(t => `${t.trace_id} ${t.meta.scenario_id} ${t.meta.role}`).join(" ")}`;
     if (!search.toLowerCase().includes(query)) return "";
-    return `<button class="session ${session.id === currentSession ? "active" : ""}" data-session="${esc(session.id)}">
-      <strong>${esc(title)}</strong><br>${session.traces.length} turns; ${reviewed} with notes
+    return `<button class="session ${session.id === currentSession ? "active" : ""}" data-session="${esc(session.id)}" data-start-trace="${esc(start)}">
+      <strong>${esc(title)}</strong><br>${hideNoted ? `${session.traces.length - reviewed} without notes; ${session.traces.length} total turns` : `${session.traces.length} turns; ${reviewed} with notes`}
       <div class="meta">${esc(session.id)}</div></button>`;
-  }).join("");
+  }).join("") || '<p class="small">No conversations match this filter.</p>';
 }
 
 function evidenceText(message) {
@@ -144,6 +153,10 @@ function renderConversation(main) {
 
 function renderTrace(trace) {
   const id = trace.trace_id;
+  const next = nextTrace(id);
+  const userId = trace.metadata?.["cartwheel.user_id"];
+  const identity = userId === undefined || userId === null || userId === ""
+    ? "Identity not recorded" : `User ${userId}`;
   const flag = data.graph.nodes.find(n => n.trace_id === id)?.flag;
   const blocks = [];
   for (let i = 0; i < trace.trace.length; i++) {
@@ -157,14 +170,13 @@ function renderTrace(trace) {
   }
   const raw = [...(trace.observations || [])].sort((a, b) =>
     String(a.start_time || "").localeCompare(String(b.start_time || "")) || String(a.id).localeCompare(String(b.id)));
-  return `<section class="trace" id="trace-${esc(id)}">
+  return `<section class="trace" id="trace-${esc(id)}" tabindex="-1">
+    <div class="trace-identity"><span class="trace-role">${esc(trace.meta.role || "Role not recorded")}</span><span>${esc(identity)}</span></div>
     <h3 id="heading-${esc(id)}">Trace ${esc(id)}</h3>
-    <div class="meta">${esc(trace.timestamp || "Timestamp missing: chronology is uncertain")} | ${esc(trace.meta.role || "Role missing")} | ${esc(trace.meta.scenario_id || "Scenario missing")}</div>
+    <div class="meta">${esc(trace.timestamp || "Timestamp missing: chronology is uncertain")} | ${esc(trace.meta.scenario_id || "Scenario missing")}</div>
     ${flag ? `<span class="badge">${esc(flag)}</span>` : ""}
     <div class="toolbar">
-      ${selected(id) ? '<span class="badge">In review set</span>' : `<button data-include="${esc(id)}">Include in review set</button>`}
-      <button data-note="${esc(id)}">Add trace note</button>
-      <button data-clean="${esc(id)}">No failure observed</button>
+      ${selected(id) ? '<span class="badge">In review set</span>' : `<button data-include="${esc(id)}" title="Add this trace to the HW4 review sample and record why it was chosen. This does not mark it reviewed.">Include in review set</button>`}
       <button data-label-trace="${esc(id)}">Label this trace</button>
     </div>
     <div class="trace-grid"><article class="evidence">${blocks.join("")}
@@ -172,6 +184,12 @@ function renderTrace(trace) {
         <p>Preserved even when generation output is null. Repeated session-history wrappers are not additional turns.</p>
         <pre>${esc(pretty({input: trace.input, output: trace.output, observations: raw, metadata: trace.metadata}))}</pre></details>
       </article><aside class="margin" aria-label="Annotations beside evidence"></aside></div>
+    <footer class="toolbar trace-actions" aria-label="Trace review actions">
+      <button data-note="${esc(id)}">Add trace note</button>
+      <button data-clean="${esc(id)}">No failure observed</button>
+      <button data-next-trace="${esc(id)}"${next ? "" : " disabled"}>Next trace</button>
+      ${next ? "" : `<span class="small">${hideNoted ? "No more traces without notes" : "Last trace in dataset"}</span>`}
+    </footer>
     </section>`;
 }
 
@@ -364,7 +382,18 @@ function goTrace(id, targetView = "conversation") {
   currentSession = session.id;
   view = targetView;
   render();
-  document.getElementById(`trace-${id}`)?.scrollIntoView({block: "start"});
+  const target = document.getElementById(`trace-${id}`);
+  if (target) {
+    placeNotes();
+    target.focus({preventScroll: true});
+    target.scrollIntoView({block: "start"});
+  }
+}
+
+function goNextTrace(id) {
+  if (busy) throw new Error("Wait for the current save before moving to the next trace.");
+  const next = nextTrace(id);
+  if (next) goTrace(next.trace_id);
 }
 
 document.addEventListener("click", async event => {
@@ -372,7 +401,10 @@ document.addEventListener("click", async event => {
   if (!button) return;
   try {
     if (button.dataset.view) { cancelNote(); view = button.dataset.view; render(); }
-    if (button.dataset.session) { cancelNote(); currentSession = button.dataset.session; render(); }
+    if (button.dataset.session) {
+      if (button.dataset.startTrace) goTrace(button.dataset.startTrace);
+      else { cancelNote(); currentSession = button.dataset.session; render(); }
+    }
     if (button.id === "refresh") await refresh();
     if (button.dataset.goTrace) { event.preventDefault(); goTrace(button.dataset.goTrace); }
     if (button.dataset.labelTrace) goTrace(button.dataset.labelTrace, "labels");
@@ -382,7 +414,12 @@ document.addEventListener("click", async event => {
     }
     if (button.dataset.note) openNote(button.dataset.note);
     if (button.dataset.messageNote) openNote(button.dataset.messageNote, button.dataset.anchor);
-    if (button.dataset.clean) await act({action: "note", trace_id: button.dataset.clean, note: "no failure observed"});
+    if (button.dataset.nextTrace) goNextTrace(button.dataset.nextTrace);
+    if (button.dataset.clean) {
+      const session = currentSession;
+      await act({action: "note", trace_id: button.dataset.clean, note: "no failure observed"});
+      if (view === "conversation" && currentSession === session) goNextTrace(button.dataset.clean);
+    }
     if (button.id === "cancel-note") cancelNote();
     if (button.dataset.edit) {
       const a = data.annotations.find(a => a.id === button.dataset.edit);
@@ -412,6 +449,10 @@ document.addEventListener("click", async event => {
 
 $("#search").addEventListener("input", renderNavigator);
 document.addEventListener("change", event => {
+  if (event.target.id === "hide-noted") {
+    hideNoted = event.target.checked;
+    render();
+  }
   if (event.target.id === "suggestion-all") document.querySelectorAll("[data-pick-suggestion]").forEach(e => { e.checked = event.target.checked; });
 });
 $("#annotation").addEventListener("submit", async event => {

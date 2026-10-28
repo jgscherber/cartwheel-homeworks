@@ -15,6 +15,7 @@ textarea { width: 100%; min-height: 80px; }
 .layout { display: grid; grid-template-columns: 275px minmax(0, 1fr); }
 #navigator { padding: 16px; border-right: 1px solid var(--line); height: calc(100vh - 130px); overflow: auto; position: sticky; top: 100px; }
 #search { display: block; width: 100%; margin: 8px 0 14px; }
+.sidebar-filter { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
 .session { display: block; width: 100%; text-align: left; margin-bottom: 8px; overflow-wrap: anywhere; }
 main { padding: 24px; min-width: 0; }
 #status, #updates { padding: 8px 20px; background: #e7eef9; }
@@ -22,6 +23,8 @@ main { padding: 24px; min-width: 0; }
 .meta, .small { font-size: 12px; color: #4b586b; overflow-wrap: anywhere; }
 .badge { display: inline-block; border: 1px solid #8997aa; padding: 1px 6px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
 .trace { padding-top: 18px; margin: 24px 0 40px; border-top: 2px solid #8997aa; scroll-margin-top: 100px; }
+.trace-identity { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+.trace-role { text-transform: capitalize; }
 .trace-grid { display: grid; grid-template-columns: minmax(0, 720px) 240px; gap: 24px; align-items: start; }
 .evidence { min-width: 0; }
 .margin { position: relative; min-height: 60px; }
@@ -41,6 +44,7 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 details { margin-top: 8px; }
 summary { cursor: pointer; }
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.trace-actions { padding-top: 12px; margin-top: 20px; border-top: 1px solid var(--line); }
 .note { position: absolute; width: 240px; border-left: 3px solid #9b7800; padding: 8px; background: #fff8d5; font-size: 13px; overflow-wrap: anywhere; }
 .note.suggestion { border-left: 3px dashed #6d28d9; background: #f1ebff; }
 .note q { display: block; font-size: 12px; }
