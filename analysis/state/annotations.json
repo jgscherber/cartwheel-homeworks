@@ -1,1 +1,554 @@
-{"annotations": []}
+{
+  "annotations": [
+    {
+      "id": "74e89d10-375b-4f4b-92fd-91050ebcefa7",
+      "trace_id": "5819bba941ed2664c2fa3500ab6f9dae",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T01:47:53.522045+00:00",
+      "start": null
+    },
+    {
+      "id": "9be7acd9-6fa2-4b29-b78a-830f410b7d52",
+      "trace_id": "eca954bd830940fd7b98cf330f0c36e3",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T01:51:44.919094+00:00",
+      "start": null
+    },
+    {
+      "id": "0f1ae983-b269-4b43-94e3-4dd0b57f17c0",
+      "trace_id": "44014176ca3e38e1981d1074dd377bd1",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T01:52:01.805005+00:00",
+      "start": null
+    },
+    {
+      "id": "d833161b-ad74-4cd4-a696-df1eccd5d97e",
+      "trace_id": "84446cb2ea28fba3d761097d47c66630",
+      "anchor": "message:1",
+      "note": "No check that was this user's order",
+      "quote": "{\n  \"order_id\": 9807\n}",
+      "source": "human",
+      "ts": "2026-10-28T02:09:01.404920+00:00",
+      "start": 0
+    },
+    {
+      "id": "5c84a8eb-b4a7-4970-a98a-2cde4517d95f",
+      "trace_id": "1744fc70964a76fc631ac73dad67fb5a",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:13:59.727352+00:00",
+      "start": null
+    },
+    {
+      "id": "db3faa7d-2e28-4344-b5ed-3afb102f7949",
+      "trace_id": "a211a2046c11275fa09367233eb60d5d",
+      "anchor": "message:1",
+      "note": "these aren't tasks it can help with",
+      "quote": "Do you need to look into why it was cancelled, or help them place a new order?",
+      "source": "human",
+      "ts": "2026-10-28T02:14:45.504762+00:00",
+      "start": 347
+    },
+    {
+      "id": "5cef453d-11c3-4be7-b8e9-7e40e619325a",
+      "trace_id": "b63321df7112ef4ca9428398f7f5b2b1",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:15:11.899737+00:00",
+      "start": null
+    },
+    {
+      "id": "d485d609-c003-4689-bcd7-b1074af2be12",
+      "trace_id": "d36c2f54c28296c41fba3ac673c1154b",
+      "anchor": "message:3",
+      "note": "extra tool call",
+      "quote": "{\n  \"query\": \"Speckled Puzzle\"\n}",
+      "source": "human",
+      "ts": "2026-10-28T02:15:46.487037+00:00",
+      "start": 0
+    },
+    {
+      "id": "ec025dc0-e35f-41d5-bd70-39531aa6393a",
+      "trace_id": "2cc8295cf5af751da4f60c15b82728f8",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:16:15.645029+00:00",
+      "start": null
+    },
+    {
+      "id": "ddca7828-cf08-47b6-a1a7-87e7a319f670",
+      "trace_id": "7c2f351b82bc4bec3114a67a21e96ea0",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:17:16.130530+00:00",
+      "start": null
+    },
+    {
+      "id": "b4fa5fb2-1920-4078-aba4-c273a4ea735d",
+      "trace_id": "a0caf9b262571a86af7c978a117159e6",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:17:24.826512+00:00",
+      "start": null
+    },
+    {
+      "id": "6205779d-c20b-45d1-ae26-cf7976e363aa",
+      "trace_id": "f8acafd14c12a0f6472cb0694fd098da",
+      "anchor": "message:1",
+      "note": "Unhelpful follow-up",
+      "quote": "Did you cancel this order yourself, or are you wondering if a refund you expected is stuck somewhere? ",
+      "source": "human",
+      "ts": "2026-10-28T02:17:46.845023+00:00",
+      "start": 153
+    },
+    {
+      "id": "52b2c752-63d8-460e-8f77-e89639e2166f",
+      "trace_id": "f8acafd14c12a0f6472cb0694fd098da",
+      "anchor": "message:1",
+      "note": "Agent can't dig into it more",
+      "quote": " that might be something we need to dig into",
+      "source": "human",
+      "ts": "2026-10-28T02:18:05.291815+00:00",
+      "start": 312
+    },
+    {
+      "id": "44c3cad5-619f-40c4-86ce-0d3eb2a9dbf1",
+      "trace_id": "a8a7341e609f7cf62503581bdf398da3",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:18:53.309998+00:00",
+      "start": null
+    },
+    {
+      "id": "4fc0f720-1b28-4767-b3b3-180debc95feb",
+      "trace_id": "b6cb65a78477be544bb3fb67260957a4",
+      "anchor": "message:3",
+      "note": "No emojis",
+      "quote": " ✓",
+      "source": "human",
+      "ts": "2026-10-28T02:19:07.632119+00:00",
+      "start": 66
+    },
+    {
+      "id": "a1c60ccb-7674-430a-9fe8-40b6c5d71abc",
+      "trace_id": "b6cb65a78477be544bb3fb67260957a4",
+      "anchor": "message:3",
+      "note": "This feels hallucinated",
+      "quote": "week ",
+      "source": "human",
+      "ts": "2026-10-28T02:19:58.404671+00:00",
+      "start": 589
+    },
+    {
+      "id": "97295069-811c-4a53-bfff-c4d30afe92b1",
+      "trace_id": "ebc61f76a850ee03115769c11ce3bb3f",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:20:30.725883+00:00",
+      "start": null
+    },
+    {
+      "id": "031df00f-0493-488c-a092-5b5cb45216cb",
+      "trace_id": "8ea4b32e0b7993693428072b5f592816",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:20:42.299878+00:00",
+      "start": null
+    },
+    {
+      "id": "8051431d-6cd0-45a1-931b-bcda0565313f",
+      "trace_id": "596913f6caa0ea8d70b56dad6db49542",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:30:02.191968+00:00",
+      "start": null
+    },
+    {
+      "id": "46499340-be27-41a2-89a2-1437b83fe312",
+      "trace_id": "44ca5cbbf7f001b629c0709a56864218",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:30:14.837665+00:00",
+      "start": null
+    },
+    {
+      "id": "fa233884-f36d-4570-93d4-d894982e2743",
+      "trace_id": "486e7e25a126a9c06be2fa8d8fb8410f",
+      "anchor": "message:3",
+      "note": "Don't speculate",
+      "quote": "Depending on Harbor Knits' current processing and shipping times, it should be moving along soon",
+      "source": "human",
+      "ts": "2026-10-28T02:30:39.781948+00:00",
+      "start": 281
+    },
+    {
+      "id": "d2fc6c6a-c4fb-413e-95a8-0c84a50ca406",
+      "trace_id": "486e7e25a126a9c06be2fa8d8fb8410f",
+      "anchor": "message:3",
+      "note": "You are the support bot already",
+      "quote": "reaching out to Harbor Knits directly—they can give you a better idea of when it'll go out.",
+      "source": "human",
+      "ts": "2026-10-28T02:30:58.084216+00:00",
+      "start": 442
+    },
+    {
+      "id": "85d6e1b1-79a9-402f-a4eb-6bfc212ec32a",
+      "trace_id": "53e2ee894efdd46246142aae6121269f",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:36:24.052146+00:00",
+      "start": null
+    },
+    {
+      "id": "9f04fb92-0a93-4630-b3e9-50b1e92c95aa",
+      "trace_id": "ca2bc7d5ce9b782018f2ad70abc7abac",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:37:17.539042+00:00",
+      "start": null
+    },
+    {
+      "id": "8a4d34c7-37fc-4a45-bdf4-c57bb9c41170",
+      "trace_id": "77d50bb8d1c2c36cd5679bb1c2421998",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:37:30.153406+00:00",
+      "start": null
+    },
+    {
+      "id": "194ab7e4-fafe-4ff3-bff2-182ce1df1ee8",
+      "trace_id": "93fc6c334f748926e049910bf5d740b4",
+      "anchor": "message:3",
+      "note": "Weird phrasing",
+      "quote": "h, I have some news for you:",
+      "source": "human",
+      "ts": "2026-10-28T02:38:05.526858+00:00",
+      "start": 1
+    },
+    {
+      "id": "2c24834b-b0bd-4ba1-a630-022ad3c5ec15",
+      "trace_id": "93fc6c334f748926e049910bf5d740b4",
+      "anchor": "message:3",
+      "note": "Agent doesn't need to know this info; no need to request it",
+      "quote": "Do you know what happened with this order? Was it cancelled by the customer, or did something come up on your end?",
+      "source": "human",
+      "ts": "2026-10-28T02:39:11.828487+00:00",
+      "start": 348
+    },
+    {
+      "id": "b4a92ae2-4ad6-4962-bceb-42856705e996",
+      "trace_id": "c72eb69024ac07fd2cb78843beeb1e8a",
+      "anchor": "message:1",
+      "note": "Speculation; there is no \"to be packed\" queue",
+      "quote": " so it's not sitting in a \"to be packed\" queue either.",
+      "source": "human",
+      "ts": "2026-10-28T02:40:24.223644+00:00",
+      "start": 185
+    },
+    {
+      "id": "2ba4c8a0-18fa-464d-b063-da9ebbc4fd46",
+      "trace_id": "e9d1c26cea22cc7aaa0304f3484fc58b",
+      "anchor": "message:1",
+      "note": "You don't know any of this",
+      "quote": "This means:\n- It's not pending\n- There's been no movement toward packing or shipment\n- It's not in active fulfillment at all",
+      "source": "human",
+      "ts": "2026-10-28T02:41:12.047510+00:00",
+      "start": 129
+    },
+    {
+      "id": "6884e26b-1ca1-496e-93a4-90409dc535ca",
+      "trace_id": "8fbc7bde3f69c6b86aef5d922da10619",
+      "anchor": "message:3",
+      "note": "informal phrasing",
+      "quote": "now is the time to act ",
+      "source": "human",
+      "ts": "2026-10-28T02:43:58.498819+00:00",
+      "start": 361
+    },
+    {
+      "id": "1b91de11-5f5d-48e4-8c16-e9551b47f8ca",
+      "trace_id": "495c2451174de376ba0026b7b48f0e94",
+      "anchor": "message:3",
+      "note": "Is email a thing?",
+      "quote": " I'd recommend checking your email for a shipment notification ",
+      "source": "human",
+      "ts": "2026-10-28T02:46:22.028868+00:00",
+      "start": 442
+    },
+    {
+      "id": "96692753-100e-4cea-9b2b-f897ef4092a6",
+      "trace_id": "ddc6881704dfb2d713a29338396816d1",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:47:04.780477+00:00",
+      "start": null
+    },
+    {
+      "id": "697b5e0c-0ac1-4579-8486-399cce2a6a8d",
+      "trace_id": "3a3d29b1eb101b1d2ea0ef6601d1f1ef",
+      "anchor": "message:3",
+      "note": "Weird phrasing",
+      "quote": "Okay, here's what I'm seeing",
+      "source": "human",
+      "ts": "2026-10-28T02:47:34.975741+00:00",
+      "start": 0
+    },
+    {
+      "id": "3162d404-7d2b-4031-961a-9600d08d63c3",
+      "trace_id": "3a3d29b1eb101b1d2ea0ef6601d1f1ef",
+      "anchor": "message:3",
+      "note": "Inappropriate speculation",
+      "quote": "your customer may be asking about a refund status rather than a shipment status.",
+      "source": "human",
+      "ts": "2026-10-28T02:47:54.208919+00:00",
+      "start": 301
+    },
+    {
+      "id": "3ee8b29c-3f10-49a4-bcdf-a5f14458b23b",
+      "trace_id": "4e81483860590ae7f873a63d8090a329",
+      "anchor": "message:3",
+      "note": "irrelevant",
+      "quote": "Do you remember why this order was cancelled,",
+      "source": "human",
+      "ts": "2026-10-28T02:48:27.920793+00:00",
+      "start": 250
+    },
+    {
+      "id": "51982569-62d6-43a7-b130-58eee60b2994",
+      "trace_id": "51b6f12d8367ab4f11a74c111d6c008e",
+      "anchor": "message:1",
+      "note": "You can't do any of this",
+      "quote": "1. Do you remember if you cancelled it yourself, or did something go wrong when you placed it?\n2. Were you charged for this order? If so, would you like me to help look into a refund?\n3. Would you like to place a new order for the Midnight Bar Soap?",
+      "source": "human",
+      "ts": "2026-10-28T02:48:57.189001+00:00",
+      "start": 298
+    },
+    {
+      "id": "6c834fd1-4d07-40cd-9c17-25c2d3851f55",
+      "trace_id": "d7a5e87d0e496ed604ab576921fbcb5e",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:49:17.233280+00:00",
+      "start": null
+    },
+    {
+      "id": "329166d0-e811-4523-95df-c3cd0f3c82d3",
+      "trace_id": "5a65c50e83c7c9443045f4c0a7e0b605",
+      "anchor": "message:3",
+      "note": "Good, direct them to real info",
+      "quote": " If they have a tracking number",
+      "source": "human",
+      "ts": "2026-10-28T02:49:40.678242+00:00",
+      "start": 312
+    },
+    {
+      "id": "3c7f91b4-d8b6-4e99-8673-2dd8b90bd5aa",
+      "trace_id": "da05d14f9866aaf517490a0e1d06a82e",
+      "anchor": "message:3",
+      "note": "No confirmation from user about want to return",
+      "quote": "{\n  \"amount_usd\": 34.75,\n  \"order_id\": 1985,\n  \"reason\": \"Customer changed mind, does not plan to use the product\"\n}",
+      "source": "human",
+      "ts": "2026-10-28T02:50:26.675694+00:00",
+      "start": 0
+    },
+    {
+      "id": "41837b49-6567-4f6f-930c-f5a5225bcde8",
+      "trace_id": "06fc76b69876e143aeb70885a73a9fb2",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:51:04.826074+00:00",
+      "start": null
+    },
+    {
+      "id": "5a75103c-2101-4737-947d-6eabaf600a49",
+      "trace_id": "195c32b9158448c2f8610114ddc66bb2",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:53:14.016273+00:00",
+      "start": null
+    },
+    {
+      "id": "0e44ccbb-79e3-4a34-a344-660acd4ca973",
+      "trace_id": "a3b52f4901a32b7c4cce9b0c14f4dd4b",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:53:21.428387+00:00",
+      "start": null
+    },
+    {
+      "id": "eff90243-c667-4539-b525-3678581fb2ca",
+      "trace_id": "dcd8c57565b98f7633c9daca5403d4f2",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T02:53:52.402829+00:00",
+      "start": null
+    },
+    {
+      "id": "9e598322-86a4-49eb-ba8e-a049f9b19abb",
+      "trace_id": "29825040a70adc0ec8792ea41c4dfb81",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:01:20.325127+00:00",
+      "start": null
+    },
+    {
+      "id": "b9368985-1bb7-48f8-b196-c7c3440efe86",
+      "trace_id": "63c259349b372825281c10ebe8d81e99",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:01:47.766774+00:00",
+      "start": null
+    },
+    {
+      "id": "7ceac088-e1fe-46c5-9bf4-a8da93fcec15",
+      "trace_id": "2f97134dd5c1c4678a204dafacd55f01",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:15:47.105985+00:00",
+      "start": null
+    },
+    {
+      "id": "91fa4298-7591-4a6d-b539-3dfd8e7da1d3",
+      "trace_id": "2592824c83d24a6986d83518183e1ae9",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:16:01.012133+00:00",
+      "start": null
+    },
+    {
+      "id": "6a3ef848-7fe9-4987-9d8d-e3a377f0d966",
+      "trace_id": "94febfc31d3b5b1af1c03db9c00e6387",
+      "anchor": "message:1",
+      "note": "Don't speculate",
+      "quote": "The approval process is just a quick verification step, and given that the order is refund eligible and your reasoning is clear, it should go through smoothly.",
+      "source": "human",
+      "ts": "2026-10-28T03:16:23.421183+00:00",
+      "start": 427
+    },
+    {
+      "id": "a7aac1f6-8cb2-4c5c-a10c-dbf00c625c1d",
+      "trace_id": "6824eace652fa36b37b41869330a7e0b",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:16:44.052855+00:00",
+      "start": null
+    },
+    {
+      "id": "9b080ecd-a472-47e3-a2df-74a249ce04bb",
+      "trace_id": "c5e4ea0fc9b910d17a7c0e05e29b3586",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:29:12.409252+00:00",
+      "start": null
+    },
+    {
+      "id": "b97698c8-4f92-4515-9f7d-c3bb7171c190",
+      "trace_id": "e9d27c21153f0e3ddc3f5da33d3899bb",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:29:28.976161+00:00",
+      "start": null
+    },
+    {
+      "id": "c32dcd47-0d05-48ab-b7f2-112761f9bb65",
+      "trace_id": "3501fdf6c7a7964021555a11b657b97b",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:29:53.991318+00:00",
+      "start": null
+    },
+    {
+      "id": "a8d00cf5-47d8-49c9-baa7-17b3107b6377",
+      "trace_id": "40726c1399d261f40749037461a2ec4f",
+      "anchor": "message:3",
+      "note": "Good. Queried the policy",
+      "quote": "{\n  \"query\": \"refund policy returns\"\n}",
+      "source": "human",
+      "ts": "2026-10-28T03:30:36.159708+00:00",
+      "start": 0
+    },
+    {
+      "id": "56d6ddf5-2be2-4ece-94c5-6c2c3866a3a3",
+      "trace_id": "7397737e2a57a38120a294e21fd3f1e1",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:31:21.608740+00:00",
+      "start": null
+    },
+    {
+      "id": "7a3378c4-83eb-45ea-9f74-477f05aa5368",
+      "trace_id": "3d929cb8f93d1494e8e01647233e0210",
+      "anchor": "message:1",
+      "note": "Too informal",
+      "quote": "Just hang tight ",
+      "source": "human",
+      "ts": "2026-10-28T03:31:49.006821+00:00",
+      "start": 225
+    }
+  ]
+}

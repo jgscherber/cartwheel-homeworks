@@ -17,7 +17,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
-from analysis.helpers import _state, langfuse_io
+from analysis.helpers import _state, langfuse_io, selection
 from analysis.review_app.loader import graph, load_records, sessions
 
 ASSETS = Path(__file__).parent
@@ -68,6 +68,7 @@ class ReviewStore:
         digest = hashlib.sha256()
         paths = [self.root / name for name in (
             "annotations.json", "patterns.json", "suggestions.json", "sample_manifest.json",
+            "sampling_exclusions.json",
         )]
         paths += sorted((self.root / "labels").glob("*.jsonl"))
         for path in paths:
@@ -112,6 +113,7 @@ class ReviewStore:
                 "revision": self.revision(), "sessions": self.conversations,
                 "annotations": annotations, "patterns": patterns, "suggestions": suggestions,
                 "manifest": manifest, "labels": labels, "graph": self.graph,
+                "excluded_trace_ids": sorted(selection.excluded_trace_ids(self.root)),
                 "identity": hashlib.sha256(f"{self.root.resolve()}:{self.source}".encode()).hexdigest(),
                 "legacy_identity": (
                     hashlib.sha256(f"{self.root.resolve()}:langfuse".encode()).hexdigest()
@@ -154,6 +156,24 @@ class ReviewStore:
             trace_id = payload.get("trace_id")
             if trace_id not in self.traces:
                 raise ValueError("Unknown trace ID")
+            if action == "exclude":
+                excluded = payload.get("excluded")
+                if type(excluded) is not bool:
+                    raise ValueError("Choose whether to exclude this trace from automatic picks")
+                selection.excluded_trace_ids(self.root)
+                document = self.read("sampling_exclusions.json", {"exclusions": []})
+                rows = items(document, "exclusions")
+                previous = next((row for row in rows if row["trace_id"] == trace_id), None)
+                entry = {
+                    **(previous or {}), "trace_id": trace_id, "excluded": excluded,
+                    "updated_at": now(), "decision_source": "human", **self.source_info(),
+                }
+                if previous is not None:
+                    rows[rows.index(previous)] = entry
+                else:
+                    rows.append(entry)
+                self.write("sampling_exclusions.json", replace_items(document, "exclusions", rows))
+                return {"ok": True}
             if action == "select":
                 reason = str(payload.get("reason", "")).strip()
                 if not reason:

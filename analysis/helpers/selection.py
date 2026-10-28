@@ -31,7 +31,26 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from . import _state
 from .normalization import normalize_traces
+
+
+def excluded_trace_ids(root: Path | None = None) -> set[str]:
+    """Read reversible human exclusions from future automatic picks."""
+    document = _state.read_json(
+        (root if root is not None else _state.state_root()) / "sampling_exclusions.json",
+        default={"exclusions": []},
+    )
+    rows = document.get("exclusions") if isinstance(document, dict) else None
+    if not isinstance(rows, list) or any(
+        not isinstance(row, dict)
+        or not isinstance(row.get("trace_id"), str)
+        or not row["trace_id"]
+        or type(row.get("excluded")) is not bool
+        for row in rows
+    ):
+        raise ValueError("Sampling exclusions must contain trace IDs and boolean excluded flags")
+    return {row["trace_id"] for row in rows if row["excluded"]}
 
 # ---------------------------------------------------------------------------
 # loading traces

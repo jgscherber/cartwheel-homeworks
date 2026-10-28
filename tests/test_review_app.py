@@ -269,6 +269,59 @@ def test_read_only_use_does_not_write_existing_state(store):
     assert {p.name: p.read_bytes() for p in store.root.iterdir()} == before
 
 
+def test_sampling_exclusion_is_reversible_and_preserves_existing_review_work(store):
+    change(store, "select", trace_id="a" * 32, reason="random batch")
+    change(store, "note", trace_id="a" * 32, note="no failure observed")
+    before = store.snapshot()
+    revision = store.revision()
+    change(store, "exclude", trace_id="a" * 32, excluded=True)
+    after = store.snapshot()
+    assert after["excluded_trace_ids"] == ["a" * 32]
+    assert after["manifest"] == before["manifest"]
+    assert after["annotations"] == before["annotations"]
+    assert after["progress"] == before["progress"]
+    assert ReviewStore(list(store.traces.values()), store.root).snapshot()["excluded_trace_ids"] == ["a" * 32]
+    with pytest.raises(Conflict):
+        store.mutate({"revision": revision, "action": "exclude", "trace_id": "b" * 32, "excluded": True})
+    change(store, "exclude", trace_id="a" * 32, excluded=False)
+    assert store.snapshot()["excluded_trace_ids"] == []
+    assert store.snapshot()["manifest"] == before["manifest"]
+    assert len(store.read("sampling_exclusions.json", {})["exclusions"]) == 1
+
+
+@pytest.mark.parametrize("excluded", [None, "true", 1])
+def test_sampling_exclusion_requires_an_explicit_boolean(store, excluded):
+    revision = store.revision()
+    with pytest.raises(ValueError, match="exclude"):
+        change(store, "exclude", trace_id="a" * 32, excluded=excluded)
+    assert store.revision() == revision
+
+
+@pytest.mark.parametrize("strategy", ["random", "diversity"])
+def test_automatic_picks_respect_saved_exclusions_and_restoration(store, tmp_path, monkeypatch, strategy):
+    from analysis.helpers import next_to_label, select_traces
+
+    monkeypatch.setenv("CARTWHEEL_ANALYSIS_STATE", str(store.root))
+    source = tmp_path / "candidates.json"
+    source.write_text(json.dumps([
+        {"id": identifier, "text": "Refund policy question", "features": {"code_vs_judge_conflict": True}}
+        for identifier in store.traces
+    ]), encoding="utf-8")
+    change(store, "exclude", trace_id="a" * 32, excluded=True)
+    assert {p["trace_id"] for p in select_traces(source, k=10, strategy=strategy)} == {"b" * 32, "c" * 32}
+    assert [p["trace_id"] for p in select_traces(source, k=10, strategy=strategy, exclude_ids=["c" * 32])] == ["b" * 32]
+    for candidate_strategy in ("random", "enrich", "uncertainty", "disagreement"):
+        candidates = next_to_label("new_mode", k=10, strategy=candidate_strategy, trace_source=source)
+        assert {p["trace_id"] for p in candidates} == {"b" * 32, "c" * 32}
+    assert store.snapshot()["excluded_trace_ids"] == ["a" * 32]
+    change(store, "exclude", trace_id="a" * 32, excluded=False)
+    assert {p["trace_id"] for p in select_traces(source, k=10, strategy=strategy)} == set(store.traces)
+    for identifier in store.traces:
+        change(store, "exclude", trace_id=identifier, excluded=True)
+    assert select_traces(source, k=10, strategy=strategy) == []
+    assert next_to_label("new_mode", k=10, strategy="random", trace_source=source) == []
+
+
 def test_notes_preserve_fields_and_reviewed_counts_are_per_selected_trace(store):
     store.write("annotations.json", {"annotations": [], "custom": 42})
     change(store, "select", trace_id="a" * 32, reason="uniform batch")

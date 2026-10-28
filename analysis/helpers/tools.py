@@ -246,7 +246,8 @@ def select_traces(
         k: batch size (the demo default is 24).
         strategy: ``"diversity"`` (default), ``"random"``, or ``"outlier"``
             (interquartile-range flags on a numeric feature).
-        exclude_ids: trace ids already read, skipped this batch.
+        exclude_ids: trace ids already read, skipped this batch. Saved human
+            exclusions in ``sampling_exclusions.json`` are also always skipped.
 
     Returns:
         A list of ``{"trace_id": ..., "reason": ...}`` dicts, one per pick,
@@ -254,7 +255,7 @@ def select_traces(
         ``state/samples.json`` and selection details to
         ``state/sample_manifest.json``.
     """
-    exclude = set(exclude_ids or [])
+    exclude = set(exclude_ids or []) | selection.excluded_trace_ids()
     traces = _load_trace_source(trace_source)
     picks = selection.select(traces, k=k, strategy=strategy, exclude_ids=exclude)
     traces_by_id = {trace["id"]: trace for trace in traces}
@@ -321,7 +322,7 @@ def next_to_label(
 
     Returns:
         ``{"trace_id": ..., "signal": ...}`` dicts naming why each was
-        picked, excluding already-labeled traces.
+        picked, excluding already-labeled traces and saved sampling exclusions.
     """
     labeled = {r["trace_id"] for r in _load_labels(mode)}
     confirmed_failures = [r["trace_id"] for r in _load_labels(mode) if r["label"] == 1]
@@ -335,7 +336,7 @@ def next_to_label(
         k=k,
         strategy=strategy,
         confirmed_failures=confirmed_failures,
-        already_labeled=labeled,
+        already_labeled=labeled | selection.excluded_trace_ids(),
     )
 
 

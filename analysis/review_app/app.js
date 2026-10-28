@@ -8,6 +8,7 @@ const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({
 const pretty = value => typeof value === "string" ? value : JSON.stringify(value, null, 2);
 const traces = () => data.sessions.flatMap(s => s.traces);
 const selected = id => data.manifest.picks.some(p => p.trace_id === id);
+const excluded = id => (data.excluded_trace_ids || []).includes(id);
 const notes = id => data.annotations.filter(a => a.trace_id === id && !a.deleted);
 const modes = () => data.patterns.modes || [];
 const finals = () => modes().filter(m => m.status === "final");
@@ -90,6 +91,9 @@ function render() {
 }
 
 function renderNavigator() {
+  const all = traces();
+  const annotated = all.filter(t => notes(t.trace_id).length).length;
+  $("#annotation-count").textContent = `${annotated} of ${all.length} traces annotated`;
   const query = $("#search").value.toLowerCase();
   $("#sessions").innerHTML = data.sessions.map(session => {
     const first = session.traces[0];
@@ -140,10 +144,15 @@ function renderConversation(main) {
         ${note.kind === "suggestion"
           ? suggestionControls(note)
           : `<div class="edit-controls"><button data-edit="${esc(note.id)}">Edit</button> <button data-delete="${esc(note.id)}" data-trace="${esc(trace.trace_id)}">Delete</button></div>`}`;
-      box.addEventListener("mouseenter", () => target.classList.add("linked"));
-      box.addEventListener("mouseleave", () => target.classList.remove("linked"));
-      target.addEventListener("mouseenter", () => box.classList.add("linked"));
-      target.addEventListener("mouseleave", () => box.classList.remove("linked"));
+      const targets = target.dataset.highlightId
+        ? [...section.querySelectorAll("mark")].filter(m => m.dataset.highlightId === target.dataset.highlightId)
+        : [target];
+      box.addEventListener("mouseenter", () => targets.forEach(t => t.classList.add("linked")));
+      box.addEventListener("mouseleave", () => targets.forEach(t => t.classList.remove("linked")));
+      targets.forEach(t => {
+        t.addEventListener("mouseenter", () => box.classList.add("linked"));
+        t.addEventListener("mouseleave", () => box.classList.remove("linked"));
+      });
       margin.append(box);
     }
     section.querySelectorAll("details").forEach(d => d.addEventListener("toggle", placeNotes));
@@ -177,6 +186,8 @@ function renderTrace(trace) {
     ${flag ? `<span class="badge">${esc(flag)}</span>` : ""}
     <div class="toolbar">
       ${selected(id) ? '<span class="badge">In review set</span>' : `<button data-include="${esc(id)}" title="Add this trace to the HW4 review sample and record why it was chosen. This does not mark it reviewed.">Include in review set</button>`}
+      <button data-exclude-trace="${esc(id)}" data-excluded="${!excluded(id)}" title="Controls future automatic picks only. Existing review-set membership, notes, and labels stay unchanged.">${excluded(id) ? "Allow future automatic picks" : "Don't include in the review set"}</button>
+      ${excluded(id) ? '<span class="badge">Excluded from automatic picks</span>' : ""}
       <button data-label-trace="${esc(id)}">Label this trace</button>
     </div>
     <div class="trace-grid"><article class="evidence">${blocks.join("")}
@@ -202,23 +213,69 @@ function renderMessage(message, i, id) {
     <button class="small" data-message-note="${esc(id)}" data-anchor="message:${i}">Add note beside this step</button></div>`;
 }
 
-function highlight(body, quote, id, kind, start) {
-  const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT);
-  let node, offset = 0;
-  while ((node = walker.nextNode())) {
-    const index = Number.isInteger(start) ? start - offset : node.textContent.indexOf(quote);
-    offset += node.textContent.length;
-    if (index < 0 || node.textContent.slice(index, index + quote.length) !== quote || node.parentElement.closest("mark")) continue;
+function textSegments(range) {
+  const root = range.commonAncestorContainer;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const segments = [];
+  let node = root.nodeType === Node.TEXT_NODE ? root : walker.nextNode();
+  while (node) {
+    if (range.intersectsNode(node)) {
+      const start = node === range.startContainer ? range.startOffset : 0;
+      const end = node === range.endContainer ? range.endOffset : node.textContent.length;
+      if (end > start) segments.push({node, start, end});
+    }
+    node = walker.nextNode();
+  }
+  return segments;
+}
+
+function selectedContent(range) {
+  const segments = textSegments(range);
+  const meaningful = segments.filter(s => s.node.textContent.slice(s.start, s.end).trim());
+  if (!meaningful.length) return null;
+  const body = meaningful[0].node.parentElement.closest(".content");
+  if (!body || meaningful.some(s => s.node.parentElement.closest(".content") !== body)) return null;
+  const inside = segments.filter(s => body.contains(s.node));
+  const selected = document.createRange();
+  selected.setStart(inside[0].node, inside[0].start);
+  selected.setEnd(inside.at(-1).node, inside.at(-1).end);
+  const prefix = document.createRange();
+  prefix.selectNodeContents(body);
+  prefix.setEnd(selected.startContainer, selected.startOffset);
+  return {body, range: selected, quote: selected.toString(), start: prefix.toString().length};
+}
+
+function wrapSegments(segments, className, id = null) {
+  // Wrap text fragments separately so existing annotation elements stay intact.
+  return segments.map((segment, i) => {
     const range = document.createRange();
-    range.setStart(node, index);
-    range.setEnd(node, index + quote.length);
+    range.setStart(segment.node, segment.start);
+    range.setEnd(segment.node, segment.end);
     const mark = document.createElement("mark");
-    mark.className = `highlight ${kind === "suggestion" ? "suggestion" : ""}`;
-    mark.id = `highlight-${id}`;
+    mark.className = className;
+    if (id !== null) {
+      mark.id = `highlight-${id}${i ? `-${i}` : ""}`;
+      mark.dataset.highlightId = id;
+    }
     range.surroundContents(mark);
     return mark;
+  });
+}
+
+function highlight(body, quote, id, kind, start) {
+  const text = body.textContent;
+  const from = Number.isInteger(start) ? start : text.indexOf(quote);
+  if (from < 0 || text.slice(from, from + quote.length) !== quote) return null;
+  const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT);
+  const segments = [];
+  let node, offset = 0;
+  while ((node = walker.nextNode())) {
+    const start = Math.max(0, from - offset);
+    const end = Math.min(node.textContent.length, from + quote.length - offset);
+    if (end > start) segments.push({node, start, end});
+    offset += node.textContent.length;
   }
-  return null;
+  return wrapSegments(segments, `highlight ${kind === "suggestion" ? "suggestion" : ""}`, id)[0] || null;
 }
 
 function placeNotes() {
@@ -236,21 +293,19 @@ function placeNotes() {
 }
 
 function openNote(trace_id, anchor = "trace", quote = "", id = null, text = "", range = null, start = null) {
+  const segments = range ? textSegments(range) : [];
   cancelNote();
-  let mark = null;
-  if (range) {
-    mark = document.createElement("mark");
-    mark.className = "pending-highlight";
-    range.surroundContents(mark);
-  }
-  pending = {trace_id, anchor, quote, id, mark, start};
+  const marks = wrapSegments(segments, "pending-highlight");
+  pending = {trace_id, anchor, quote, id, marks, start};
   $("#annotation").hidden = false;
   $("#annotation-text").value = text;
   $("#annotation-text").focus();
 }
 
 function cancelNote() {
-  if (pending?.mark?.isConnected) pending.mark.replaceWith(...pending.mark.childNodes);
+  for (const mark of pending?.marks || []) {
+    if (mark.isConnected) mark.replaceWith(...mark.childNodes);
+  }
   pending = null;
   recoveryKey = null;
   $("#annotation").hidden = true;
@@ -412,6 +467,10 @@ document.addEventListener("click", async event => {
       const reason = prompt("Why is this trace entering the review set? Record the selection method / batch.");
       if (reason) await act({action: "select", trace_id: button.dataset.include, reason});
     }
+    if (button.dataset.excludeTrace) {
+      await act({action: "exclude", trace_id: button.dataset.excludeTrace,
+        excluded: button.dataset.excluded === "true"});
+    }
     if (button.dataset.note) openNote(button.dataset.note);
     if (button.dataset.messageNote) openNote(button.dataset.messageNote, button.dataset.anchor);
     if (button.dataset.nextTrace) goNextTrace(button.dataset.nextTrace);
@@ -458,14 +517,14 @@ document.addEventListener("change", event => {
 $("#annotation").addEventListener("submit", async event => {
   event.preventDefault();
   try {
-    const {mark, ...payload} = pending;
+    const {marks, ...payload} = pending;
     await act({action: "note", ...payload, note: $("#annotation-text").value});
     cancelNote();
   } catch (error) { fail(error); }
 });
 $("#annotation-text").addEventListener("input", () => {
   if (pending) {
-    const {mark, ...payload} = pending;
+    const {marks, ...payload} = pending;
     localStorage.setItem(backupKey(), JSON.stringify({revision: data.revision,
       payload: {action: "note", ...payload, note: $("#annotation-text").value}}));
   }
@@ -474,18 +533,11 @@ document.addEventListener("mouseup", event => {
   if (pending || event.target.closest("#annotation")) return;
   const selection = getSelection();
   if (!selection || selection.isCollapsed || !selection.rangeCount) return;
-  const range = selection.getRangeAt(0);
-  const node = range.commonAncestorContainer;
-  const body = (node.nodeType === Node.TEXT_NODE ? node.parentElement : node).closest(".content");
-  if (!body || !body.contains(range.startContainer) || !body.contains(range.endContainer)) return;
-  // Only surround a single text node; existing overlapping highlights remain
-  // available through step-level notes rather than corrupting their anchors.
-  if (range.startContainer !== range.endContainer || range.startContainer.parentElement.closest("mark")) return;
-  const quote = selection.toString();
-  const prefix = document.createRange();
-  prefix.selectNodeContents(body);
-  prefix.setEnd(range.startContainer, range.startOffset);
-  if (quote.trim()) openNote(body.dataset.trace, body.dataset.anchor, quote, null, "", range, prefix.toString().length);
+  try {
+    const content = selectedContent(selection.getRangeAt(0));
+    if (content) openNote(content.body.dataset.trace, content.body.dataset.anchor,
+      content.quote, null, "", content.range, content.start);
+  } catch (error) { fail(error); }
 });
 document.addEventListener("mousedown", event => {
   if (pending && !event.target.closest("#annotation") && !event.target.closest(".pending-highlight")) cancelNote();

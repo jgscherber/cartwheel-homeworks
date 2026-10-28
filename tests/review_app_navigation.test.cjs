@@ -185,3 +185,96 @@ test("deleted notes do not hide a trace, and a filtered sidebar click opens the 
   await ui.click({session: "first", startTrace: "b"});
   assert.equal(ui.moves.at(-1), "trace-b");
 });
+
+test("annotation count tracks distinct traces with active notes, independently of navigation filters", () => {
+  const ui = app();
+  ui.run("renderNavigator()");
+  assert.equal(ui.elements.get("#annotation-count").textContent, "0 of 3 traces annotated");
+  ui.run(`
+    data.annotations = [
+      {trace_id: "a", note: "First observation"},
+      {trace_id: "a", note: "Another observation"},
+      {trace_id: "b", note: "no failure observed"},
+      {trace_id: "c", note: "Removed observation", deleted: true},
+      {trace_id: "outside-dataset", note: "Not in this export"}
+    ];
+    hideNoted = true;
+    document.querySelector("#search").value = "no matching conversation";
+    renderNavigator();
+  `);
+  assert.equal(ui.elements.get("#annotation-count").textContent, "2 of 3 traces annotated");
+  ui.run('data.annotations.forEach(a => { a.deleted = true; }); renderNavigator();');
+  assert.equal(ui.elements.get("#annotation-count").textContent, "0 of 3 traces annotated");
+});
+
+test("sampling exclusions are reversible and remain separate from existing membership and notes", async () => {
+  const ui = app();
+  assert(ui.run("renderTrace(data.sessions[0].traces[0])").includes("Don't include in the review set"));
+  await ui.click({excludeTrace: "a", excluded: "true"});
+  assert.equal(ui.saves.at(-1).action, "exclude");
+  assert.equal(ui.saves.at(-1).trace_id, "a");
+  assert.equal(ui.saves.at(-1).excluded, true);
+  ui.run(`
+    data.excluded_trace_ids = ["a"];
+    data.manifest.picks = [{trace_id: "a"}];
+  `);
+  const html = ui.run("renderTrace(data.sessions[0].traces[0])");
+  assert(html.includes("In review set"));
+  assert(html.includes("Excluded from automatic picks"));
+  assert(html.includes('data-excluded="false"'));
+  assert(html.includes("Allow future automatic picks"));
+  await ui.click({excludeTrace: "a", excluded: "false"});
+  assert.equal(ui.saves.at(-1).excluded, false);
+  assert.equal(ui.saves.length, 2);
+  assert.equal(ui.run("selected('a')"), true);
+  assert.equal(ui.run("data.annotations.length"), 0);
+});
+
+test("line-edge selections retain text when an endpoint is the surrounding element", () => {
+  const ui = app();
+  const result = ui.run(`
+    globalThis.Node = {TEXT_NODE: 3};
+    globalThis.NodeFilter = {SHOW_TEXT: 4};
+    const body = {};
+    const first = {textContent: "First\\n"};
+    const last = {textContent: "Second"};
+    const nodes = [first, last];
+    document.createTreeWalker = () => {
+      let index = 0;
+      return {nextNode: () => nodes[index++] || null};
+    };
+    const summarize = range => textSegments(range).map(s => ({
+      text: s.node.textContent.slice(s.start, s.end), start: s.start, end: s.end
+    }));
+    JSON.stringify([
+      summarize({commonAncestorContainer: body, startContainer: first, startOffset: 2,
+        endContainer: body, endOffset: 2, intersectsNode: () => true}),
+      summarize({commonAncestorContainer: body, startContainer: body, startOffset: 0,
+        endContainer: last, endOffset: 3, intersectsNode: () => true})
+    ]);
+  `);
+  assert.deepEqual(JSON.parse(result), [
+    [{text: "rst\n", start: 2, end: 6}, {text: "Second", start: 0, end: 6}],
+    [{text: "First\n", start: 0, end: 6}, {text: "Sec", start: 0, end: 3}],
+  ]);
+});
+
+test("selection ending at the start of another text node excludes its empty fragment", () => {
+  const ui = app();
+  const result = ui.run(`
+    globalThis.Node = {TEXT_NODE: 3};
+    globalThis.NodeFilter = {SHOW_TEXT: 4};
+    const first = {textContent: "Selected line"};
+    const next = {textContent: "Not selected"};
+    const nodes = [first, next];
+    document.createTreeWalker = () => {
+      let index = 0;
+      return {nextNode: () => nodes[index++] || null};
+    };
+    JSON.stringify(textSegments({
+      commonAncestorContainer: {}, startContainer: first, startOffset: 0,
+      endContainer: next, endOffset: 0, intersectsNode: () => true
+    }).map(s => s.node.textContent.slice(s.start, s.end)));
+  `);
+  assert.deepEqual(JSON.parse(result), ["Selected line"]);
+});
