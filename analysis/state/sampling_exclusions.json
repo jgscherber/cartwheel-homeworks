@@ -1,0 +1,74 @@
+{
+  "exclusions": [
+    {
+      "trace_id": "6822450c79cdd2910ed89d39e5b3a4b7",
+      "excluded": true,
+      "updated_at": "2026-10-28T03:34:42.245060+00:00",
+      "decision_source": "human",
+      "source": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "trace_source": "local_export",
+      "trace_path": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "sync_mode": "langfuse"
+    },
+    {
+      "trace_id": "283e05589d57a9554b1cc92a6472ffbc",
+      "excluded": true,
+      "updated_at": "2026-10-28T03:34:54.059642+00:00",
+      "decision_source": "human",
+      "source": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "trace_source": "local_export",
+      "trace_path": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "sync_mode": "langfuse"
+    },
+    {
+      "trace_id": "56e477e4465c66d21bd4164a32ae4aca",
+      "excluded": true,
+      "updated_at": "2026-10-28T03:36:59.824604+00:00",
+      "decision_source": "human",
+      "source": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "trace_source": "local_export",
+      "trace_path": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "sync_mode": "langfuse"
+    },
+    {
+      "trace_id": "85e57084f4cac247bd15ddfbcaaa4c57",
+      "excluded": true,
+      "updated_at": "2026-10-28T03:37:33.479549+00:00",
+      "decision_source": "human",
+      "source": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "trace_source": "local_export",
+      "trace_path": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "sync_mode": "langfuse"
+    },
+    {
+      "trace_id": "659ecedfbf31b7aba357d9577d7af71b",
+      "excluded": true,
+      "updated_at": "2026-10-28T03:41:55.738663+00:00",
+      "decision_source": "human",
+      "source": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "trace_source": "local_export",
+      "trace_path": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "sync_mode": "langfuse"
+    },
+    {
+      "trace_id": "e5c6555f6494503f01c96a836f87854a",
+      "excluded": true,
+      "updated_at": "2026-10-28T03:44:24.464289+00:00",
+      "decision_source": "human",
+      "source": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "trace_source": "local_export",
+      "trace_path": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "sync_mode": "langfuse"
+    },
+    {
+      "trace_id": "25224766554227c88e212c2e3ac684a5",
+      "excluded": true,
+      "updated_at": "2026-10-28T03:44:38.172693+00:00",
+      "decision_source": "human",
+      "source": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "trace_source": "local_export",
+      "trace_path": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+      "sync_mode": "langfuse"
+    }
+  ]
+}

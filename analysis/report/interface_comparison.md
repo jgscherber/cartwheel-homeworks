@@ -20,6 +20,8 @@ The reference interface's paired tool-call/result containers and adjacent free-t
 
 Trace-at-a-time navigation was replaced with a searchable conversation list and chronological session timeline. Grouping uses `cartwheel.session_id`, not the scenario ID: repeated scenario executions remain separate conversations. All constituent trace IDs are retained, including context-only sibling turns that do not automatically enter the review set.
 
+The sidebar conversation order is randomized on each page load and stays stable through saves, filtering, and state refreshes. Turns within a conversation remain chronological, and "Next trace" follows the displayed conversation order.
+
 The interface also separates open coding from explicit Present/Absent judgments, shows taxonomy definitions alongside supporting human notes, displays review and synchronization progress, and keeps AI suggestions separate until explicitly accepted or rejected. Rejected suggestions remain inspectable. Accepting a suggestion creates a note, never an automatic binary judgment.
 
 ## Remaining limitation

@@ -28,10 +28,28 @@ function fail(error) {
   $("#error").hidden = false;
 }
 
+function orderSessions(sessions) {
+  const remaining = new Map(sessions.map(session => [session.id, session]));
+  const ordered = [];
+  for (const previous of data?.sessions || []) {
+    if (remaining.has(previous.id)) {
+      ordered.push(remaining.get(previous.id));
+      remaining.delete(previous.id);
+    }
+  }
+  const added = [...remaining.values()];
+  for (let i = added.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [added[i], added[j]] = [added[j], added[i]];
+  }
+  return [...ordered, ...added];
+}
+
 async function getData() {
   const response = await fetch("/api/data");
   const result = await response.json();
   if (!response.ok) throw new Error(result.error || "State could not be loaded");
+  result.sessions = orderSessions(result.sessions);
   return result;
 }
 

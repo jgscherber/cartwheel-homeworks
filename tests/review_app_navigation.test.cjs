@@ -49,6 +49,46 @@ function app() {
   };
 }
 
+test("loading randomizes conversations without splitting turns, and Next follows the displayed order", async () => {
+  const ui = app();
+  ui.run(`
+    const snapshot = JSON.stringify(data);
+    data = undefined;
+    Math.random = () => 0;
+    fetch = async () => ({ok: true, json: async () => JSON.parse(snapshot)});
+  `);
+  await ui.run("getData().then(result => { data = result; })");
+  assert.equal(ui.run("data.sessions.map(s => s.id).join(',')"), "second,first");
+  assert.equal(ui.run("traces().map(t => t.trace_id).join(',')"), "c,a,b");
+  ui.run("renderNavigator()");
+  const sidebar = ui.elements.get("#sessions").innerHTML;
+  assert(sidebar.indexOf('data-session="second"') < sidebar.indexOf('data-session="first"'));
+  await ui.click({nextTrace: "c"});
+  assert.equal(ui.moves.at(-1), "trace-a");
+  await ui.click({nextTrace: "a"});
+  assert.equal(ui.moves.at(-1), "trace-b");
+  assert.equal(ui.run("nextTrace('b')"), null);
+});
+
+test("state reloads keep the randomized order and append new conversations without restoring removed ones", async () => {
+  const ui = app();
+  ui.run(`
+    data.sessions.reverse();
+    const snapshot = JSON.parse(JSON.stringify(data));
+    snapshot.sessions.reverse();
+    snapshot.sessions.push({id: "third", traces: []}, {id: "fourth", traces: []});
+    Math.random = () => 0;
+    fetch = async () => ({ok: true, json: async () => JSON.parse(JSON.stringify(snapshot))});
+  `);
+  await ui.run("getData().then(result => { data = result; })");
+  assert.equal(ui.run("data.sessions.map(s => s.id).join(',')"), "second,first,fourth,third");
+  await ui.run("getData().then(result => { data = result; })");
+  assert.equal(ui.run("data.sessions.map(s => s.id).join(',')"), "second,first,fourth,third");
+  ui.run(`snapshot.sessions = snapshot.sessions.filter(s => s.id !== "second")`);
+  await ui.run("getData().then(result => { data = result; })");
+  assert.equal(ui.run("data.sessions.map(s => s.id).join(',')"), "first,fourth,third");
+});
+
 test("review actions follow all evidence, and role/identity appear before trace metadata", () => {
   const ui = app();
   const html = ui.run("renderTrace(data.sessions[0].traces[0])");

@@ -549,6 +549,166 @@
       "source": "human",
       "ts": "2026-10-28T03:31:49.006821+00:00",
       "start": 225
+    },
+    {
+      "id": "baa49681-5bc1-4b69-b1e2-71872b2a8c89",
+      "trace_id": "192997caa115439107f595f3046fe9ff",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:34:32.717864+00:00",
+      "start": null
+    },
+    {
+      "id": "e49d0345-ddb1-46dc-958e-d72445b870f7",
+      "trace_id": "6822450c79cdd2910ed89d39e5b3a4b7",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:34:46.375448+00:00",
+      "start": null
+    },
+    {
+      "id": "c55beed5-56ae-4c11-b52c-12e1544ae0c7",
+      "trace_id": "283e05589d57a9554b1cc92a6472ffbc",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:34:56.272540+00:00",
+      "start": null
+    },
+    {
+      "id": "967f3f41-8f86-4075-bef2-8d4e734e8ba8",
+      "trace_id": "50e3ada68eeb518a3c71c38b709ca31d",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:35:03.176561+00:00",
+      "start": null
+    },
+    {
+      "id": "82fc5a1d-526d-4403-b5ec-f5582d6973b7",
+      "trace_id": "64ac86482b1a9c6e4b847f52b918fea3",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:35:09.501884+00:00",
+      "start": null
+    },
+    {
+      "id": "86828f3d-45c8-4e3c-9165-53aac32d110c",
+      "trace_id": "e13e8cf54c3508571089feed12919bb2",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:35:13.793755+00:00",
+      "start": null
+    },
+    {
+      "id": "1662a2dc-e471-433e-a071-eee1d160415a",
+      "trace_id": "82c715ab61c659c475978bdacd94c7e0",
+      "anchor": "message:3",
+      "note": "Good to not invent a reason",
+      "quote": ". Before I process it, can you let me know why you'd like to return the Portable Tea Sampler? This helps me note the reason on the refund.",
+      "source": "human",
+      "ts": "2026-10-28T03:36:25.442933+00:00",
+      "start": 45
+    },
+    {
+      "id": "c18af762-db11-4aad-9cc4-6091833c979c",
+      "trace_id": "56e477e4465c66d21bd4164a32ae4aca",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:37:01.444643+00:00",
+      "start": null
+    },
+    {
+      "id": "e500990c-df3a-49c2-b15e-487f48009f86",
+      "trace_id": "1f2da0202cf4e19c5af9387adb80be2c",
+      "anchor": "message:5",
+      "note": "What's perfect?",
+      "quote": "Perfect! ",
+      "source": "human",
+      "ts": "2026-10-28T03:37:23.663641+00:00",
+      "start": 0
+    },
+    {
+      "id": "08365f74-7f32-42b1-b780-85ca448bbfeb",
+      "trace_id": "09206f6d782e783caaec9d564c59f568",
+      "anchor": "message:3",
+      "note": "Original asked if the item was being returned and then issued refund anyways",
+      "quote": "{\n  \"amount_usd\": 111.75,\n  \"order_id\": 4180,\n  \"reason\": \"Customer return - Matte Scarf, doesn't want it anymore\"\n}",
+      "source": "human",
+      "ts": "2026-10-28T03:40:48.753463+00:00",
+      "start": 0
+    },
+    {
+      "id": "a0387c96-6401-4843-bb01-04db8baeaa1a",
+      "trace_id": "85e57084f4cac247bd15ddfbcaaa4c57",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:40:59.878908+00:00",
+      "start": null
+    },
+    {
+      "id": "b43e9b39-006b-4d62-bbf2-93260cc28973",
+      "trace_id": "bb4bcfe00a615b1de68b7088d1392280",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:41:46.481199+00:00",
+      "start": null
+    },
+    {
+      "id": "f65b88d6-e0ac-428d-a7d1-2858463a36fc",
+      "trace_id": "659ecedfbf31b7aba357d9577d7af71b",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:41:57.489208+00:00",
+      "start": null
+    },
+    {
+      "id": "7ff3dd20-7893-4aef-b419-777d8fbff45b",
+      "trace_id": "d0321615ae5df9a57ce2c21e583da666",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:44:18.707761+00:00",
+      "start": null
+    },
+    {
+      "id": "27de0de5-2444-4040-b5f7-1040b6f7fe6e",
+      "trace_id": "e5c6555f6494503f01c96a836f87854a",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:44:26.107678+00:00",
+      "start": null
+    },
+    {
+      "id": "add102cf-bfaf-4fe4-a135-121632abf6d7",
+      "trace_id": "25224766554227c88e212c2e3ac684a5",
+      "anchor": "trace",
+      "note": "no failure observed",
+      "quote": "",
+      "source": "human",
+      "ts": "2026-10-28T03:44:40.519429+00:00",
+      "start": null
     }
   ]
 }
