@@ -299,6 +299,62 @@ test("line-edge selections retain text when an endpoint is the surrounding eleme
   ]);
 });
 
+test("treemap rectangles fill the container without overlap and match their exact weights", () => {
+  const ui = app();
+  const rectangles = JSON.parse(ui.run(`JSON.stringify(treemapRectangles([
+    {name: "a", weight: 3}, {name: "b", weight: 2}, {name: "c", weight: 1}
+  ]))`));
+  assert(Math.abs(rectangles.reduce((sum, r) => sum + r.width * r.height, 0) - 10000) < 1e-8);
+  for (const r of rectangles) {
+    assert(Math.abs(r.width * r.height - 10000 * r.weight / 6) < 1e-8);
+    assert(r.x >= 0 && r.y >= 0 && r.x + r.width <= 100 + 1e-8 && r.y + r.height <= 100 + 1e-8);
+  }
+  for (let i = 0; i < rectangles.length; i++) {
+    for (const b of rectangles.slice(i + 1)) {
+      const a = rectangles[i];
+      assert(a.x + a.width <= b.x + 1e-8 || b.x + b.width <= a.x + 1e-8
+        || a.y + a.height <= b.y + 1e-8 || b.y + b.height <= a.y + 1e-8);
+    }
+  }
+});
+
+test("treemap support counts only distinct accepted current-definition positives and excludes skipped traces", () => {
+  const ui = app();
+  ui.run(`
+    data.annotations = [
+      {id: "n1", trace_id: "a", note: "Observation"}, {id: "n2", trace_id: "a", note: "Another observation"},
+      {id: "n3", trace_id: "b", note: "Boundary example"}
+    ];
+    const proposal = {name: "candidate", definition: "Rule", examples: [
+      {id: "p1", trace_id: "a", annotation_id: "n1", kind: "positive", status: "pending"},
+      {id: "p2", trace_id: "a", annotation_id: "n2", kind: "positive", status: "pending"},
+      {id: "n", trace_id: "b", annotation_id: "n3", kind: "close_negative", status: "accepted", reviewed_definition: "Rule"}
+    ]};
+  `);
+  assert.equal(ui.run("taxonomyCounts(proposal).positive"), 0);
+  ui.run('proposal.examples.slice(0, 2).forEach(e => { e.status = "accepted"; e.reviewed_definition = "Rule"; })');
+  assert.equal(ui.run("taxonomyCounts(proposal).positive"), 1);
+  assert.equal(ui.run("taxonomyCounts(proposal).negative"), 1);
+  ui.run('data.excluded_trace_ids = ["a"]');
+  assert.equal(ui.run("taxonomyCounts(proposal).positive"), 0);
+  assert.equal(ui.run("taxonomyExamples(proposal).length"), 1);
+  ui.run('data.excluded_trace_ids = []; proposal.definition = "Revised rule"');
+  assert.equal(ui.run("taxonomyCounts(proposal).positive"), 0);
+  assert.equal(ui.run("taxonomyCounts(proposal).negative"), 0);
+});
+
+test("taxonomy review controls send one explicit decision without creating notes or binary labels", async () => {
+  const ui = app();
+  await ui.click({taxonomyExample: "p1", mode: "candidate", decision: "accepted"});
+  assert.equal(ui.saves.length, 1);
+  assert.equal(ui.saves[0].action, "taxonomy_example");
+  await ui.click({taxonomyMode: "candidate", decision: "accepted"});
+  assert.equal(ui.saves.length, 2);
+  assert.equal(ui.saves[1].action, "taxonomy_mode");
+  assert.equal(ui.run("data.annotations.length"), 0);
+  assert.equal(ui.run("data.manifest.picks.length"), 0);
+});
+
 test("selection ending at the start of another text node excludes its empty fragment", () => {
   const ui = app();
   const result = ui.run(`

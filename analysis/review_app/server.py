@@ -146,11 +146,15 @@ class ReviewStore:
                         raise ValueError("Mode status must be candidate or final")
                     if mode.get("status") == "final" and not str(mode.get("definition", "")).strip():
                         raise ValueError("A final mode needs a binary definition")
+                    if mode.get("status") == "final" and "examples" in mode:
+                        self.validate_final_mode(mode)
                     names.append(name)
                 if len(names) != len(set(names)):
                     raise ValueError("Duplicate mode names")
                 self.write("patterns.json", patterns)
                 return {"ok": True}
+            if action in {"taxonomy_example", "taxonomy_mode"}:
+                return self.review_taxonomy(payload)
             if action == "suggestion":
                 return self.decide_suggestion(payload)
             trace_id = payload.get("trace_id")
@@ -201,6 +205,100 @@ class ReviewStore:
             if action == "retry":
                 return self.sync_label(trace_id, payload.get("mode"))
             raise ValueError("Unknown action")
+
+    def taxonomy_examples(self, mode: dict[str, Any]) -> list[dict[str, Any]]:
+        annotations = {
+            a["id"]: a for a in items(self.read("annotations.json", {"annotations": []}), "annotations")
+            if not a.get("deleted") and a.get("source", "human") in {"human", "accepted_suggestion"}
+        }
+        excluded = selection.excluded_trace_ids(self.root)
+        return [
+            example for example in items(mode, "examples")
+            if example.get("trace_id") in self.traces
+            and example["trace_id"] not in excluded
+            and example.get("annotation_id") in annotations
+            and annotations[example["annotation_id"]]["trace_id"] == example["trace_id"]
+        ]
+
+    def validate_final_mode(self, mode: dict[str, Any]) -> None:
+        if mode.get("review_status") != "accepted" or mode.get("reviewed_definition") != mode.get("definition"):
+            raise ValueError("Approve the current definition before finalizing")
+        if mode.get("requirement_status") not in {"existing", "revised"} or not str(mode.get("requirement_source", "")).strip():
+            raise ValueError("Resolve and document the specification requirement before finalizing")
+        if mode.get("requirement_status") == "revised":
+            revision_text = str(mode.get("requirement_revision_text", "")).strip()
+            specification = (ASSETS.parent.parent / "SPEC.md").read_text(encoding="utf-8")
+            if not revision_text or " ".join(revision_text.split()) not in " ".join(specification.split()):
+                raise ValueError("Record requirement_revision_text from the approved SPEC.md revision before finalizing")
+        if not mode.get("originating_annotation_ids") or not str(mode.get("boundary", "")).strip():
+            raise ValueError("Record the human origins and mode boundary before finalizing")
+        eligible = self.taxonomy_examples(mode)
+        if not set(mode["originating_annotation_ids"]) & {e["annotation_id"] for e in eligible}:
+            raise ValueError("A final mode needs an eligible originating human annotation")
+        if mode.get("evaluator_type") not in {"code", "llm_judge"}:
+            raise ValueError("Choose code or llm_judge as the likely evaluator")
+        examples = [
+            e for e in eligible
+            if e.get("status") == "accepted" and e.get("reviewed_definition") == mode.get("definition")
+        ]
+        positives = {e["trace_id"] for e in examples if e.get("kind") == "positive"}
+        negatives = {e["trace_id"] for e in examples if e.get("kind") == "close_negative"}
+        if positives & negatives:
+            raise ValueError("A trace cannot be both positive and close negative for one mode")
+        if len(positives) < 3:
+            raise ValueError("Confirm at least three distinct positive traces before finalizing")
+        if len(negatives) < 3 and not str(mode.get("close_negative_unavailability_reason", "")).strip():
+            raise ValueError("Confirm three close negatives, or document why reviewed data does not permit them")
+
+    def review_taxonomy(self, payload: dict[str, Any]) -> dict[str, Any]:
+        document = self.read("patterns.json", {"modes": []})
+        mode = next((m for m in items(document, "modes") if m.get("name") == payload.get("mode")), None)
+        if mode is None or "examples" not in mode:
+            raise ValueError("Choose an existing taxonomy proposal")
+        decision = payload.get("decision")
+        if decision not in {"accepted", "rejected", "pending", "final"}:
+            raise ValueError("Choose an explicit taxonomy review decision")
+        if not str(mode.get("definition", "")).strip():
+            raise ValueError("A taxonomy proposal needs a binary definition")
+        if payload["action"] == "taxonomy_example":
+            if decision == "final":
+                raise ValueError("Examples are accepted or rejected, not finalized")
+            example = next((e for e in items(mode, "examples") if e.get("id") == payload.get("id")), None)
+            if example is None:
+                raise ValueError("Choose an existing proposed example")
+            if decision == "accepted":
+                if example not in self.taxonomy_examples(mode):
+                    raise ValueError("Excluded, deleted, or unreviewed evidence cannot be accepted into a mode")
+                if example.get("kind") not in {"positive", "close_negative"}:
+                    raise ValueError("Choose a positive or close-negative example")
+                if any(
+                    e["trace_id"] == example["trace_id"] and e.get("kind") != example["kind"]
+                    and e.get("status") == "accepted" and e.get("reviewed_definition") == mode["definition"]
+                    for e in self.taxonomy_examples(mode)
+                ):
+                    raise ValueError("This trace already has the opposite decision in this mode")
+            example.update(status=decision, reviewed_definition=mode["definition"])
+            example.setdefault("review_history", []).append({
+                "decision": decision, "definition": mode["definition"], "ts": now(),
+                "source": "human", "note": str(payload.get("note", "")),
+            })
+            mode["supporting_annotation_ids"] = list(dict.fromkeys(
+                e["annotation_id"] for e in self.taxonomy_examples(mode)
+                if e.get("kind") == "positive" and e.get("status") == "accepted"
+                and e.get("reviewed_definition") == mode["definition"]
+            ))
+            mode["status"] = "candidate"
+        elif decision == "final":
+            self.validate_final_mode(mode)
+            mode["status"] = "final"
+        else:
+            mode.update(review_status=decision, reviewed_definition=mode["definition"], status="candidate")
+        if payload["action"] == "taxonomy_mode":
+            mode.setdefault("review_history", []).append({
+                "decision": decision, "definition": mode["definition"], "ts": now(), "source": "human",
+            })
+        self.write("patterns.json", document)
+        return {"ok": True}
 
     def save_note(self, payload: dict[str, Any]) -> dict[str, Any]:
         document = self.read("annotations.json", {"annotations": []})

@@ -68,6 +68,159 @@ def prepare_label(store):
     ]})
 
 
+@pytest.fixture
+def taxonomy_store(tmp_path):
+    records = load(tmp_path, [trace(letter * 32, session=f"session-{letter}") for letter in "abcdef"])
+    value = ReviewStore(records, tmp_path / "state", offline_reason="Taxonomy test")
+    for letter in "abcdef":
+        change(value, "note", trace_id=letter * 32, note=f"Human observation {letter}")
+    annotations = {a["trace_id"]: a["id"] for a in value.snapshot()["annotations"]}
+    mode = {
+        "name": "test_mode", "status": "candidate", "review_status": "pending",
+        "definition": "An unsupported operational claim is present.",
+        "boundary": "A grounded statement is negative.", "requirement_source": "SPEC.md RESP-3",
+        "requirement_status": "existing", "evaluator_type": "llm_judge",
+        "originating_annotation_ids": [annotations["a" * 32]], "supporting_annotation_ids": [],
+        "examples": [
+            {"id": letter, "trace_id": letter * 32, "annotation_id": annotations[letter * 32],
+             "kind": "positive" if letter in "abc" else "close_negative", "status": "pending"}
+            for letter in "abcdef"
+        ],
+    }
+    change(value, "patterns", patterns={"modes": [mode]})
+    return value
+
+
+def test_taxonomy_example_decisions_preserve_notes_and_do_not_create_labels(taxonomy_store):
+    value = taxonomy_store
+    before = value.snapshot()
+    change(value, "taxonomy_example", mode="test_mode", id="a", decision="accepted")
+    mode = value.snapshot()["patterns"]["modes"][0]
+    assert mode["examples"][0]["status"] == "accepted"
+    assert mode["supporting_annotation_ids"] == [mode["examples"][0]["annotation_id"]]
+    assert mode["status"] == "candidate"
+    change(value, "taxonomy_example", mode="test_mode", id="a", decision="rejected")
+    mode = value.snapshot()["patterns"]["modes"][0]
+    assert mode["supporting_annotation_ids"] == []
+    assert [r["decision"] for r in mode["examples"][0]["review_history"]] == ["accepted", "rejected"]
+    change(value, "taxonomy_example", mode="test_mode", id="a", decision="pending")
+    after = value.snapshot()
+    assert after["annotations"] == before["annotations"]
+    assert after["manifest"] == before["manifest"]
+    assert after["labels"] == {}
+    assert after["progress"] == before["progress"]
+
+
+def test_taxonomy_cannot_accept_excluded_or_deleted_evidence(taxonomy_store):
+    value = taxonomy_store
+    change(value, "exclude", trace_id="a" * 32, excluded=True)
+    with pytest.raises(ValueError, match="Excluded"):
+        change(value, "taxonomy_example", mode="test_mode", id="a", decision="accepted")
+    annotation_id = value.snapshot()["patterns"]["modes"][0]["examples"][1]["annotation_id"]
+    change(value, "delete_note", trace_id="b" * 32, id=annotation_id)
+    with pytest.raises(ValueError, match="deleted"):
+        change(value, "taxonomy_example", mode="test_mode", id="b", decision="accepted")
+
+
+def test_taxonomy_finalization_requires_approval_and_confirmed_examples(taxonomy_store):
+    value = taxonomy_store
+    with pytest.raises(ValueError, match="Approve"):
+        change(value, "taxonomy_mode", mode="test_mode", decision="final")
+    change(value, "taxonomy_mode", mode="test_mode", decision="accepted")
+    with pytest.raises(ValueError, match="three distinct positive"):
+        change(value, "taxonomy_mode", mode="test_mode", decision="final")
+    for identifier in "abc":
+        change(value, "taxonomy_example", mode="test_mode", id=identifier, decision="accepted")
+    with pytest.raises(ValueError, match="three close negatives"):
+        change(value, "taxonomy_mode", mode="test_mode", decision="final")
+    for identifier in "def":
+        change(value, "taxonomy_example", mode="test_mode", id=identifier, decision="accepted")
+    change(value, "taxonomy_mode", mode="test_mode", decision="final")
+    assert value.snapshot()["patterns"]["modes"][0]["status"] == "final"
+    assert value.snapshot()["labels"] == {}
+
+
+def test_taxonomy_specification_gaps_cannot_be_finalized_through_json_editor(taxonomy_store):
+    value = taxonomy_store
+    for identifier in "abcdef":
+        change(value, "taxonomy_example", mode="test_mode", id=identifier, decision="accepted")
+    change(value, "taxonomy_mode", mode="test_mode", decision="accepted")
+    patterns = value.snapshot()["patterns"]
+    patterns["modes"][0].update(requirement_status="needs_revision", status="final")
+    with pytest.raises(ValueError, match="specification"):
+        change(value, "patterns", patterns=patterns)
+    assert value.snapshot()["patterns"]["modes"][0]["status"] == "candidate"
+
+
+def test_taxonomy_definition_changes_require_rechecking_earlier_examples(taxonomy_store):
+    value = taxonomy_store
+    for identifier in "abcdef":
+        change(value, "taxonomy_example", mode="test_mode", id=identifier, decision="accepted")
+    change(value, "taxonomy_mode", mode="test_mode", decision="accepted")
+    patterns = value.snapshot()["patterns"]
+    patterns["modes"][0]["definition"] += " Revised boundary."
+    change(value, "patterns", patterns=patterns)
+    with pytest.raises(ValueError, match="Approve"):
+        change(value, "taxonomy_mode", mode="test_mode", decision="final")
+    change(value, "taxonomy_mode", mode="test_mode", decision="accepted")
+    with pytest.raises(ValueError, match="three distinct positive"):
+        change(value, "taxonomy_mode", mode="test_mode", decision="final")
+
+
+def test_taxonomy_revision_metadata_alone_does_not_satisfy_a_specification_gap(taxonomy_store):
+    value = taxonomy_store
+    for identifier in "abcdef":
+        change(value, "taxonomy_example", mode="test_mode", id=identifier, decision="accepted")
+    change(value, "taxonomy_mode", mode="test_mode", decision="accepted")
+    patterns = value.snapshot()["patterns"]
+    patterns["modes"][0].update(
+        requirement_status="revised",
+        requirement_revision_text="An invented requirement that is not recorded in SPEC.md.",
+    )
+    change(value, "patterns", patterns=patterns)
+    with pytest.raises(ValueError, match="approved SPEC.md revision"):
+        change(value, "taxonomy_mode", mode="test_mode", decision="final")
+
+
+def test_taxonomy_counts_distinct_traces_not_duplicate_annotations(taxonomy_store):
+    value = taxonomy_store
+    patterns = value.snapshot()["patterns"]
+    source = patterns["modes"][0]["examples"][0]
+    for example in patterns["modes"][0]["examples"][:3]:
+        example.update(trace_id=source["trace_id"], annotation_id=source["annotation_id"])
+    change(value, "patterns", patterns=patterns)
+    for identifier in "abcdef":
+        change(value, "taxonomy_example", mode="test_mode", id=identifier, decision="accepted")
+    change(value, "taxonomy_mode", mode="test_mode", decision="accepted")
+    with pytest.raises(ValueError, match="three distinct positive"):
+        change(value, "taxonomy_mode", mode="test_mode", decision="final")
+
+
+def test_taxonomy_cannot_confirm_opposite_assignments_for_one_trace(taxonomy_store):
+    value = taxonomy_store
+    patterns = value.snapshot()["patterns"]
+    positive = patterns["modes"][0]["examples"][0]
+    patterns["modes"][0]["examples"][3].update(
+        trace_id=positive["trace_id"], annotation_id=positive["annotation_id"],
+    )
+    change(value, "patterns", patterns=patterns)
+    change(value, "taxonomy_example", mode="test_mode", id="a", decision="accepted")
+    with pytest.raises(ValueError, match="opposite"):
+        change(value, "taxonomy_example", mode="test_mode", id="d", decision="accepted")
+
+
+def test_taxonomy_finalization_requires_real_human_origins(taxonomy_store):
+    value = taxonomy_store
+    for identifier in "abcdef":
+        change(value, "taxonomy_example", mode="test_mode", id=identifier, decision="accepted")
+    change(value, "taxonomy_mode", mode="test_mode", decision="accepted")
+    patterns = value.snapshot()["patterns"]
+    patterns["modes"][0]["originating_annotation_ids"] = ["invented-annotation"]
+    change(value, "patterns", patterns=patterns)
+    with pytest.raises(ValueError, match="originating human annotation"):
+        change(value, "taxonomy_mode", mode="test_mode", decision="final")
+
+
 def test_session_grouping_preserves_trace_ids_and_separates_scenario_replays(tmp_path):
     values = load(tmp_path, [
         trace("b", timestamp="2026-07-01T12:01:00Z"),

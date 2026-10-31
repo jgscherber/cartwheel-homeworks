@@ -61,6 +61,14 @@ th, td { padding: 10px; border: 1px solid var(--line); text-align: left; vertica
 .panel { padding: 16px; background: white; border: 1px solid var(--line); margin-bottom: 16px; }
 .mode-grid { display: flex; flex-wrap: wrap; gap: 10px; }
 .mode-card { flex: 1 1 240px; border: 1px solid var(--line); padding: 14px; min-width: 200px; }
+.taxonomy-treemap { position: relative; height: 480px; margin: 18px 0 28px; background: white; }
+.treemap-tile { position: absolute; display: flex; flex-direction: column; justify-content: center; gap: 8px; border-radius: 0; background: #e7eef9; padding: 8px; overflow: hidden; overflow-wrap: anywhere; font-size: 13px; }
+.treemap-tile:nth-child(even) { background: #dcf2e9; }
+.treemap-tile span { font-size: 12px; }
+.taxonomy-mode { scroll-margin-top: 110px; }
+.taxonomy-example { border-top: 1px solid var(--line); padding: 12px 0; }
+.taxonomy-example q { display: block; white-space: pre-wrap; overflow-wrap: anywhere; }
+.requirement-warning { border-left: 3px solid #b45309; padding: 8px 12px; background: #fff8d5; }
 .json-editor { min-height: 260px; font-family: ui-monospace, Consolas, monospace; }
 .graph { width: 100%; height: 600px; border: 1px solid var(--line); background: white; }
 .graph a { cursor: pointer; }

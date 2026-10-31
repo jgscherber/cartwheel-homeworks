@@ -329,8 +329,82 @@ function cancelNote() {
   $("#annotation").hidden = true;
 }
 
+function taxonomyExamples(mode) {
+  return (mode.examples || []).filter(e => !excluded(e.trace_id) && traces().some(t => t.trace_id === e.trace_id)
+    && data.annotations.some(a => a.id === e.annotation_id && a.trace_id === e.trace_id && !a.deleted
+      && ["human", "accepted_suggestion"].includes(a.source || "human")));
+}
+
+function taxonomyCounts(mode) {
+  const accepted = taxonomyExamples(mode).filter(e => e.status === "accepted" && e.reviewed_definition === mode.definition);
+  return {
+    positive: new Set(accepted.filter(e => e.kind === "positive").map(e => e.trace_id)).size,
+    negative: new Set(accepted.filter(e => e.kind === "close_negative").map(e => e.trace_id)).size,
+  };
+}
+
+function treemapRectangles(entries, x = 0, y = 0, width = 100, height = 100) {
+  if (!entries.length) return [];
+  if (entries.length === 1) return [{...entries[0], x, y, width, height}];
+  const split = Math.ceil(entries.length / 2);
+  const first = entries.slice(0, split), second = entries.slice(split);
+  const weight = list => list.reduce((sum, e) => sum + e.weight, 0);
+  const ratio = weight(first) / weight(entries);
+  return width >= height
+    ? [...treemapRectangles(first, x, y, width * ratio, height),
+      ...treemapRectangles(second, x + width * ratio, y, width * (1 - ratio), height)]
+    : [...treemapRectangles(first, x, y, width, height * ratio),
+      ...treemapRectangles(second, x, y + height * ratio, width, height * (1 - ratio))];
+}
+
 function renderTaxonomy(main) {
-  const cards = modes().map(m => {
+  const proposals = modes().filter(m => Array.isArray(m.examples));
+  const tiles = treemapRectangles(proposals.map(m => ({
+    name: m.name, weight: 1 + taxonomyCounts(m).positive,
+  }))).map(tile => `<button class="treemap-tile" data-go-mode="${esc(tile.name)}"
+    style="left:${tile.x}%;top:${tile.y}%;width:${tile.width}%;height:${tile.height}%">
+    <strong>${esc(tile.name)}</strong><span>${tile.weight - 1} accepted positive traces</span></button>`).join("");
+  const proposalCards = proposals.map(m => {
+    const counts = taxonomyCounts(m);
+    const approved = m.review_status === "accepted" && m.reviewed_definition === m.definition;
+    const requirementReady = ["existing", "revised"].includes(m.requirement_status);
+    const canFinalize = approved && requirementReady && counts.positive >= 3
+      && (counts.negative >= 3 || String(m.close_negative_unavailability_reason || "").trim());
+    const examples = taxonomyExamples(m);
+    const exampleRows = kind => examples.filter(e => e.kind === kind).map(e => {
+      const annotation = data.annotations.find(a => a.id === e.annotation_id);
+      const status = e.status === "accepted" && e.reviewed_definition !== m.definition ? "needs re-review" : e.status || "pending";
+      return `<article class="taxonomy-example">
+        <span class="badge">${esc(status)}</span> ${traceLink(e.trace_id, `Inspect trace ${e.trace_id}`)}
+        <p>${esc(annotation.note)}</p>${annotation.quote ? `<q>${esc(annotation.quote)}</q>` : ""}
+        <p class="small">${esc(e.rationale || "")}</p>
+        <div class="toolbar">
+          <button data-taxonomy-example="${esc(e.id)}" data-mode="${esc(m.name)}" data-decision="accepted">Accept ${kind === "positive" ? "into category" : "as close negative"}</button>
+          <button data-taxonomy-example="${esc(e.id)}" data-mode="${esc(m.name)}" data-decision="rejected">Reject proposal</button>
+          <button data-taxonomy-example="${esc(e.id)}" data-mode="${esc(m.name)}" data-decision="pending">Reset decision</button>
+        </div></article>`;
+    }).join("") || "<p>No eligible proposed examples yet.</p>";
+    return `<section id="mode-${esc(m.name)}" class="panel taxonomy-mode" tabindex="-1">
+      <h3>${esc(m.name)} <span class="badge">${esc(m.status)}</span>
+        <span class="badge">Definition: ${esc(approved ? "approved" : m.review_status === "accepted" ? "needs re-review" : m.review_status || "pending")}</span></h3>
+      <p><strong>Binary definition:</strong> ${esc(m.definition)}</p>
+      <p><strong>Boundary:</strong> ${esc(m.boundary)}</p>
+      <p><strong>Likely product change:</strong> ${esc(m.product_change || "Pending")}</p>
+      <p><strong>Requirement:</strong> ${esc(m.requirement_source)} <span class="badge">${esc(m.requirement_status)}</span></p>
+      ${m.requirement_status === "needs_revision" ? `<p class="requirement-warning">Proposed requirement, not an existing-spec failure. Record an approved SPEC.md revision before finalizing; include its exact rule as requirement_revision_text in the taxonomy metadata.</p>` : ""}
+      ${m.evidence_caveat ? `<p class="requirement-warning">${esc(m.evidence_caveat)}</p>` : ""}
+      <p><strong>Evaluator:</strong> ${esc(m.evaluator_type)}. ${counts.positive} / 3 confirmed positives; ${counts.negative} / 3 confirmed close negatives.</p>
+      <div class="toolbar">
+        <button data-taxonomy-mode="${esc(m.name)}" data-decision="accepted">Approve definition</button>
+        <button data-taxonomy-mode="${esc(m.name)}" data-decision="rejected">Reject category</button>
+        <button data-taxonomy-mode="${esc(m.name)}" data-decision="pending">Reset approval</button>
+        <button data-taxonomy-mode="${esc(m.name)}" data-decision="final"${canFinalize ? "" : " disabled"}>Finalize mode</button>
+      </div>
+      <details open><summary>Proposed positive examples</summary>${exampleRows("positive")}</details>
+      <details><summary>Proposed close negatives (do not increase treemap area)</summary>${exampleRows("close_negative")}</details>
+    </section>`;
+  }).join("");
+  const cards = modes().filter(m => !Array.isArray(m.examples)).map(m => {
     const ids = new Set(m.supporting_annotation_ids || []);
     const support = data.annotations.filter(a => !a.deleted && (ids.has(a.id) || a.mode === m.name));
     return `<section class="mode-card" style="flex-grow:${Math.max(1, support.length)}">
@@ -342,13 +416,20 @@ function renderTaxonomy(main) {
       ${support.map(a => `<p>${traceLink(a.trace_id, a.note)}</p>`).join("")}</section>`;
   }).join("");
   main.innerHTML = `<h2>Taxonomy and supporting annotations</h2>
-    <p>Open coding stays free text. Candidate modes are not final labeling decisions. Link origins with <code>supporting_annotation_ids</code>; set <code>status: "final"</code> only after human review.</p>
-    <div class="mode-grid">${cards || "<p>No modes yet. Define them only from reviewed human observations.</p>"}</div>
+    <p>Inspect the complete supporting trace before accepting each proposal. Category approval and example acceptance are separate decisions; neither creates a binary label or adds a trace to the review set.</p>
+    ${tiles ? `<p>Treemap area = one placeholder unit + distinct accepted positive traces. Pending/rejected proposals and close negatives do not add area. This is not prevalence.</p><div class="taxonomy-treemap" aria-label="Failure mode treemap">${tiles}</div>` : ""}
+    ${proposalCards}
+    <div class="mode-grid">${cards || (proposals.length ? "" : "<p>No modes yet. Define them only from reviewed human observations.</p>")}</div>
+    ${(data.patterns.annotation_review_notes || []).filter(n => data.annotations.some(a => a.id === n.annotation_id && !a.deleted && !excluded(a.trace_id))).length
+      ? `<details><summary>Original notes needing a requirement or evidence recheck</summary>${(data.patterns.annotation_review_notes || []).map(n => {
+        const a = data.annotations.find(a => a.id === n.annotation_id && !a.deleted && !excluded(a.trace_id));
+        return a ? `<p>${traceLink(a.trace_id, a.note)} - ${esc(n.reason)}</p>` : "";
+      }).join("")}</details>` : ""}
     <details><summary>Edit taxonomy JSON (explicit human save)</summary>
       <p>Keep existing fields. Each mode needs a snake_case name, definition, requirement_source, boundary, and supporting_annotation_ids. Final modes require status "final".</p>
       <textarea id="patterns-editor" class="json-editor" aria-label="Taxonomy JSON">${esc(pretty(data.patterns))}</textarea>
       <button id="save-patterns">Save taxonomy</button></details>
-    <h3>Human annotation IDs</h3>${data.annotations.filter(a => !a.deleted).map(a =>
+    <h3>Human annotation IDs</h3>${data.annotations.filter(a => !a.deleted && !excluded(a.trace_id)).map(a =>
       `<p><code>${esc(a.id)}</code> ${traceLink(a.trace_id, a.note)}</p>`).join("") || "<p>No human annotations.</p>"}`;
 }
 
@@ -481,6 +562,17 @@ document.addEventListener("click", async event => {
     if (button.id === "refresh") await refresh();
     if (button.dataset.goTrace) { event.preventDefault(); goTrace(button.dataset.goTrace); }
     if (button.dataset.labelTrace) goTrace(button.dataset.labelTrace, "labels");
+    if (button.dataset.goMode) {
+      const target = document.getElementById(`mode-${button.dataset.goMode}`);
+      target.focus({preventScroll: true});
+      target.scrollIntoView({block: "start"});
+    }
+    if (button.dataset.taxonomyExample) {
+      await act({action: "taxonomy_example", mode: button.dataset.mode,
+        id: button.dataset.taxonomyExample, decision: button.dataset.decision});
+    } else if (button.dataset.taxonomyMode) {
+      await act({action: "taxonomy_mode", mode: button.dataset.taxonomyMode, decision: button.dataset.decision});
+    }
     if (button.dataset.include) {
       const reason = prompt("Why is this trace entering the review set? Record the selection method / batch.");
       if (reason) await act({action: "select", trace_id: button.dataset.include, reason});
@@ -513,7 +605,7 @@ document.addEventListener("click", async event => {
         label: Number(button.dataset.label), note: input.value});
     }
     if (button.dataset.retry) await act({action: "retry", trace_id: button.dataset.trace, mode: button.dataset.retry});
-    if (button.dataset.decision) {
+    if (button.dataset.decision && button.dataset.suggestion) {
       const note = prompt("Optional reason for this decision (especially a rejected boundary):", "");
       if (note !== null) await act({action: "suggestion", id: button.dataset.suggestion, decision: button.dataset.decision, note});
     }
