@@ -355,6 +355,33 @@ test("taxonomy review controls send one explicit decision without creating notes
   assert.equal(ui.run("data.manifest.picks.length"), 0);
 });
 
+test("taxonomy approval distinguishes human notes, selected evidence, and AI rationale", () => {
+  const ui = app();
+  const html = ui.run(`
+    data.annotations = [
+      {id: "quoted", trace_id: "a", source: "human", note: "<My note>\\nSecond line", quote: "<Selected text>\\nEvidence"},
+      {id: "unquoted", trace_id: "b", source: "accepted_suggestion", note: "Accepted observation", quote: ""}
+    ];
+    data.patterns = {modes: [{
+      name: "candidate", status: "candidate", definition: "Rule", examples: [
+        {id: "p1", trace_id: "a", annotation_id: "quoted", kind: "positive", status: "pending", rationale: "Proposed grouping"},
+        {id: "p2", trace_id: "b", annotation_id: "unquoted", kind: "positive", status: "pending"}
+      ]
+    }]};
+    const main = {};
+    renderTaxonomy(main);
+    main.innerHTML;
+  `);
+  assert(html.includes('<div class="evidence-label">Your note</div>'));
+  assert(html.includes('<p class="evidence-text">&lt;My note&gt;\nSecond line</p>'));
+  assert(html.includes('<div class="evidence-label">Selected text from trace</div>'));
+  assert(html.includes('<blockquote class="evidence-text">&lt;Selected text&gt;\nEvidence</blockquote>'));
+  assert(html.includes("Accepted suggestion note"));
+  assert(html.includes("Trace-level note; no text was selected."));
+  assert(html.includes("<strong>AI grouping rationale:</strong> Proposed grouping"));
+  assert(!html.includes("<My note>") && !html.includes("<Selected text>"));
+});
+
 test("selection ending at the start of another text node excludes its empty fragment", () => {
   const ui = app();
   const result = ui.run(`

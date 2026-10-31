@@ -3,7 +3,7 @@
     {
       "name": "unsupported_operational_claim",
       "status": "candidate",
-      "review_status": "pending",
+      "review_status": "accepted",
       "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
       "requirement_source": "SPEC.md RESP-3; PURPOSE-1",
       "requirement_status": "existing",
@@ -17,52 +17,108 @@
         "2ba4c8a0-18fa-464d-b063-da9ebbc4fd46",
         "6a3ef848-7fe9-4987-9d8d-e3a377f0d966"
       ],
-      "supporting_annotation_ids": [],
+      "supporting_annotation_ids": [
+        "a1c60ccb-7674-430a-9fe8-40b6c5d71abc",
+        "fa233884-f36d-4570-93d4-d894982e2743",
+        "b4a92ae2-4ad6-4962-bceb-42856705e996",
+        "2ba4c8a0-18fa-464d-b063-da9ebbc4fd46",
+        "6a3ef848-7fe9-4987-9d8d-e3a377f0d966"
+      ],
       "examples": [
         {
           "id": "unsupported_operational_claim:positive:a1c60ccb-7674-430a-9fe8-40b6c5d71abc",
           "annotation_id": "a1c60ccb-7674-430a-9fe8-40b6c5d71abc",
           "trace_id": "b6cb65a78477be544bb3fb67260957a4",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-10-31T00:55:27.770748+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unsupported_operational_claim:positive:fa233884-f36d-4570-93d4-d894982e2743",
           "annotation_id": "fa233884-f36d-4570-93d4-d894982e2743",
           "trace_id": "486e7e25a126a9c06be2fa8d8fb8410f",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-10-31T00:55:31.356682+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unsupported_operational_claim:positive:b4a92ae2-4ad6-4962-bceb-42856705e996",
           "annotation_id": "b4a92ae2-4ad6-4962-bceb-42856705e996",
           "trace_id": "c72eb69024ac07fd2cb78843beeb1e8a",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-10-31T00:55:45.069821+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unsupported_operational_claim:positive:2ba4c8a0-18fa-464d-b063-da9ebbc4fd46",
           "annotation_id": "2ba4c8a0-18fa-464d-b063-da9ebbc4fd46",
           "trace_id": "e9d1c26cea22cc7aaa0304f3484fc58b",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-10-31T00:57:58.676009+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unsupported_operational_claim:positive:6a3ef848-7fe9-4987-9d8d-e3a377f0d966",
           "annotation_id": "6a3ef848-7fe9-4987-9d8d-e3a377f0d966",
           "trace_id": "94febfc31d3b5b1af1c03db9c00e6387",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-10-31T00:58:01.356590+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unsupported_operational_claim:close_negative:0f1ae983-b269-4b43-94e3-4dd0b57f17c0",
@@ -92,12 +148,21 @@
           "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present."
         }
       ],
-      "evidence_caveat": "A missing fresh lookup is not itself a failure. Recheck earlier context and distinguish status implications from unsupported history or guarantees."
+      "evidence_caveat": "A missing fresh lookup is not itself a failure. Recheck earlier context and distinguish status implications from unsupported history or guarantees.",
+      "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+      "review_history": [
+        {
+          "decision": "accepted",
+          "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "ts": "2026-10-31T00:55:19.334558+00:00",
+          "source": "human"
+        }
+      ]
     },
     {
       "name": "unsupported_capability_offer",
       "status": "candidate",
-      "review_status": "pending",
+      "review_status": "accepted",
       "definition": "The assistant offers to itself execute an action or investigate information that its registered tools and permitted workflow cannot provide, rather than accurately offering a supported lookup or human escalation.",
       "requirement_source": "SPEC.md SCOPE-1; SCOPE-2; TOOL-1 through TOOL-9",
       "requirement_status": "existing",
@@ -109,34 +174,68 @@
         "51982569-62d6-43a7-b130-58eee60b2994",
         "52b2c752-63d8-460e-8f77-e89639e2166f"
       ],
-      "supporting_annotation_ids": [],
+      "supporting_annotation_ids": [
+        "db3faa7d-2e28-4344-b5ed-3afb102f7949",
+        "51982569-62d6-43a7-b130-58eee60b2994",
+        "52b2c752-63d8-460e-8f77-e89639e2166f"
+      ],
       "examples": [
         {
           "id": "unsupported_capability_offer:positive:db3faa7d-2e28-4344-b5ed-3afb102f7949",
           "annotation_id": "db3faa7d-2e28-4344-b5ed-3afb102f7949",
           "trace_id": "a211a2046c11275fa09367233eb60d5d",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant offers to itself execute an action or investigate information that its registered tools and permitted workflow cannot provide, rather than accurately offering a supported lookup or human escalation.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant offers to itself execute an action or investigate information that its registered tools and permitted workflow cannot provide, rather than accurately offering a supported lookup or human escalation.",
+              "ts": "2026-10-31T00:58:13.097939+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unsupported_capability_offer:positive:51982569-62d6-43a7-b130-58eee60b2994",
           "annotation_id": "51982569-62d6-43a7-b130-58eee60b2994",
           "trace_id": "51b6f12d8367ab4f11a74c111d6c008e",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant offers to itself execute an action or investigate information that its registered tools and permitted workflow cannot provide, rather than accurately offering a supported lookup or human escalation.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant offers to itself execute an action or investigate information that its registered tools and permitted workflow cannot provide, rather than accurately offering a supported lookup or human escalation.",
+              "ts": "2026-10-31T00:58:14.896052+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unsupported_capability_offer:positive:52b2c752-63d8-460e-8f77-e89639e2166f",
           "annotation_id": "52b2c752-63d8-460e-8f77-e89639e2166f",
           "trace_id": "f8acafd14c12a0f6472cb0694fd098da",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant offers to itself execute an action or investigate information that its registered tools and permitted workflow cannot provide, rather than accurately offering a supported lookup or human escalation.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant offers to itself execute an action or investigate information that its registered tools and permitted workflow cannot provide, rather than accurately offering a supported lookup or human escalation.",
+              "ts": "2026-10-31T00:58:16.418014+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unsupported_capability_offer:close_negative:b4fa5fb2-1920-4078-aba4-c273a4ea735d",
@@ -152,9 +251,19 @@
           "annotation_id": "bb066f5d-abc5-4e13-a119-fa221ffa791e",
           "trace_id": "2cce1fc6500e11ec353223905d791a28",
           "kind": "close_negative",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present."
+          "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present.",
+          "reviewed_definition": "The assistant offers to itself execute an action or investigate information that its registered tools and permitted workflow cannot provide, rather than accurately offering a supported lookup or human escalation.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant offers to itself execute an action or investigate information that its registered tools and permitted workflow cannot provide, rather than accurately offering a supported lookup or human escalation.",
+              "ts": "2026-10-31T01:03:50.070285+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unsupported_capability_offer:close_negative:d247d7e3-030c-48a9-8958-028eb75d6abe",
@@ -166,12 +275,21 @@
           "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present."
         }
       ],
-      "evidence_caveat": "Some 'dig into it' wording may mean a legitimate escalation. Do not accept it as positive unless the assistant actually misrepresents its own capability."
+      "evidence_caveat": "Some 'dig into it' wording may mean a legitimate escalation. Do not accept it as positive unless the assistant actually misrepresents its own capability.",
+      "reviewed_definition": "The assistant offers to itself execute an action or investigate information that its registered tools and permitted workflow cannot provide, rather than accurately offering a supported lookup or human escalation.",
+      "review_history": [
+        {
+          "decision": "accepted",
+          "definition": "The assistant offers to itself execute an action or investigate information that its registered tools and permitted workflow cannot provide, rather than accurately offering a supported lookup or human escalation.",
+          "ts": "2026-10-31T00:58:09.655040+00:00",
+          "source": "human"
+        }
+      ]
     },
     {
       "name": "unnecessary_clarification",
       "status": "candidate",
-      "review_status": "pending",
+      "review_status": "accepted",
       "definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
       "requirement_source": "Proposed specification revision motivated by the linked notes; RESP-5 does not currently forbid these optional questions.",
       "requirement_status": "needs_revision",
@@ -184,43 +302,88 @@
         "3ee8b29c-3f10-49a4-bcdf-a5f14458b23b",
         "0d7d9086-afa1-4bb1-a2b4-527903803371"
       ],
-      "supporting_annotation_ids": [],
+      "supporting_annotation_ids": [
+        "6205779d-c20b-45d1-ae26-cf7976e363aa",
+        "2c24834b-b0bd-4ba1-a630-022ad3c5ec15",
+        "3ee8b29c-3f10-49a4-bcdf-a5f14458b23b",
+        "0d7d9086-afa1-4bb1-a2b4-527903803371"
+      ],
       "examples": [
         {
           "id": "unnecessary_clarification:positive:6205779d-c20b-45d1-ae26-cf7976e363aa",
           "annotation_id": "6205779d-c20b-45d1-ae26-cf7976e363aa",
           "trace_id": "f8acafd14c12a0f6472cb0694fd098da",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
+              "ts": "2026-10-31T00:58:49.807088+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unnecessary_clarification:positive:2c24834b-b0bd-4ba1-a630-022ad3c5ec15",
           "annotation_id": "2c24834b-b0bd-4ba1-a630-022ad3c5ec15",
           "trace_id": "93fc6c334f748926e049910bf5d740b4",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
+              "ts": "2026-10-31T00:58:50.547350+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unnecessary_clarification:positive:3ee8b29c-3f10-49a4-bcdf-a5f14458b23b",
           "annotation_id": "3ee8b29c-3f10-49a4-bcdf-a5f14458b23b",
           "trace_id": "4e81483860590ae7f873a63d8090a329",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
+              "ts": "2026-10-31T00:58:52.832565+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unnecessary_clarification:positive:0d7d9086-afa1-4bb1-a2b4-527903803371",
           "annotation_id": "0d7d9086-afa1-4bb1-a2b4-527903803371",
           "trace_id": "ac5ff474c6419289da32e69405ef8f2a",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
+              "ts": "2026-10-31T00:58:54.905620+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unnecessary_clarification:close_negative:ddca7828-cf08-47b6-a1a7-87e7a319f670",
@@ -245,17 +408,36 @@
           "annotation_id": "1662a2dc-e471-433e-a071-eee1d160415a",
           "trace_id": "82c715ab61c659c475978bdacd94c7e0",
           "kind": "close_negative",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present."
+          "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present.",
+          "reviewed_definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
+              "ts": "2026-10-31T01:06:20.366789+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         }
       ],
-      "evidence_caveat": ""
+      "evidence_caveat": "",
+      "reviewed_definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
+      "review_history": [
+        {
+          "decision": "accepted",
+          "definition": "After answering a status or identity-only request, the assistant solicits unrelated motives, cancellation history, or concerns that are not needed to complete the requested task or a concrete supported next action.",
+          "ts": "2026-10-31T00:58:47.960894+00:00",
+          "source": "human"
+        }
+      ]
     },
     {
       "name": "omitted_required_escalation",
       "status": "candidate",
-      "review_status": "pending",
+      "review_status": "accepted",
       "definition": "The assistant recognizes a case requiring human resolution under ESC-2, ESC-3, or ESC-4, but ends the turn with advice or an offer to escalate instead of calling escalate_to_human, with no existing ticket resolving that case.",
       "requirement_source": "SPEC.md ESC-2; ESC-3; ESC-4; PURPOSE-1",
       "requirement_status": "existing",
@@ -265,16 +447,28 @@
       "originating_annotation_ids": [
         "7e5aa083-f8e7-4083-a7dd-a59dc0bd3178"
       ],
-      "supporting_annotation_ids": [],
+      "supporting_annotation_ids": [
+        "7e5aa083-f8e7-4083-a7dd-a59dc0bd3178"
+      ],
       "examples": [
         {
           "id": "omitted_required_escalation:positive:7e5aa083-f8e7-4083-a7dd-a59dc0bd3178",
           "annotation_id": "7e5aa083-f8e7-4083-a7dd-a59dc0bd3178",
           "trace_id": "3b814f329e0d48987dd6ebb4e110be7f",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant recognizes a case requiring human resolution under ESC-2, ESC-3, or ESC-4, but ends the turn with advice or an offer to escalate instead of calling escalate_to_human, with no existing ticket resolving that case.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant recognizes a case requiring human resolution under ESC-2, ESC-3, or ESC-4, but ends the turn with advice or an offer to escalate instead of calling escalate_to_human, with no existing ticket resolving that case.",
+              "ts": "2026-10-31T00:59:08.937863+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "omitted_required_escalation:close_negative:bb066f5d-abc5-4e13-a119-fa221ffa791e",
@@ -304,12 +498,21 @@
           "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present."
         }
       ],
-      "evidence_caveat": "Only one originating positive is currently proposed; more confirmed examples are required before finalization."
+      "evidence_caveat": "Only one originating positive is currently proposed; more confirmed examples are required before finalization.",
+      "reviewed_definition": "The assistant recognizes a case requiring human resolution under ESC-2, ESC-3, or ESC-4, but ends the turn with advice or an offer to escalate instead of calling escalate_to_human, with no existing ticket resolving that case.",
+      "review_history": [
+        {
+          "decision": "accepted",
+          "definition": "The assistant recognizes a case requiring human resolution under ESC-2, ESC-3, or ESC-4, but ends the turn with advice or an offer to escalate instead of calling escalate_to_human, with no existing ticket resolving that case.",
+          "ts": "2026-10-31T00:59:07.186687+00:00",
+          "source": "human"
+        }
+      ]
     },
     {
       "name": "deferred_policy_lookup",
       "status": "candidate",
-      "review_status": "pending",
+      "review_status": "accepted",
       "definition": "When a requested policy answer depends on the identified store's applicable policy, the assistant leaves that available read-only lookup to the user or asks permission for it instead of completing the lookup.",
       "requirement_source": "Proposed specification revision motivated by the linked notes; clarify proactive lookup expectations beyond SCOPE-1 and PURPOSE-1.",
       "requirement_status": "needs_revision",
@@ -320,25 +523,48 @@
         "0364fb01-9eff-4278-8759-cc9008678622",
         "5ae2765e-c7e8-4fd6-9248-88a8abff037d"
       ],
-      "supporting_annotation_ids": [],
+      "supporting_annotation_ids": [
+        "0364fb01-9eff-4278-8759-cc9008678622",
+        "5ae2765e-c7e8-4fd6-9248-88a8abff037d"
+      ],
       "examples": [
         {
           "id": "deferred_policy_lookup:positive:0364fb01-9eff-4278-8759-cc9008678622",
           "annotation_id": "0364fb01-9eff-4278-8759-cc9008678622",
           "trace_id": "eef6ccff1f577138a210e468323ae5f9",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "When a requested policy answer depends on the identified store's applicable policy, the assistant leaves that available read-only lookup to the user or asks permission for it instead of completing the lookup.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "When a requested policy answer depends on the identified store's applicable policy, the assistant leaves that available read-only lookup to the user or asks permission for it instead of completing the lookup.",
+              "ts": "2026-10-31T01:00:08.313749+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "deferred_policy_lookup:positive:5ae2765e-c7e8-4fd6-9248-88a8abff037d",
           "annotation_id": "5ae2765e-c7e8-4fd6-9248-88a8abff037d",
           "trace_id": "73b53b6d179373ad1e7ae19520d68549",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "When a requested policy answer depends on the identified store's applicable policy, the assistant leaves that available read-only lookup to the user or asks permission for it instead of completing the lookup.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "When a requested policy answer depends on the identified store's applicable policy, the assistant leaves that available read-only lookup to the user or asks permission for it instead of completing the lookup.",
+              "ts": "2026-10-31T01:00:10.014030+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "deferred_policy_lookup:close_negative:a78fdb6f-f382-4fbc-9964-8bab3d157fae",
@@ -350,12 +576,21 @@
           "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present."
         }
       ],
-      "evidence_caveat": "The Atlas Stationery trace also has a missing delivery date. Do not confuse that separate factual error with the proposed lookup rule. More close negatives remain to be found."
+      "evidence_caveat": "The Atlas Stationery trace also has a missing delivery date. Do not confuse that separate factual error with the proposed lookup rule. More close negatives remain to be found.",
+      "reviewed_definition": "When a requested policy answer depends on the identified store's applicable policy, the assistant leaves that available read-only lookup to the user or asks permission for it instead of completing the lookup.",
+      "review_history": [
+        {
+          "decision": "accepted",
+          "definition": "When a requested policy answer depends on the identified store's applicable policy, the assistant leaves that available read-only lookup to the user or asks permission for it instead of completing the lookup.",
+          "ts": "2026-10-31T01:00:07.480152+00:00",
+          "source": "human"
+        }
+      ]
     },
     {
       "name": "unresolved_write_clarification",
       "status": "candidate",
-      "review_status": "pending",
+      "review_status": "accepted",
       "definition": "The assistant explicitly states that a clarification must be answered before it performs a write, then performs that write before receiving the requested answer.",
       "requirement_source": "Proposed specification revision motivated by annotation 08365f74-7f32-42b1-b780-85ca448bbfeb; no blanket customer reconfirmation requirement currently exists.",
       "requirement_status": "needs_revision",
@@ -365,25 +600,47 @@
       "originating_annotation_ids": [
         "08365f74-7f32-42b1-b780-85ca448bbfeb"
       ],
-      "supporting_annotation_ids": [],
+      "supporting_annotation_ids": [
+        "08365f74-7f32-42b1-b780-85ca448bbfeb"
+      ],
       "examples": [
         {
           "id": "unresolved_write_clarification:positive:08365f74-7f32-42b1-b780-85ca448bbfeb",
           "annotation_id": "08365f74-7f32-42b1-b780-85ca448bbfeb",
           "trace_id": "09206f6d782e783caaec9d564c59f568",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant explicitly states that a clarification must be answered before it performs a write, then performs that write before receiving the requested answer.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant explicitly states that a clarification must be answered before it performs a write, then performs that write before receiving the requested answer.",
+              "ts": "2026-10-31T01:07:27.017706+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unresolved_write_clarification:close_negative:3c7f91b4-d8b6-4e99-8673-2dd8b90bd5aa",
           "annotation_id": "3c7f91b4-d8b6-4e99-8673-2dd8b90bd5aa",
           "trace_id": "da05d14f9866aaf517490a0e1d06a82e",
           "kind": "close_negative",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present."
+          "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present.",
+          "reviewed_definition": "The assistant explicitly states that a clarification must be answered before it performs a write, then performs that write before receiving the requested answer.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant explicitly states that a clarification must be answered before it performs a write, then performs that write before receiving the requested answer.",
+              "ts": "2026-10-31T01:07:55.373424+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unresolved_write_clarification:close_negative:a8d00cf5-47d8-49c9-baa7-17b3107b6377",
@@ -404,12 +661,27 @@
           "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present."
         }
       ],
-      "evidence_caveat": "The Slim Marble Run customer explicitly asked for a full refund. That original 'no confirmation' note is a proposed close negative, not proof that customer consent was missing."
+      "evidence_caveat": "The Slim Marble Run customer explicitly asked for a full refund. That original 'no confirmation' note is a proposed close negative, not proof that customer consent was missing.",
+      "reviewed_definition": "The assistant explicitly states that a clarification must be answered before it performs a write, then performs that write before receiving the requested answer.",
+      "review_history": [
+        {
+          "decision": "accepted",
+          "definition": "The assistant explicitly states that a clarification must be answered before it performs a write, then performs that write before receiving the requested answer.",
+          "ts": "2026-10-31T01:07:23.325742+00:00",
+          "source": "human"
+        },
+        {
+          "decision": "accepted",
+          "definition": "The assistant explicitly states that a clarification must be answered before it performs a write, then performs that write before receiving the requested answer.",
+          "ts": "2026-10-31T01:07:25.340711+00:00",
+          "source": "human"
+        }
+      ]
     },
     {
       "name": "non_actionable_response_style",
       "status": "candidate",
-      "review_status": "pending",
+      "review_status": "accepted",
       "definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
       "requirement_source": "Proposed specification revision motivated by the linked tone notes; RESP-5 and 'plain and warm' do not currently ban these expressions.",
       "requirement_status": "needs_revision",
@@ -424,34 +696,77 @@
         "3cc238f4-7545-4708-8ea8-583b9f479d44",
         "194ab7e4-fafe-4ff3-bff2-182ce1df1ee8"
       ],
-      "supporting_annotation_ids": [],
+      "supporting_annotation_ids": [
+        "4fc0f720-1b28-4767-b3b3-180debc95feb",
+        "6884e26b-1ca1-496e-93a4-90409dc535ca",
+        "7a3378c4-83eb-45ea-9f74-477f05aa5368",
+        "3cc238f4-7545-4708-8ea8-583b9f479d44",
+        "194ab7e4-fafe-4ff3-bff2-182ce1df1ee8"
+      ],
       "examples": [
         {
           "id": "non_actionable_response_style:positive:4fc0f720-1b28-4767-b3b3-180debc95feb",
           "annotation_id": "4fc0f720-1b28-4767-b3b3-180debc95feb",
           "trace_id": "b6cb65a78477be544bb3fb67260957a4",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+              "ts": "2026-10-31T01:08:02.467733+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "non_actionable_response_style:positive:6884e26b-1ca1-496e-93a4-90409dc535ca",
           "annotation_id": "6884e26b-1ca1-496e-93a4-90409dc535ca",
           "trace_id": "8fbc7bde3f69c6b86aef5d922da10619",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+              "ts": "2026-10-31T01:08:04.928414+00:00",
+              "source": "human",
+              "note": ""
+            },
+            {
+              "decision": "accepted",
+              "definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+              "ts": "2026-10-31T01:08:16.690457+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "non_actionable_response_style:positive:7a3378c4-83eb-45ea-9f74-477f05aa5368",
           "annotation_id": "7a3378c4-83eb-45ea-9f74-477f05aa5368",
           "trace_id": "3d929cb8f93d1494e8e01647233e0210",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+              "ts": "2026-10-31T01:08:19.302673+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "non_actionable_response_style:positive:e500990c-df3a-49c2-b15e-487f48009f86",
@@ -467,18 +782,38 @@
           "annotation_id": "3cc238f4-7545-4708-8ea8-583b9f479d44",
           "trace_id": "eef6ccff1f577138a210e468323ae5f9",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+              "ts": "2026-10-31T01:11:20.859809+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "non_actionable_response_style:positive:194ab7e4-fafe-4ff3-bff2-182ce1df1ee8",
           "annotation_id": "194ab7e4-fafe-4ff3-bff2-182ce1df1ee8",
           "trace_id": "93fc6c334f748926e049910bf5d740b4",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+              "ts": "2026-10-31T01:11:26.182625+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "non_actionable_response_style:close_negative:5c84a8eb-b4a7-4970-a98a-2cde4517d95f",
@@ -503,17 +838,50 @@
           "annotation_id": "e51c0cfe-6d66-431b-a5ad-04f20cf562a6",
           "trace_id": "c3873ef8b950a8586966d019715cd0ae",
           "kind": "close_negative",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present."
+          "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present.",
+          "reviewed_definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+          "review_history": [
+            {
+              "decision": "rejected",
+              "definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+              "ts": "2026-10-31T01:14:19.861493+00:00",
+              "source": "human",
+              "note": ""
+            },
+            {
+              "decision": "pending",
+              "definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+              "ts": "2026-10-31T01:14:33.064435+00:00",
+              "source": "human",
+              "note": ""
+            },
+            {
+              "decision": "accepted",
+              "definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+              "ts": "2026-10-31T01:15:04.792511+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         }
       ],
-      "evidence_caveat": ""
+      "evidence_caveat": "",
+      "reviewed_definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+      "review_history": [
+        {
+          "decision": "accepted",
+          "definition": "The assistant uses emoji/checkmark decorations, filler reactions such as 'Perfect!' or 'Ah, that explains it', or casual exhortations such as 'hang tight' or 'now is the time to act', rather than a direct factual support response.",
+          "ts": "2026-10-31T01:08:00.666070+00:00",
+          "source": "human"
+        }
+      ]
     },
     {
       "name": "unnecessary_internal_identifiers",
       "status": "candidate",
-      "review_status": "pending",
+      "review_status": "accepted",
       "definition": "The assistant exposes an unnecessary numeric store/database identifier in its customer-facing explanation instead of using the public store name.",
       "requirement_source": "Proposed specification revision motivated by the linked Store 16 notes; the current spec does not forbid authorized store IDs.",
       "requirement_status": "needs_revision",
@@ -524,25 +892,55 @@
         "0983a18f-9f1e-4358-9733-e21122a6d901",
         "c96d970b-1bdc-4e6d-a32e-31e50d24795e"
       ],
-      "supporting_annotation_ids": [],
+      "supporting_annotation_ids": [
+        "0983a18f-9f1e-4358-9733-e21122a6d901",
+        "c96d970b-1bdc-4e6d-a32e-31e50d24795e"
+      ],
       "examples": [
         {
           "id": "unnecessary_internal_identifiers:positive:0983a18f-9f1e-4358-9733-e21122a6d901",
           "annotation_id": "0983a18f-9f1e-4358-9733-e21122a6d901",
           "trace_id": "ff31950073c5ddeafc3c294c15ea3f44",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant exposes an unnecessary numeric store/database identifier in its customer-facing explanation instead of using the public store name.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant exposes an unnecessary numeric store/database identifier in its customer-facing explanation instead of using the public store name.",
+              "ts": "2026-10-31T01:14:51.636858+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unnecessary_internal_identifiers:positive:c96d970b-1bdc-4e6d-a32e-31e50d24795e",
           "annotation_id": "c96d970b-1bdc-4e6d-a32e-31e50d24795e",
           "trace_id": "37b53e3822f7b74c9a1c9997673f6b75",
           "kind": "positive",
-          "status": "pending",
+          "status": "accepted",
           "source": "agent_proposal",
-          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting."
+          "rationale": "Proposed grouping of this original human observation; inspect the complete trace before accepting.",
+          "reviewed_definition": "The assistant exposes an unnecessary numeric store/database identifier in its customer-facing explanation instead of using the public store name.",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "definition": "The assistant exposes an unnecessary numeric store/database identifier in its customer-facing explanation instead of using the public store name.",
+              "ts": "2026-10-31T01:14:37.813038+00:00",
+              "source": "human",
+              "note": ""
+            },
+            {
+              "decision": "accepted",
+              "definition": "The assistant exposes an unnecessary numeric store/database identifier in its customer-facing explanation instead of using the public store name.",
+              "ts": "2026-10-31T01:14:48.292431+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         },
         {
           "id": "unnecessary_internal_identifiers:close_negative:a78fdb6f-f382-4fbc-9964-8bab3d157fae",
@@ -572,7 +970,16 @@
           "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present."
         }
       ],
-      "evidence_caveat": "Policy IDs such as cw-returns are explicitly required by RESP-1. The separate complaints about policy-code citations are preserved for a specification recheck, not counted as identifier failures."
+      "evidence_caveat": "Policy IDs such as cw-returns are explicitly required by RESP-1. The separate complaints about policy-code citations are preserved for a specification recheck, not counted as identifier failures.",
+      "reviewed_definition": "The assistant exposes an unnecessary numeric store/database identifier in its customer-facing explanation instead of using the public store name.",
+      "review_history": [
+        {
+          "decision": "accepted",
+          "definition": "The assistant exposes an unnecessary numeric store/database identifier in its customer-facing explanation instead of using the public store name.",
+          "ts": "2026-10-31T01:14:54.751378+00:00",
+          "source": "human"
+        }
+      ]
     }
   ],
   "proposal_created_at": "2026-10-31T00:40:57.116856+00:00",

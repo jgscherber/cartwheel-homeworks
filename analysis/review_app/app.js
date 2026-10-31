@@ -376,8 +376,16 @@ function renderTaxonomy(main) {
       const status = e.status === "accepted" && e.reviewed_definition !== m.definition ? "needs re-review" : e.status || "pending";
       return `<article class="taxonomy-example">
         <span class="badge">${esc(status)}</span> ${traceLink(e.trace_id, `Inspect trace ${e.trace_id}`)}
-        <p>${esc(annotation.note)}</p>${annotation.quote ? `<q>${esc(annotation.quote)}</q>` : ""}
-        <p class="small">${esc(e.rationale || "")}</p>
+        <div class="taxonomy-evidence taxonomy-human-note">
+          <div class="evidence-label">${annotation.source === "accepted_suggestion" ? "Accepted suggestion note" : "Your note"}</div>
+          <p class="evidence-text">${esc(annotation.note)}</p>
+        </div>
+        <div class="taxonomy-evidence taxonomy-selected-text">
+          <div class="evidence-label">Selected text from trace</div>
+          ${annotation.quote ? `<blockquote class="evidence-text">${esc(annotation.quote)}</blockquote>`
+            : '<p class="small">Trace-level note; no text was selected.</p>'}
+        </div>
+        ${e.rationale ? `<p class="taxonomy-rationale small"><strong>AI grouping rationale:</strong> ${esc(e.rationale)}</p>` : ""}
         <div class="toolbar">
           <button data-taxonomy-example="${esc(e.id)}" data-mode="${esc(m.name)}" data-decision="accepted">Accept ${kind === "positive" ? "into category" : "as close negative"}</button>
           <button data-taxonomy-example="${esc(e.id)}" data-mode="${esc(m.name)}" data-decision="rejected">Reject proposal</button>
