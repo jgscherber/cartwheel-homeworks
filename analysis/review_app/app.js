@@ -363,11 +363,13 @@ function renderTaxonomy(main) {
   const proposals = modes().filter(m => Array.isArray(m.examples));
   const tiles = treemapRectangles(proposals.map(m => {
     const counts = taxonomyCounts(m);
-    return {name: m.name, weight: 1 + counts.positive, closeNegative: counts.negative};
+    return {name: m.name, weight: 1 + counts.positive, closeNegative: counts.negative,
+      trueNegative: counts.trueNegative};
   })).map(tile => `<button class="treemap-tile" data-go-mode="${esc(tile.name)}"
     style="left:${tile.x}%;top:${tile.y}%;width:${tile.width}%;height:${tile.height}%">
     <strong>${esc(tile.name)}</strong><span>${tile.weight - 1} accepted positive traces</span>
-    <span>${tile.closeNegative} confirmed close negatives</span></button>`).join("");
+    <span>${tile.closeNegative} confirmed close negatives</span>
+    <span>${tile.trueNegative} confirmed true negatives</span></button>`).join("");
   const proposalCards = proposals.map(m => {
     const counts = taxonomyCounts(m);
     const approved = m.review_status === "accepted" && m.reviewed_definition === m.definition;

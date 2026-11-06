@@ -355,17 +355,19 @@ test("taxonomy review controls send one explicit decision without creating notes
   assert.equal(ui.run("data.manifest.picks.length"), 0);
 });
 
-test("taxonomy tiles show close-negative counts but only positives change their area", () => {
+test("taxonomy tiles show both negative counts but only positives change their area", () => {
   const ui = app();
   ui.run(`
     data.annotations = [
       {id: "positive", trace_id: "a", note: "Positive"},
-      {id: "boundary", trace_id: "b", note: "Close negative"}
+      {id: "boundary", trace_id: "b", note: "Close negative"},
+      {id: "negative", trace_id: "c", note: "True negative"}
     ];
     data.patterns = {modes: [
       {name: "first", definition: "Rule", examples: [
         {annotation_id: "positive", trace_id: "a", kind: "positive", status: "accepted", reviewed_definition: "Rule"},
-        {annotation_id: "boundary", trace_id: "b", kind: "close_negative", status: "pending", reviewed_definition: "Rule"}
+        {annotation_id: "boundary", trace_id: "b", kind: "close_negative", status: "pending", reviewed_definition: "Rule"},
+        {annotation_id: "negative", trace_id: "c", kind: "negative", status: "pending", reviewed_definition: "Rule"}
       ]},
       {name: "second", definition: "Other rule", examples: []}
     ]};
@@ -378,14 +380,21 @@ test("taxonomy tiles show close-negative counts but only positives change their 
   const before = renderTiles();
   assert(before[0].includes("1 accepted positive traces"));
   assert(before[0].includes("0 confirmed close negatives"));
+  assert(before[0].includes("0 confirmed true negatives"));
   ui.run('data.patterns.modes[0].examples[1].status = "accepted"');
   const after = renderTiles();
   assert(after[0].includes("1 confirmed close negatives"));
   assert.deepEqual(styles(after), styles(before));
+  ui.run('data.patterns.modes[0].examples[2].status = "accepted"');
+  const withTrueNegative = renderTiles();
+  assert(withTrueNegative[0].includes("1 confirmed true negatives"));
+  assert(withTrueNegative[0].includes("1 confirmed close negatives"));
+  assert.deepEqual(styles(withTrueNegative), styles(after));
   ui.run('data.patterns.modes[0].examples[0].status = "rejected"');
   const withoutPositive = renderTiles();
   assert(withoutPositive[0].includes("0 accepted positive traces"));
   assert(withoutPositive[0].includes("1 confirmed close negatives"));
+  assert(withoutPositive[0].includes("1 confirmed true negatives"));
   assert.notDeepEqual(styles(withoutPositive), styles(after));
   const areas = withoutPositive.map(tile => {
     const style = tile.match(/style="([^"]+)"/)[1];
