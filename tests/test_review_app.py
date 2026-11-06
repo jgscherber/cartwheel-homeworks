@@ -526,6 +526,128 @@ def test_suggestion_decisions_are_retained_and_acceptance_is_not_a_label(store):
     with pytest.raises(ValueError, match="already"):
         change(store, "suggestion", id="one", decision="accepted")
 
+@pytest.fixture
+def claim_store(tmp_path):
+    records = load(tmp_path, [trace(letter * 32, session=f"session-{letter}") for letter in "abcdef"])
+    value = ReviewStore(records, tmp_path / "state", offline_reason="Focused search test")
+    definition = "The assistant asserts an operational fact unsupported by recorded evidence."
+    for letter in "abc":
+        change(value, "note", trace_id=letter * 32, note="Human-confirmed originating example")
+    annotations = value.snapshot()["annotations"]
+    value.write("patterns.json", {"custom": "preserve", "modes": [{
+        "name": "unsupported_operational_claim", "definition": definition, "status": "candidate",
+        "review_status": "accepted", "reviewed_definition": definition,
+        "supporting_annotation_ids": [a["id"] for a in annotations],
+        "examples": [{"id": a["id"], "annotation_id": a["id"], "trace_id": a["trace_id"],
+                      "kind": "positive", "status": "accepted", "reviewed_definition": definition}
+                     for a in annotations],
+    }]})
+    return value
+
+
+def claim_suggestion(value, letter, identifier=None):
+    message_index = next(i for i, m in enumerate(value.traces[letter * 32]["trace"]) if m["role"] == "assistant" and m.get("text"))
+    return {
+        "id": identifier or letter, "trace_id": letter * 32, "anchor": f"message:{message_index}",
+        "quote": value.traces[letter * 32]["trace"][message_index]["text"], "start": 0,
+        "proposed_kind": "positive", "note": "AI proposal, not human truth",
+        "taxonomy_assignment": True, "mode": "unsupported_operational_claim",
+        "definition": value.snapshot()["patterns"]["modes"][0]["definition"],
+        "context_trace_ids": [letter * 32],
+    }
+
+
+@pytest.mark.parametrize("decision,kind", [("accepted", "positive"), ("close_negative", "close_negative"), ("rejected", "negative")])
+def test_bulk_search_decisions_link_human_evidence_and_preserve_other_state(claim_store, decision, kind):
+    value = claim_store
+    value.write("suggestions.json", {"custom": 99, "suggestions": [claim_suggestion(value, letter) for letter in "de"]})
+    before = value.snapshot()
+    result = change(value, "suggestion_batch", ids=["d", "e"], decision=decision, note="Human decision")
+    after = value.snapshot()
+    assert result == {"ok": True, "decided": 2}
+    assert [s["status"] for s in after["suggestions"]] == [decision, decision]
+    assert [s["reviewed_kind"] for s in after["suggestions"]] == [kind, kind]
+    mode = after["patterns"]["modes"][0]
+    assert [(e["kind"], e["status"]) for e in mode["examples"][3:]] == [(kind, "accepted")] * 2
+    assert all(e["review_history"][0]["source"] == "human" for e in mode["examples"][3:])
+    assert len(mode["supporting_annotation_ids"]) == (5 if kind == "positive" else 3)
+    assert [(a["review_kind"], a["note"], a["start"]) for a in after["annotations"][3:]] == [(kind, "Human decision", 0)] * 2
+    assert after["annotations"][:3] == before["annotations"]
+    assert after["manifest"] == before["manifest"]
+    assert after["labels"] == {}
+    assert value.read("suggestions.json", {})["custom"] == 99
+    assert after["patterns"]["custom"] == "preserve"
+
+
+@pytest.mark.parametrize("invalid", ["excluded", "quote", "stale_definition"])
+def test_bulk_search_validates_the_whole_batch_before_writing(claim_store, invalid):
+    value = claim_store
+    suggestions = [claim_suggestion(value, letter) for letter in "de"]
+    if invalid == "excluded":
+        change(value, "exclude", trace_id="e" * 32, excluded=True)
+    elif invalid == "quote":
+        suggestions[1]["quote"] = "Invented text"
+    else:
+        suggestions[1]["definition"] = "Old definition"
+    value.write("suggestions.json", suggestions)
+    before = value.snapshot()
+    with pytest.raises(ValueError):
+        change(value, "suggestion_batch", ids=["d", "e"], decision="rejected")
+    assert value.snapshot() == before
+
+
+def test_search_preserves_utf16_quote_offsets_and_separates_opposite_decisions(claim_store):
+    value = claim_store
+    suggestion = claim_suggestion(value, "d")
+    message = value.traces["d" * 32]["trace"][int(suggestion["anchor"].split(":")[1])]
+    message["text"] = "\U0001f600 Echo. Echo."
+    suggestion.update(quote="Echo.", start=9, proposed_kind="close_negative")
+    value.write("suggestions.json", [suggestion])
+    change(value, "suggestion", id="d", decision="accepted")
+    note = value.snapshot()["annotations"][-1]
+    assert note["start"] == 9 and note["quote"] == "Echo."
+    assert "this failure mode is present" in note["note"]
+    suggestions = value.read("suggestions.json", [])
+    other = {**suggestion, "id": "opposite"}
+    suggestions.append(other)
+    value.write("suggestions.json", suggestions)
+    before = value.snapshot()
+    with pytest.raises(ValueError, match="opposite"):
+        change(value, "suggestion", id="opposite", decision="close_negative")
+    assert value.snapshot() == before
+
+
+def test_search_publication_filters_scope_deduplicates_and_retains_pending_provenance(claim_store):
+    value = claim_store
+    change(value, "exclude", trace_id="f" * 32, excluded=True)
+    value.write("sample_manifest.json", {"custom": "keep", "picks": [{"trace_id": "a" * 32, "reason": "existing pick"}]})
+    before = value.snapshot()
+    result = {
+        "mode": "unsupported_operational_claim", "definition": before["patterns"]["modes"][0]["definition"],
+        "method": "local_agent_evidence_review", "eligible_trace_ids": [letter * 32 for letter in "adef"],
+        "candidates": [claim_suggestion(value, letter) for letter in "adef"],
+    }
+    result["candidates"][2]["proposed_kind"] = "close_negative"
+    report = change(value, "publish_search", result=result)["report"]
+    after = value.snapshot()
+    assert [s["trace_id"] for s in after["suggestions"]] == ["d" * 32, "e" * 32]
+    assert all(s["status"] == "pending" and s["search_id"] == report["search_id"] for s in after["suggestions"])
+    assert report["published_positive_count"] == report["published_close_negative_count"] == 1
+    assert [s["reason"] for s in report["skipped"]] == ["already_reviewed", "excluded"]
+    assert after["manifest"]["custom"] == "keep"
+    assert after["manifest"]["picks"][0] == before["manifest"]["picks"][0]
+    assert [p["strategy"] for p in after["manifest"]["picks"][1:]] == ["mode_search"] * 2
+    assert after["annotations"] == before["annotations"]
+    assert after["patterns"] == before["patterns"]
+    assert after["labels"] == {}
+    second = value.publish_search(result)
+    assert second["published_ids"] == []
+    assert value.snapshot() == after
+    result["candidates"][-1]["quote"] = "Fabricated text"
+    with pytest.raises(ValueError, match="quote"):
+        value.publish_search(result)
+    assert value.snapshot() == after
+
 
 def test_unjudged_is_not_absent_and_corrections_append_history(store):
     prepare_label(store)

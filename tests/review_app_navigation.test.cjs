@@ -401,3 +401,72 @@ test("selection ending at the start of another text node excludes its empty frag
   `);
   assert.deepEqual(JSON.parse(result), ["Selected line"]);
 });
+
+function suggestionFixture(ui) {
+  ui.run(`
+    prompt = () => "";
+    data.patterns = {modes: [{
+      name: "unsupported_operational_claim", definition: "Rule", reviewed_definition: "Rule", review_status: "accepted", examples: []
+    }]};
+    data.suggestions = ["one", "two", "three"].map((id, i) => ({
+      id, trace_id: ["a", "b", "c"][i], mode: "unsupported_operational_claim",
+      definition: "Rule", taxonomy_assignment: true, proposed_kind: i ? "close_negative" : "positive",
+      quote: "<quoted>", note: "AI rationale", status: "pending"
+    }));
+  `);
+}
+
+test("AI suggestions distinguish proposals, selected text, and true-negative rejection", () => {
+  const ui = app();
+  suggestionFixture(ui);
+  ui.run("renderSuggestions(document.querySelector('#main'))");
+  const html = ui.elements.get("#main").innerHTML;
+  for (const text of ["Accept as positive", "Close negative", "Reject as true negative",
+    "AI proposed: close negative", "Selected text from trace", "AI proposal rationale (not your note or decision)"]) {
+    assert(html.includes(text), text);
+  }
+  assert(html.includes("&lt;quoted&gt;"));
+  assert(!html.includes("<quoted>"));
+  ui.run(`data.suggestions[0].status = "rejected"; data.suggestions[0].reviewed_kind = "negative";`);
+  ui.run("renderSuggestions(document.querySelector('#main'))");
+  assert(ui.elements.get("#main").innerHTML.includes("true negative (rejected suggestion)"));
+});
+
+test("bulk review submits one batch and retains selection through navigation and failed saves", async () => {
+  const ui = app();
+  suggestionFixture(ui);
+  ui.change({dataset: {pickSuggestion: "one"}, checked: true});
+  ui.change({dataset: {pickSuggestion: "two"}, checked: true});
+  ui.run("renderSuggestions(document.querySelector('#main'))");
+  assert.equal((ui.elements.get("#main").innerHTML.match(/ checked/g) || []).length, 2);
+  await ui.click({bulk: "close_negative"});
+  assert.equal(ui.saves.length, 1);
+  assert.equal(ui.saves[0].action, "suggestion_batch");
+  assert.equal(ui.saves[0].ids.join(","), "one,two");
+  assert.equal(ui.saves[0].decision, "close_negative");
+  ui.run(`act = async () => { throw new Error("Batch failed"); };`);
+  await ui.click({bulk: "rejected"});
+  assert.equal(ui.run("[...suggestionSelection].join(',')"), "one,two");
+  assert.equal(ui.elements.get("#error").textContent, "Batch failed");
+  ui.run(`data.suggestions[0].status = "accepted"; updateSuggestionSelection();`);
+  assert.equal(ui.run("[...suggestionSelection].join(',')"), "two");
+});
+
+test("select all ignores excluded and stale suggestions, and true negatives do not count as close negatives", () => {
+  const ui = app();
+  suggestionFixture(ui);
+  ui.run(`
+    data.excluded_trace_ids = ["b"];
+    data.suggestions[2].definition = "Old rule";
+  `);
+  ui.change({id: "suggestion-all", checked: true});
+  assert.equal(ui.run("[...suggestionSelection].join(',')"), "one");
+  ui.run(`
+    data.annotations = [{id: "n", trace_id: "a", source: "accepted_suggestion"}];
+    data.patterns.modes[0].examples = [{id: "n", annotation_id: "n", trace_id: "a",
+      kind: "negative", status: "accepted", reviewed_definition: "Rule"}];
+  `);
+  assert.equal(ui.run("taxonomyCounts(modes()[0]).positive"), 0);
+  assert.equal(ui.run("taxonomyCounts(modes()[0]).negative"), 0);
+  assert.equal(ui.run("taxonomyCounts(modes()[0]).trueNegative"), 1);
+});

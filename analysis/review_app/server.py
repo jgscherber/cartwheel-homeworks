@@ -157,6 +157,12 @@ class ReviewStore:
                 return self.review_taxonomy(payload)
             if action == "suggestion":
                 return self.decide_suggestion(payload)
+            if action == "suggestion_batch":
+                return self.decide_suggestions(payload)
+            if action == "publish_search":
+                if not isinstance(payload.get("result"), dict):
+                    raise ValueError("Provide a structured search result")
+                return {"ok": True, "report": self.publish_search(payload["result"])}
             trace_id = payload.get("trace_id")
             if trace_id not in self.traces:
                 raise ValueError("Unknown trace ID")
@@ -206,9 +212,9 @@ class ReviewStore:
                 return self.sync_label(trace_id, payload.get("mode"))
             raise ValueError("Unknown action")
 
-    def taxonomy_examples(self, mode: dict[str, Any]) -> list[dict[str, Any]]:
+    def taxonomy_examples(self, mode: dict[str, Any], notes: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
         annotations = {
-            a["id"]: a for a in items(self.read("annotations.json", {"annotations": []}), "annotations")
+            a["id"]: a for a in (notes if notes is not None else items(self.read("annotations.json", {"annotations": []}), "annotations"))
             if not a.get("deleted") and a.get("source", "human") in {"human", "accepted_suggestion"}
         }
         excluded = selection.excluded_trace_ids(self.root)
@@ -243,8 +249,9 @@ class ReviewStore:
         ]
         positives = {e["trace_id"] for e in examples if e.get("kind") == "positive"}
         negatives = {e["trace_id"] for e in examples if e.get("kind") == "close_negative"}
-        if positives & negatives:
-            raise ValueError("A trace cannot be both positive and close negative for one mode")
+        absent = {e["trace_id"] for e in examples if e.get("kind") in {"close_negative", "negative"}}
+        if positives & absent:
+            raise ValueError("A trace cannot be both positive and negative for one mode")
         if len(positives) < 3:
             raise ValueError("Confirm at least three distinct positive traces before finalizing")
         if len(negatives) < 3 and not str(mode.get("close_negative_unavailability_reason", "")).strip():
@@ -269,10 +276,11 @@ class ReviewStore:
             if decision == "accepted":
                 if example not in self.taxonomy_examples(mode):
                     raise ValueError("Excluded, deleted, or unreviewed evidence cannot be accepted into a mode")
-                if example.get("kind") not in {"positive", "close_negative"}:
-                    raise ValueError("Choose a positive or close-negative example")
+                if example.get("kind") not in {"positive", "close_negative", "negative"}:
+                    raise ValueError("Choose a positive, close-negative, or true-negative example")
                 if any(
-                    e["trace_id"] == example["trace_id"] and e.get("kind") != example["kind"]
+                    e["trace_id"] == example["trace_id"]
+                    and (e.get("kind") == "positive") != (example["kind"] == "positive")
                     and e.get("status") == "accepted" and e.get("reviewed_definition") == mode["definition"]
                     for e in self.taxonomy_examples(mode)
                 ):
@@ -338,32 +346,212 @@ class ReviewStore:
         return {"ok": True}
 
     def decide_suggestion(self, payload: dict[str, Any]) -> dict[str, Any]:
+        return self.decide_suggestions({**payload, "ids": [payload.get("id")]})
+
+    def suggestion_anchor(self, suggestion: dict[str, Any]) -> None:
+        trace = self.traces[suggestion["trace_id"]]
+        anchor = suggestion.get("anchor", "trace")
+        quote = suggestion.get("quote", "")
+        if anchor == "trace":
+            if quote and suggestion.get("taxonomy_assignment"):
+                raise ValueError("Quoted evidence needs a message anchor")
+            return
+        match = re.fullmatch(r"message:(\d+)", str(anchor))
+        if not match or int(match[1]) >= len(trace["trace"]):
+            raise ValueError("Unknown suggestion evidence anchor")
+        message = trace["trace"][int(match[1])]
+        if suggestion.get("taxonomy_assignment") and message.get("role") != "assistant":
+            raise ValueError("Operational-claim suggestions must quote an assistant message")
+        text = message.get("text", message.get("content", ""))
+        if not isinstance(text, str):
+            text = json.dumps(text, indent=2, ensure_ascii=False)
+        start = suggestion.get("start")
+        if start is None and not suggestion.get("taxonomy_assignment"):
+            if not quote or quote in text:
+                return
+            raise ValueError("Suggestion quote does not match the recorded evidence")
+        if type(start) is not int or start < 0 or not isinstance(quote, str) or not quote:
+            raise ValueError("Suggestion quotes need an exact nonnegative character offset")
+        encoded = text.encode("utf-16-le")
+        if encoded[start * 2:(start + len(quote.encode("utf-16-le")) // 2) * 2] != quote.encode("utf-16-le"):
+            raise ValueError("Suggestion quote does not match the recorded evidence")
+
+    def decide_suggestions(self, payload: dict[str, Any]) -> dict[str, Any]:
+        ids = payload.get("ids")
+        if not isinstance(ids, list) or not ids or any(not isinstance(i, str) or not i for i in ids) or len(ids) != len(set(ids)):
+            raise ValueError("Select one or more distinct pending suggestions")
+        decision = payload.get("decision")
+        if decision not in {"accepted", "close_negative", "rejected"}:
+            raise ValueError("Accept positives, confirm close negatives, or reject as true negatives")
         document = self.read("suggestions.json", [])
         suggestions = items(document, "suggestions")
-        suggestion = next((s for s in suggestions if s.get("id") == payload.get("id")), None)
-        if not suggestion or suggestion.get("trace_id") not in self.traces:
+        chosen = [next((s for s in suggestions if s.get("id") == identifier), None) for identifier in ids]
+        if any(s is None or s.get("trace_id") not in self.traces for s in chosen):
             raise ValueError("Unknown suggestion or source trace")
-        if payload.get("decision") not in {"accepted", "rejected"}:
-            raise ValueError("Explicitly accept or reject the suggestion")
-        if suggestion.get("status", "pending") != "pending":
-            raise ValueError("This suggestion already has a decision")
-        if payload["decision"] == "accepted":
-            annotations = self.read("annotations.json", {"annotations": []})
-            notes = items(annotations, "annotations")
+        if any(s.get("status", "pending") != "pending" for s in chosen):
+            raise ValueError("A selected suggestion already has a decision")
+        annotations = self.read("annotations.json", {"annotations": []})
+        notes = items(annotations, "annotations")
+        patterns = self.read("patterns.json", {"modes": []})
+        modes = items(patterns, "modes")
+        excluded = selection.excluded_trace_ids(self.root)
+        changed_modes: set[str] = set()
+        for suggestion in chosen:
+            if decision == "rejected" and not suggestion.get("taxonomy_assignment"):
+                suggestion.update(status=decision, decided_at=now(), decision_note=str(payload.get("note", "")))
+                continue
+            if suggestion["trace_id"] in excluded:
+                raise ValueError("Excluded traces cannot be accepted as suggestion evidence")
+            self.suggestion_anchor(suggestion)
             note_id = f"suggestion:{suggestion['id']}"
+            previous_note = next((n for n in notes if n.get("id") == note_id), None)
+            if previous_note and (previous_note.get("deleted") or previous_note.get("trace_id") != suggestion["trace_id"]):
+                raise ValueError("Deleted or mismatched suggestion evidence cannot be accepted")
+            kind = {"accepted": "positive", "close_negative": "close_negative", "rejected": "negative"}[decision]
+            mode = next((m for m in modes if m.get("name") == suggestion.get("mode")), None)
+            if suggestion.get("taxonomy_assignment"):
+                if mode is None or "examples" not in mode:
+                    raise ValueError("Choose the existing taxonomy mode for this suggestion")
+                if suggestion.get("definition") != mode.get("definition") or mode.get("review_status") != "accepted" or mode.get("reviewed_definition") != mode["definition"]:
+                    raise ValueError("The mode definition changed or is not approved; re-search before accepting")
+                if any(
+                    e.get("trace_id") == suggestion["trace_id"]
+                    and (e.get("kind") == "positive") != (kind == "positive")
+                    and e.get("status") == "accepted" and e.get("reviewed_definition") == mode["definition"]
+                    for e in self.taxonomy_examples(mode, notes)
+                ):
+                    raise ValueError("This trace already has the opposite decision in this mode")
+                example_id = f"suggestion:{suggestion['id']}"
+                example = next((e for e in mode["examples"] if e.get("id") == example_id), None)
+                entry = {
+                    **(example or {}), "id": example_id, "trace_id": suggestion["trace_id"],
+                    "annotation_id": note_id, "kind": kind, "status": "accepted",
+                    "reviewed_definition": mode["definition"], "source": "human_reviewed_search",
+                    "rationale": suggestion.get("note", ""), "suggestion_id": suggestion["id"],
+                }
+                entry.setdefault("review_history", []).append({
+                    "decision": "accepted", "kind": kind, "definition": mode["definition"],
+                    "ts": now(), "source": "human", "note": str(payload.get("note", "")),
+                })
+                if example is not None:
+                    mode["examples"][mode["examples"].index(example)] = entry
+                else:
+                    mode["examples"].append(entry)
+                changed_modes.add(mode["name"])
             if not any(n.get("id") == note_id for n in notes):
+                default_note = suggestion.get("note") or suggestion.get("mode") or "Accepted suggestion"
+                if kind == "positive" and suggestion.get("proposed_kind") == "close_negative":
+                    default_note = f"Positive for {suggestion['mode']}: this failure mode is present."
+                if kind != "positive":
+                    label = "Close negative" if kind == "close_negative" else "True negative"
+                    default_note = f"{label} for {suggestion.get('mode') or 'this suggestion'}: this failure mode is absent."
                 notes.append({
                     "id": note_id, "trace_id": suggestion["trace_id"],
                     "anchor": suggestion.get("anchor", "trace"),
-                    "quote": suggestion.get("quote", ""),
-                    "note": suggestion.get("note") or suggestion.get("mode") or "Accepted suggestion",
+                    "quote": suggestion.get("quote", ""), "start": suggestion.get("start"),
+                    "note": str(payload.get("note", "")).strip() or default_note,
                     "source": "accepted_suggestion", "suggestion_id": suggestion["id"], "ts": now(),
+                    "mode": suggestion.get("mode"), "review_kind": kind,
                 })
-                self.write("annotations.json", replace_items(annotations, "annotations", notes))
-        suggestion.update(status=payload["decision"], decided_at=now(),
-                          decision_note=str(payload.get("note", "")))
+            suggestion.update(status=decision, decided_at=now(), reviewed_kind=kind,
+                              decision_note=str(payload.get("note", "")))
+        if changed_modes:
+            for mode in modes:
+                if mode.get("name") in changed_modes:
+                    mode["supporting_annotation_ids"] = list(dict.fromkeys(
+                        e["annotation_id"] for e in self.taxonomy_examples(mode, notes)
+                        if e.get("kind") == "positive" and e.get("status") == "accepted"
+                        and e.get("reviewed_definition") == mode["definition"]
+                    ))
+        if any(s.get("reviewed_kind") for s in chosen):
+            self.write("annotations.json", replace_items(annotations, "annotations", notes))
+        if changed_modes:
+            self.write("patterns.json", patterns)
         self.write("suggestions.json", replace_items(document, "suggestions", suggestions))
-        return {"ok": True}
+        return {"ok": True, "decided": len(chosen)}
+
+    def publish_search(self, result: dict[str, Any]) -> dict[str, Any]:
+        """Publish AI retrieval proposals without approving any examples."""
+        with self.lock:
+            revision = self.revision()
+            name = result.get("mode")
+            if name != "unsupported_operational_claim":
+                raise ValueError("This search is limited to unsupported_operational_claim")
+            mode = next((m for m in items(self.read("patterns.json", {"modes": []}), "modes") if m.get("name") == name), None)
+            if not mode or result.get("definition") != mode.get("definition") or mode.get("review_status") != "accepted" or mode.get("reviewed_definition") != mode["definition"]:
+                raise ValueError("Search results need the unchanged, approved mode definition")
+            support = {
+                e["trace_id"] for e in self.taxonomy_examples(mode)
+                if e.get("status") == "accepted" and e.get("kind") == "positive"
+                and e.get("reviewed_definition") == mode["definition"]
+            }
+            if len(support) < 3:
+                raise ValueError("Search needs three confirmed positive traces")
+            searched = result.get("eligible_trace_ids")
+            if not isinstance(searched, list) or any(not isinstance(i, str) or i not in self.traces for i in searched) or len(searched) != len(set(searched)):
+                raise ValueError("Search coverage must list distinct original trace IDs")
+            document = self.read("suggestions.json", [])
+            suggestions = items(document, "suggestions")
+            annotations = items(self.read("annotations.json", {"annotations": []}), "annotations")
+            reviewed = {a["trace_id"] for a in annotations if not a.get("deleted") and a.get("source", "human") in {"human", "accepted_suggestion"}}
+            excluded = selection.excluded_trace_ids(self.root)
+            existing = {s.get("trace_id") for s in suggestions if s.get("mode") == name and s.get("definition") == mode["definition"]}
+            search_id = f"operational_claim_{uuid.uuid4().hex}"
+            manifest = self.read("sample_manifest.json", {"picks": []})
+            picks = items(manifest, "picks")
+            selected = {p["trace_id"] for p in picks}
+            added = []
+            skipped = []
+            for candidate in items(result, "candidates"):
+                identifier = candidate.get("trace_id")
+                if identifier not in searched:
+                    raise ValueError("Suggestion target was not inspected in this search")
+                if candidate.get("proposed_kind") not in {"positive", "close_negative"} or not isinstance(candidate.get("note"), str) or not candidate["note"].strip():
+                    raise ValueError("Search suggestions need a proposed kind and evidence rationale")
+                context = candidate.get("context_trace_ids", [])
+                if not isinstance(context, list) or any(i not in self.traces for i in context):
+                    raise ValueError("Search context must reference original trace IDs")
+                conversation = next(s for s in self.conversations if any(t["trace_id"] == identifier for t in s["traces"]))
+                if not set(context) <= {t["trace_id"] for t in conversation["traces"]}:
+                    raise ValueError("Search context must stay within the target conversation")
+                entry = {
+                    **candidate, "mode": name, "definition": mode["definition"],
+                    "taxonomy_assignment": True, "status": "pending",
+                    "source": result.get("method", "local_agent_evidence_review"),
+                    "search_id": search_id, "created_at": now(),
+                }
+                self.suggestion_anchor(entry)
+                entry["id"] = "search-" + hashlib.sha256(json.dumps(
+                    [name, mode["definition"], identifier, entry["anchor"], entry["quote"]],
+                    ensure_ascii=False,
+                ).encode()).hexdigest()[:24]
+                reason = "excluded" if identifier in excluded else "already_reviewed" if identifier in reviewed else "duplicate" if identifier in existing else ""
+                if reason:
+                    skipped.append({"trace_id": identifier, "reason": reason})
+                    continue
+                suggestions.append(entry)
+                added.append(entry)
+                existing.add(identifier)
+                if identifier not in selected:
+                    picks.append({
+                        "trace_id": identifier, "reason": f"Part D depth search for {name}: AI-proposed {entry['proposed_kind']} (unconfirmed)",
+                        "strategy": "mode_search", "mode": name, "search_id": search_id,
+                        "selected_at": now(), **self.source_info(),
+                    })
+                    selected.add(identifier)
+            report = {
+                **result, "search_id": search_id, "published_at": now(),
+                "published_ids": [s["id"] for s in added], "skipped": skipped,
+                "published_positive_count": sum(s["proposed_kind"] == "positive" for s in added),
+                "published_close_negative_count": sum(s["proposed_kind"] == "close_negative" for s in added),
+            }
+            if self.revision() != revision:
+                raise Conflict("Review state changed during publication; retry with the current state")
+            if added:
+                self.write("sample_manifest.json", replace_items(manifest, "picks", picks))
+                self.write("suggestions.json", replace_items(document, "suggestions", suggestions))
+            _state.write_json(self.root / "searches" / f"{search_id}.json", report)
+            return report
 
     def save_label(self, payload: dict[str, Any]) -> dict[str, Any]:
         mode = payload.get("mode")

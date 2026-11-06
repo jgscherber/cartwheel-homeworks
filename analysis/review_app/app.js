@@ -1,6 +1,7 @@
 "use strict";
 
 let data, currentSession, view = "conversation", pending = null, busy = false, recoveryKey = null, hideNoted = false;
+const suggestionSelection = new Set();
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -340,6 +341,7 @@ function taxonomyCounts(mode) {
   return {
     positive: new Set(accepted.filter(e => e.kind === "positive").map(e => e.trace_id)).size,
     negative: new Set(accepted.filter(e => e.kind === "close_negative").map(e => e.trace_id)).size,
+    trueNegative: new Set(accepted.filter(e => e.kind === "negative").map(e => e.trace_id)).size,
   };
 }
 
@@ -385,9 +387,9 @@ function renderTaxonomy(main) {
           ${annotation.quote ? `<blockquote class="evidence-text">${esc(annotation.quote)}</blockquote>`
             : '<p class="small">Trace-level note; no text was selected.</p>'}
         </div>
-        ${e.rationale ? `<p class="taxonomy-rationale small"><strong>AI grouping rationale:</strong> ${esc(e.rationale)}</p>` : ""}
+        ${e.rationale ? `<p class="taxonomy-rationale small"><strong>${e.source === "human_reviewed_search" ? "Original AI proposal rationale (not your decision)" : "AI grouping rationale"}:</strong> ${esc(e.rationale)}</p>` : ""}
         <div class="toolbar">
-          <button data-taxonomy-example="${esc(e.id)}" data-mode="${esc(m.name)}" data-decision="accepted">Accept ${kind === "positive" ? "into category" : "as close negative"}</button>
+          <button data-taxonomy-example="${esc(e.id)}" data-mode="${esc(m.name)}" data-decision="accepted">Accept ${kind === "positive" ? "into category" : kind === "negative" ? "as true negative" : "as close negative"}</button>
           <button data-taxonomy-example="${esc(e.id)}" data-mode="${esc(m.name)}" data-decision="rejected">Reject proposal</button>
           <button data-taxonomy-example="${esc(e.id)}" data-mode="${esc(m.name)}" data-decision="pending">Reset decision</button>
         </div></article>`;
@@ -401,7 +403,7 @@ function renderTaxonomy(main) {
       <p><strong>Requirement:</strong> ${esc(m.requirement_source)} <span class="badge">${esc(m.requirement_status)}</span></p>
       ${m.requirement_status === "needs_revision" ? `<p class="requirement-warning">Proposed requirement, not an existing-spec failure. Record an approved SPEC.md revision before finalizing; include its exact rule as requirement_revision_text in the taxonomy metadata.</p>` : ""}
       ${m.evidence_caveat ? `<p class="requirement-warning">${esc(m.evidence_caveat)}</p>` : ""}
-      <p><strong>Evaluator:</strong> ${esc(m.evaluator_type)}. ${counts.positive} / 3 confirmed positives; ${counts.negative} / 3 confirmed close negatives.</p>
+      <p><strong>Evaluator:</strong> ${esc(m.evaluator_type)}. ${counts.positive} / 3 confirmed positives; ${counts.negative} / 3 confirmed close negatives; ${counts.trueNegative} confirmed true negatives.</p>
       <div class="toolbar">
         <button data-taxonomy-mode="${esc(m.name)}" data-decision="accepted">Approve definition</button>
         <button data-taxonomy-mode="${esc(m.name)}" data-decision="rejected">Reject category</button>
@@ -410,6 +412,7 @@ function renderTaxonomy(main) {
       </div>
       <details open><summary>Proposed positive examples</summary>${exampleRows("positive")}</details>
       <details><summary>Proposed close negatives (do not increase treemap area)</summary>${exampleRows("close_negative")}</details>
+      <details><summary>True negatives from rejected AI suggestions (do not increase treemap area)</summary>${exampleRows("negative")}</details>
     </section>`;
   }).join("");
   const cards = modes().filter(m => !Array.isArray(m.examples)).map(m => {
@@ -462,21 +465,57 @@ function renderLabels(main) {
 }
 
 function suggestionControls(s) {
-  return `<button data-decision="accepted" data-suggestion="${esc(s.id)}">Accept as note</button>
-    <button data-decision="rejected" data-suggestion="${esc(s.id)}">Reject</button>`;
+  if (!reviewableSuggestion(s)) return '<p class="requirement-warning">Excluded or changed/unapproved definition: re-search before reviewing this suggestion.</p>';
+  return `<button data-decision="accepted" data-suggestion="${esc(s.id)}">${s.taxonomy_assignment ? "Accept as positive" : "Accept as note"}</button>
+    <button data-decision="close_negative" data-suggestion="${esc(s.id)}">Close negative</button>
+    <button data-decision="rejected" data-suggestion="${esc(s.id)}">${s.taxonomy_assignment ? "Reject as true negative" : "Reject"}</button>`;
+}
+
+function reviewableSuggestion(s) {
+  if ((s.status || "pending") !== "pending" || excluded(s.trace_id)) return false;
+  if (!s.taxonomy_assignment) return true;
+  const mode = modes().find(m => m.name === s.mode);
+  return Boolean(mode && mode.definition === s.definition && mode.review_status === "accepted"
+    && mode.reviewed_definition === mode.definition);
+}
+
+function updateSuggestionSelection() {
+  const eligible = (data.suggestions || []).filter(reviewableSuggestion);
+  const ids = new Set(eligible.map(s => s.id));
+  for (const id of suggestionSelection) if (!ids.has(id)) suggestionSelection.delete(id);
+  const counter = $("#suggestion-selection-count");
+  if (counter) counter.textContent = `${suggestionSelection.size} selected`;
+  const all = $("#suggestion-all");
+  if (all) {
+    all.checked = eligible.length > 0 && suggestionSelection.size === eligible.length;
+    all.indeterminate = suggestionSelection.size > 0 && !all.checked;
+  }
+  document.querySelectorAll("[data-bulk]").forEach(button => { button.disabled = !suggestionSelection.size; });
 }
 
 function renderSuggestions(main) {
-  main.innerHTML = `<h2>AI hypotheses, not human judgments</h2>
-    <p>Acceptance creates an attributed note only. It never silently assigns a binary label. Rejections remain saved for boundary review.</p>
+  updateSuggestionSelection();
+  main.innerHTML = `<h2>AI suggestions and your decisions</h2>
+    <p>AI proposals are unconfirmed. Accept = positive; close negative = similar but this failure is absent; reject = true negative for this mode, not a clean trace overall. Your decisions add attributed notes and category evidence, not final binary labels or Langfuse scores.</p>
     <div class="toolbar"><label><input id="suggestion-all" type="checkbox"> Select all pending</label>
-      <button data-bulk="accepted">Accept selected as notes</button><button data-bulk="rejected">Reject selected</button></div>
+      <span id="suggestion-selection-count">${suggestionSelection.size} selected</span>
+      <button data-bulk="accepted"${suggestionSelection.size ? "" : " disabled"}>Accept selected as positives</button>
+      <button data-bulk="close_negative"${suggestionSelection.size ? "" : " disabled"}>Selected are close negatives</button>
+      <button data-bulk="rejected"${suggestionSelection.size ? "" : " disabled"}>Reject selected as true negatives</button></div>
     ${data.suggestions.map(s => `<section class="panel suggestion-row">
-      ${(s.status || "pending") === "pending" ? `<input type="checkbox" data-pick-suggestion="${esc(s.id)}" aria-label="Select suggestion">` : ""}
-      <strong>${esc(s.mode || "Candidate observation")}</strong> <span class="badge">${esc(s.status || "pending")}</span>
-      <p>${traceLink(s.trace_id)} ${esc(s.quote || "")}</p><p>${esc(s.note || "")}</p>
+      ${reviewableSuggestion(s) ? `<input type="checkbox" data-pick-suggestion="${esc(s.id)}"${suggestionSelection.has(s.id) ? " checked" : ""} aria-label="Select suggestion">` : ""}
+      <strong>${esc(s.mode || "Candidate observation")}</strong> <span class="badge">${esc(s.reviewed_kind === "negative" ? "true negative (rejected suggestion)" : s.reviewed_kind === "close_negative" ? "confirmed close negative" : s.status || "pending")}</span>
+      ${s.proposed_kind ? `<span class="badge">AI proposed: ${esc(s.proposed_kind.replaceAll("_", " "))}</span>` : ""}
+      <p>${traceLink(s.trace_id)}</p>
+      <div class="taxonomy-evidence taxonomy-selected-text"><div class="evidence-label">Selected text from trace</div>
+        ${s.quote ? `<blockquote class="evidence-text">${esc(s.quote)}</blockquote>` : "<p>Trace-level suggestion; no selected text.</p>"}</div>
+      <div class="taxonomy-evidence suggestion-rationale"><div class="evidence-label">AI proposal rationale (not your note or decision)</div>
+        <p class="evidence-text">${esc(s.note || "")}</p>${s.evidence ? `<p class="small"><strong>Recorded evidence:</strong> ${esc(s.evidence)}</p>` : ""}
+        ${s.uncertainty ? `<p class="small"><strong>Uncertainty:</strong> ${esc(s.uncertainty)}</p>` : ""}</div>
+      ${notes(s.trace_id).map(a => `<div class="taxonomy-evidence taxonomy-human-note"><div class="evidence-label">${a.source === "accepted_suggestion" ? "Your reviewed suggestion note" : "Your note"}</div><p class="evidence-text">${esc(a.note)}</p></div>`).join("")}
       ${(s.status || "pending") === "pending" ? suggestionControls(s) : `<p>${esc(s.decision_note || "")}</p>`}
       </section>`).join("") || "<p>No AI suggestions.</p>"}`;
+  updateSuggestionSelection();
 }
 
 function traceLink(id, text = id) {
@@ -614,12 +653,14 @@ document.addEventListener("click", async event => {
     }
     if (button.dataset.retry) await act({action: "retry", trace_id: button.dataset.trace, mode: button.dataset.retry});
     if (button.dataset.decision && button.dataset.suggestion) {
-      const note = prompt("Optional reason for this decision (especially a rejected boundary):", "");
+      const note = prompt("Optional reason for your positive / close-negative / true-negative decision:", "");
       if (note !== null) await act({action: "suggestion", id: button.dataset.suggestion, decision: button.dataset.decision, note});
     }
     if (button.dataset.bulk) {
-      const ids = [...document.querySelectorAll("[data-pick-suggestion]:checked")].map(e => e.dataset.pickSuggestion);
-      for (const id of ids) await act({action: "suggestion", id, decision: button.dataset.bulk});
+      const ids = [...suggestionSelection];
+      if (!ids.length) throw new Error("Select at least one pending suggestion.");
+      const note = prompt("Optional reason applied to all selected suggestions:", "");
+      if (note !== null) await act({action: "suggestion_batch", ids, decision: button.dataset.bulk, note});
     }
   } catch (error) { fail(error); }
 });
@@ -630,7 +671,19 @@ document.addEventListener("change", event => {
     hideNoted = event.target.checked;
     render();
   }
-  if (event.target.id === "suggestion-all") document.querySelectorAll("[data-pick-suggestion]").forEach(e => { e.checked = event.target.checked; });
+  if (event.target.id === "suggestion-all") {
+    data.suggestions.filter(reviewableSuggestion).forEach(s => {
+      if (event.target.checked) suggestionSelection.add(s.id);
+      else suggestionSelection.delete(s.id);
+    });
+    document.querySelectorAll("[data-pick-suggestion]").forEach(e => { e.checked = suggestionSelection.has(e.dataset.pickSuggestion); });
+    updateSuggestionSelection();
+  }
+  if (event.target.dataset?.pickSuggestion) {
+    if (event.target.checked) suggestionSelection.add(event.target.dataset.pickSuggestion);
+    else suggestionSelection.delete(event.target.dataset.pickSuggestion);
+    updateSuggestionSelection();
+  }
 });
 $("#annotation").addEventListener("submit", async event => {
   event.preventDefault();
