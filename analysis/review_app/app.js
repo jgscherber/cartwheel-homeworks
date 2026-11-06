@@ -361,11 +361,13 @@ function treemapRectangles(entries, x = 0, y = 0, width = 100, height = 100) {
 
 function renderTaxonomy(main) {
   const proposals = modes().filter(m => Array.isArray(m.examples));
-  const tiles = treemapRectangles(proposals.map(m => ({
-    name: m.name, weight: 1 + taxonomyCounts(m).positive,
-  }))).map(tile => `<button class="treemap-tile" data-go-mode="${esc(tile.name)}"
+  const tiles = treemapRectangles(proposals.map(m => {
+    const counts = taxonomyCounts(m);
+    return {name: m.name, weight: 1 + counts.positive, closeNegative: counts.negative};
+  })).map(tile => `<button class="treemap-tile" data-go-mode="${esc(tile.name)}"
     style="left:${tile.x}%;top:${tile.y}%;width:${tile.width}%;height:${tile.height}%">
-    <strong>${esc(tile.name)}</strong><span>${tile.weight - 1} accepted positive traces</span></button>`).join("");
+    <strong>${esc(tile.name)}</strong><span>${tile.weight - 1} accepted positive traces</span>
+    <span>${tile.closeNegative} confirmed close negatives</span></button>`).join("");
   const proposalCards = proposals.map(m => {
     const counts = taxonomyCounts(m);
     const approved = m.review_status === "accepted" && m.reviewed_definition === m.definition;
@@ -502,7 +504,7 @@ function renderSuggestions(main) {
       <button data-bulk="accepted"${suggestionSelection.size ? "" : " disabled"}>Accept selected as positives</button>
       <button data-bulk="close_negative"${suggestionSelection.size ? "" : " disabled"}>Selected are close negatives</button>
       <button data-bulk="rejected"${suggestionSelection.size ? "" : " disabled"}>Reject selected as true negatives</button></div>
-    ${data.suggestions.map(s => `<section class="panel suggestion-row">
+    ${data.suggestions.filter(s => (s.status || "pending") === "pending").map(s => `<section class="panel suggestion-row">
       ${reviewableSuggestion(s) ? `<input type="checkbox" data-pick-suggestion="${esc(s.id)}"${suggestionSelection.has(s.id) ? " checked" : ""} aria-label="Select suggestion">` : ""}
       <strong>${esc(s.mode || "Candidate observation")}</strong> <span class="badge">${esc(s.reviewed_kind === "negative" ? "true negative (rejected suggestion)" : s.reviewed_kind === "close_negative" ? "confirmed close negative" : s.status || "pending")}</span>
       ${s.proposed_kind ? `<span class="badge">AI proposed: ${esc(s.proposed_kind.replaceAll("_", " "))}</span>` : ""}
@@ -514,7 +516,7 @@ function renderSuggestions(main) {
         ${s.uncertainty ? `<p class="small"><strong>Uncertainty:</strong> ${esc(s.uncertainty)}</p>` : ""}</div>
       ${notes(s.trace_id).map(a => `<div class="taxonomy-evidence taxonomy-human-note"><div class="evidence-label">${a.source === "accepted_suggestion" ? "Your reviewed suggestion note" : "Your note"}</div><p class="evidence-text">${esc(a.note)}</p></div>`).join("")}
       ${(s.status || "pending") === "pending" ? suggestionControls(s) : `<p>${esc(s.decision_note || "")}</p>`}
-      </section>`).join("") || "<p>No AI suggestions.</p>"}`;
+      </section>`).join("") || "<p>No pending AI suggestions.</p>"}`;
   updateSuggestionSelection();
 }
 

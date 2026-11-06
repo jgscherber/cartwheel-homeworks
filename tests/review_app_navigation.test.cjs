@@ -355,6 +355,45 @@ test("taxonomy review controls send one explicit decision without creating notes
   assert.equal(ui.run("data.manifest.picks.length"), 0);
 });
 
+test("taxonomy tiles show close-negative counts but only positives change their area", () => {
+  const ui = app();
+  ui.run(`
+    data.annotations = [
+      {id: "positive", trace_id: "a", note: "Positive"},
+      {id: "boundary", trace_id: "b", note: "Close negative"}
+    ];
+    data.patterns = {modes: [
+      {name: "first", definition: "Rule", examples: [
+        {annotation_id: "positive", trace_id: "a", kind: "positive", status: "accepted", reviewed_definition: "Rule"},
+        {annotation_id: "boundary", trace_id: "b", kind: "close_negative", status: "pending", reviewed_definition: "Rule"}
+      ]},
+      {name: "second", definition: "Other rule", examples: []}
+    ]};
+  `);
+  const renderTiles = () => {
+    ui.run("renderTaxonomy(document.querySelector('#main'))");
+    return ui.elements.get("#main").innerHTML.match(/<button class="treemap-tile"[\s\S]*?<\/button>/g);
+  };
+  const styles = tiles => tiles.map(tile => tile.match(/style="([^"]+)"/)[1]);
+  const before = renderTiles();
+  assert(before[0].includes("1 accepted positive traces"));
+  assert(before[0].includes("0 confirmed close negatives"));
+  ui.run('data.patterns.modes[0].examples[1].status = "accepted"');
+  const after = renderTiles();
+  assert(after[0].includes("1 confirmed close negatives"));
+  assert.deepEqual(styles(after), styles(before));
+  ui.run('data.patterns.modes[0].examples[0].status = "rejected"');
+  const withoutPositive = renderTiles();
+  assert(withoutPositive[0].includes("0 accepted positive traces"));
+  assert(withoutPositive[0].includes("1 confirmed close negatives"));
+  assert.notDeepEqual(styles(withoutPositive), styles(after));
+  const areas = withoutPositive.map(tile => {
+    const style = tile.match(/style="([^"]+)"/)[1];
+    return Number(style.match(/width:([\d.]+)%/)[1]) * Number(style.match(/height:([\d.]+)%/)[1]);
+  });
+  assert.equal(areas[0], areas[1]);
+});
+
 test("taxonomy approval distinguishes human notes, selected evidence, and AI rationale", () => {
   const ui = app();
   const html = ui.run(`
@@ -429,7 +468,38 @@ test("AI suggestions distinguish proposals, selected text, and true-negative rej
   assert(!html.includes("<quoted>"));
   ui.run(`data.suggestions[0].status = "rejected"; data.suggestions[0].reviewed_kind = "negative";`);
   ui.run("renderSuggestions(document.querySelector('#main'))");
-  assert(ui.elements.get("#main").innerHTML.includes("true negative (rejected suggestion)"));
+  assert(!ui.elements.get("#main").innerHTML.includes('data-go-trace="a"'));
+  assert(ui.elements.get("#main").innerHTML.includes('data-go-trace="b"'));
+});
+
+test("all three decisions clear completed suggestions after single and bulk saves without deleting their records", async () => {
+  for (const decision of ["accepted", "close_negative", "rejected"]) {
+    const ui = app();
+    suggestionFixture(ui);
+    ui.run(`
+      act = async payload => {
+        saves.push(payload);
+        const ids = payload.ids || [payload.id];
+        data.suggestions.filter(s => ids.includes(s.id)).forEach(s => { s.status = payload.decision; });
+        renderSuggestions(document.querySelector('#main'));
+        return {ok: true};
+      };
+    `);
+    await ui.click({suggestion: "one", decision});
+    let html = ui.elements.get("#main").innerHTML;
+    assert(!html.includes('data-go-trace="a"'));
+    assert(html.includes('data-go-trace="b"'));
+    ui.change({id: "suggestion-all", checked: true});
+    await ui.click({bulk: decision});
+    html = ui.elements.get("#main").innerHTML;
+    assert(html.includes("No pending AI suggestions."));
+    assert(!html.includes('class="panel suggestion-row"'));
+    assert.equal(ui.run("suggestionSelection.size"), 0);
+    assert.equal(ui.run("data.suggestions.length"), 3);
+    assert.equal(ui.run(`data.suggestions.every(s => s.status === "${decision}")`), true);
+    ui.run("renderSuggestions(document.querySelector('#main'))");
+    assert(ui.elements.get("#main").innerHTML.includes("No pending AI suggestions."));
+  }
 });
 
 test("bulk review submits one batch and retains selection through navigation and failed saves", async () => {

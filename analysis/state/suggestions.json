@@ -12,11 +12,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.613659+00:00",
-    "id": "search-8983011fa007ebff3745d6e9"
+    "id": "search-8983011fa007ebff3745d6e9",
+    "decided_at": "2026-11-06T03:35:24.406231+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "6edd2566fed863bc28953b13557df0a6",
@@ -31,11 +34,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-e08d66bf819e880b00f8552c"
+    "id": "search-e08d66bf819e880b00f8552c",
+    "decided_at": "2026-11-06T03:35:24.406627+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "bc5c579c67e10b74a3d848deb57ae923",
@@ -50,11 +56,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "close_negative",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-1e0ebd5d21cf1c4eec9472c4"
+    "id": "search-1e0ebd5d21cf1c4eec9472c4",
+    "decided_at": "2026-11-06T03:35:38.014159+00:00",
+    "reviewed_kind": "close_negative",
+    "decision_note": ""
   },
   {
     "trace_id": "edea47ed85f4609ca108c01bc010cf38",
@@ -72,11 +81,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-42d2ab9f86a41d274e69dd80"
+    "id": "search-42d2ab9f86a41d274e69dd80",
+    "decided_at": "2026-11-06T03:36:30.048566+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "1b81689cdebbc7dfcdf705dc5274994f",
@@ -94,11 +106,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-06992b8b770b1a7aaf311285"
+    "id": "search-06992b8b770b1a7aaf311285",
+    "decided_at": "2026-11-06T03:36:30.049566+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "d0f01859121e67aaf219a5a0bcfe0f54",
@@ -116,11 +131,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-4274d3b7cc744fda2b173166"
+    "id": "search-4274d3b7cc744fda2b173166",
+    "decided_at": "2026-11-06T03:36:30.049566+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "25f62f1830082ff622988924cb593970",
@@ -135,11 +153,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-1a72dcc14e001173dcb24401"
+    "id": "search-1a72dcc14e001173dcb24401",
+    "decided_at": "2026-11-06T03:36:30.049566+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "ff821ed860047cd8cb142cb7ead4403d",
@@ -154,11 +175,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "close_negative",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-5bc78ce9e26979ad3fc2710e"
+    "id": "search-5bc78ce9e26979ad3fc2710e",
+    "decided_at": "2026-11-06T03:36:48.860413+00:00",
+    "reviewed_kind": "close_negative",
+    "decision_note": ""
   },
   {
     "trace_id": "675b180f0fdd2e9ead0dec088b18f877",
@@ -173,11 +197,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-e3dc0178c1d6cebee324c71a"
+    "id": "search-e3dc0178c1d6cebee324c71a",
+    "decided_at": "2026-11-06T03:40:11.538637+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "3fd7f61f29490ee8de6830460e16b857",
@@ -194,11 +221,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-66750a45f24a13c0ffe3f2e1"
+    "id": "search-66750a45f24a13c0ffe3f2e1",
+    "decided_at": "2026-11-06T03:40:28.974553+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "f7fac1590b5d3bd7204b90aa434a8111",
@@ -213,11 +243,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-4557c7cb0497d88a5cc90a97"
+    "id": "search-4557c7cb0497d88a5cc90a97",
+    "decided_at": "2026-11-06T03:40:57.680555+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "22ad690aac22a072c766d443a67e32fe",
@@ -232,11 +265,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-fe5b2c2075a4b7392bbcbad7"
+    "id": "search-fe5b2c2075a4b7392bbcbad7",
+    "decided_at": "2026-11-06T03:58:32.059481+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "d56cca16b6b91d06acbfd0294c96d09a",
@@ -251,11 +287,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-be458835928b94343964c16b"
+    "id": "search-be458835928b94343964c16b",
+    "decided_at": "2026-11-06T03:41:39.864797+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": ""
   },
   {
     "trace_id": "4f1672d13363796af31a4ef0ffe5ba81",
@@ -270,11 +309,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-5e31a2e905f8f9b706a511c2"
+    "id": "search-5e31a2e905f8f9b706a511c2",
+    "decided_at": "2026-11-06T03:42:17.893018+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": "different issue; forgot to call tool"
   },
   {
     "trace_id": "f0371f2043a76905dfff1c3d06d359c3",
@@ -292,11 +334,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-86df0650b9b4bf470abf2e96"
+    "id": "search-86df0650b9b4bf470abf2e96",
+    "decided_at": "2026-11-06T03:42:48.042988+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": ""
   },
   {
     "trace_id": "56126eff83a88f5c06f30dafa4d3db29",
@@ -314,11 +359,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.615272+00:00",
-    "id": "search-25712066d1d3c801870db4d2"
+    "id": "search-25712066d1d3c801870db4d2",
+    "decided_at": "2026-11-06T03:42:56.201057+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": ""
   },
   {
     "trace_id": "ed1a59b159b373d2054d783fe3061b89",
@@ -335,11 +383,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.617591+00:00",
-    "id": "search-b0056c53abf3d698e6684e9c"
+    "id": "search-b0056c53abf3d698e6684e9c",
+    "decided_at": "2026-11-06T03:58:22.927906+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": ""
   },
   {
     "trace_id": "345479891268905dcbabe83f8fc05da3",
@@ -354,11 +405,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.617591+00:00",
-    "id": "search-1f7901221ecc90a8d1d05ba6"
+    "id": "search-1f7901221ecc90a8d1d05ba6",
+    "decided_at": "2026-11-06T03:58:56.017573+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "8d4391f78b2e3a754c1f00d7d5b00aae",
@@ -376,11 +430,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "close_negative",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.617591+00:00",
-    "id": "search-b01179096fd3166c279f18bf"
+    "id": "search-b01179096fd3166c279f18bf",
+    "decided_at": "2026-11-06T03:58:49.053945+00:00",
+    "reviewed_kind": "close_negative",
+    "decision_note": ""
   },
   {
     "trace_id": "22ae4087cba97376142611627587c08d",
@@ -398,11 +455,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "close_negative",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.617591+00:00",
-    "id": "search-0a5bfed4747627833c7221dc"
+    "id": "search-0a5bfed4747627833c7221dc",
+    "decided_at": "2026-11-06T03:59:18.471750+00:00",
+    "reviewed_kind": "close_negative",
+    "decision_note": ""
   },
   {
     "trace_id": "78b934eb29ea2e85d46e4634bee0b465",
@@ -417,11 +477,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.617591+00:00",
-    "id": "search-9e2167c9bc07c8eb2271905b"
+    "id": "search-9e2167c9bc07c8eb2271905b",
+    "decided_at": "2026-11-06T03:59:40.199780+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": ""
   },
   {
     "trace_id": "64972071022840a62b1c9168ce83b5f7",
@@ -438,11 +501,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.617591+00:00",
-    "id": "search-8917d338eae26d8e6913e494"
+    "id": "search-8917d338eae26d8e6913e494",
+    "decided_at": "2026-11-06T03:59:52.647727+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "169295f30173d374a365bdf693915382",
@@ -459,11 +525,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.617591+00:00",
-    "id": "search-b2c7903bc2db769f587611a2"
+    "id": "search-b2c7903bc2db769f587611a2",
+    "decided_at": "2026-11-06T04:00:50.972176+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "cb744021927ca64ea133432351888238",
@@ -481,11 +550,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.617591+00:00",
-    "id": "search-c2466ce1d868875da44b11a7"
+    "id": "search-c2466ce1d868875da44b11a7",
+    "decided_at": "2026-11-06T04:01:30.484726+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": "different issue"
   },
   {
     "trace_id": "87927afc132da586bd49ddde5b14e334",
@@ -503,11 +575,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.617591+00:00",
-    "id": "search-b43922ee6f3b8e706387d66c"
+    "id": "search-b43922ee6f3b8e706387d66c",
+    "decided_at": "2026-11-06T04:01:56.107117+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": "different error"
   },
   {
     "trace_id": "c5387b84ce7aa30dba7c227f4436ba9e",
@@ -525,11 +600,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.618377+00:00",
-    "id": "search-4a770c31e2cd75712f745cae"
+    "id": "search-4a770c31e2cd75712f745cae",
+    "decided_at": "2026-11-06T04:01:56.106036+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": "different error"
   },
   {
     "trace_id": "de952e3a7e2c6b79c45a328e3b506eec",
@@ -544,11 +622,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.618377+00:00",
-    "id": "search-c302eed261e94d85d91d8cf3"
+    "id": "search-c302eed261e94d85d91d8cf3",
+    "decided_at": "2026-11-06T04:02:21.629400+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": "different issue"
   },
   {
     "trace_id": "8bb6ca9d7b765d45c15dabbb2b135ecd",
@@ -565,11 +646,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.618377+00:00",
-    "id": "search-d2e8f983687643a86fb759ee"
+    "id": "search-d2e8f983687643a86fb759ee",
+    "decided_at": "2026-11-06T04:02:56.559090+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": "correct date"
   },
   {
     "trace_id": "ea38f0a114885ef7646adb576843b883",
@@ -586,11 +670,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.618377+00:00",
-    "id": "search-9001e63252304e954a67b3c2"
+    "id": "search-9001e63252304e954a67b3c2",
+    "decided_at": "2026-11-06T04:04:00.737775+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": "different issue"
   },
   {
     "trace_id": "ac02a01d824eec4bad87f62f6420e712",
@@ -605,11 +692,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.618377+00:00",
-    "id": "search-40e41a57cdb873b9296e345e"
+    "id": "search-40e41a57cdb873b9296e345e",
+    "decided_at": "2026-11-06T04:04:00.738592+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": "different issue"
   },
   {
     "trace_id": "f4dedbf98cfa59c15b99d041219e9caf",
@@ -624,11 +714,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.618377+00:00",
-    "id": "search-32216eb5dba61a831a1f08e4"
+    "id": "search-32216eb5dba61a831a1f08e4",
+    "decided_at": "2026-11-06T04:04:00.738592+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": "different issue"
   },
   {
     "trace_id": "06ccab479750c7040a015bc5ab174072",
@@ -646,11 +739,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "close_negative",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.618377+00:00",
-    "id": "search-2313e1079951e98a4b4bc992"
+    "id": "search-2313e1079951e98a4b4bc992",
+    "decided_at": "2026-11-06T04:04:13.439156+00:00",
+    "reviewed_kind": "close_negative",
+    "decision_note": ""
   },
   {
     "trace_id": "5caa090add8eeb4ea3cda94ac22f645f",
@@ -665,11 +761,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.618377+00:00",
-    "id": "search-6bd1901bff93cb6b6fb1366b"
+    "id": "search-6bd1901bff93cb6b6fb1366b",
+    "decided_at": "2026-11-06T04:05:23.717549+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "c378d1b584c14a1acd587195a4abd045",
@@ -686,11 +785,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.618377+00:00",
-    "id": "search-14ac0be5167f656a22f6aa0a"
+    "id": "search-14ac0be5167f656a22f6aa0a",
+    "decided_at": "2026-11-06T04:05:16.876293+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "6481d9e985d9edf894e3ae7dcd79137d",
@@ -707,11 +809,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.618377+00:00",
-    "id": "search-ad80c229d09848a682756db1"
+    "id": "search-ad80c229d09848a682756db1",
+    "decided_at": "2026-11-06T04:05:43.936676+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "555bdff704eb66a1e89f77cf8ec0a782",
@@ -728,11 +833,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.619913+00:00",
-    "id": "search-3a63475214d058063c6c2ca6"
+    "id": "search-3a63475214d058063c6c2ca6",
+    "decided_at": "2026-11-06T04:06:07.817852+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": "count is included in results"
   },
   {
     "trace_id": "ae652a7fd903859fb3a69c96fc73ae33",
@@ -750,11 +858,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "close_negative",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.619913+00:00",
-    "id": "search-3b12e7f01f84a5d6fdd71972"
+    "id": "search-3b12e7f01f84a5d6fdd71972",
+    "decided_at": "2026-11-06T04:06:39.323228+00:00",
+    "reviewed_kind": "close_negative",
+    "decision_note": ""
   },
   {
     "trace_id": "9b4b64675fcd1c6b68e96b48b1bffec3",
@@ -771,11 +882,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "close_negative",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.619913+00:00",
-    "id": "search-89414a5e9780f20d15a21b68"
+    "id": "search-89414a5e9780f20d15a21b68",
+    "decided_at": "2026-11-06T04:06:42.256168+00:00",
+    "reviewed_kind": "close_negative",
+    "decision_note": ""
   },
   {
     "trace_id": "06092d1300b1b2b6810245361e23b67a",
@@ -792,11 +906,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.619913+00:00",
-    "id": "search-d9f8ed3fac09dd4d441ec914"
+    "id": "search-d9f8ed3fac09dd4d441ec914",
+    "decided_at": "2026-11-06T04:07:34.028760+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "34cb006eede8796b22c9449c1a009341",
@@ -814,11 +931,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.619913+00:00",
-    "id": "search-d5b2d70a8a267752a49fa52b"
+    "id": "search-d5b2d70a8a267752a49fa52b",
+    "decided_at": "2026-11-06T04:06:52.241450+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": ""
   },
   {
     "trace_id": "c742bbe735ad2027c5a0a751a972e528",
@@ -836,11 +956,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.619913+00:00",
-    "id": "search-ba751698e1d861f8542551b0"
+    "id": "search-ba751698e1d861f8542551b0",
+    "decided_at": "2026-11-06T04:06:59.532159+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": ""
   },
   {
     "trace_id": "39f365742429b6b17e351f573c0c7c4c",
@@ -859,11 +982,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.620716+00:00",
-    "id": "search-611bda448b04150e867f123c"
+    "id": "search-611bda448b04150e867f123c",
+    "decided_at": "2026-11-06T04:07:34.029083+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "e16871b00b66ca104a50192de4800f12",
@@ -882,11 +1008,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.620716+00:00",
-    "id": "search-95038dbcdc4e779d1c002d7d"
+    "id": "search-95038dbcdc4e779d1c002d7d",
+    "decided_at": "2026-11-06T04:07:47.427536+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": ""
   },
   {
     "trace_id": "8f30157244eacf40c44f5dd5ff21de44",
@@ -905,11 +1034,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "close_negative",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.620716+00:00",
-    "id": "search-d4e790636522942decd8a1b6"
+    "id": "search-d4e790636522942decd8a1b6",
+    "decided_at": "2026-11-06T04:08:21.668845+00:00",
+    "reviewed_kind": "close_negative",
+    "decision_note": "different issue"
   },
   {
     "trace_id": "b4b0cc7ede9fc4a3baa9a9ae96381545",
@@ -928,11 +1060,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.620716+00:00",
-    "id": "search-968f147f15b27bf3fbf71249"
+    "id": "search-968f147f15b27bf3fbf71249",
+    "decided_at": "2026-11-06T04:08:02.914853+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": ""
   },
   {
     "trace_id": "7ca7335c2cff1c446c9c48d9862e9cf6",
@@ -950,11 +1085,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "close_negative",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.620716+00:00",
-    "id": "search-f9b3b8fe5cb28e69bc063d71"
+    "id": "search-f9b3b8fe5cb28e69bc063d71",
+    "decided_at": "2026-11-06T04:09:36.645036+00:00",
+    "reviewed_kind": "close_negative",
+    "decision_note": ""
   },
   {
     "trace_id": "0dda7277a894f4a53312e9771b39b1a8",
@@ -972,11 +1110,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.620716+00:00",
-    "id": "search-fdcf5bbcc9d3c4e33cd3b17c"
+    "id": "search-fdcf5bbcc9d3c4e33cd3b17c",
+    "decided_at": "2026-11-06T04:09:21.067924+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "f5724258b5d727faf8227c5e36ac2495",
@@ -994,11 +1135,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.620716+00:00",
-    "id": "search-1f263fba77dd77d56bc8435a"
+    "id": "search-1f263fba77dd77d56bc8435a",
+    "decided_at": "2026-11-06T04:09:21.066917+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "1b6025e42631b8bf6672285bc7d4ed81",
@@ -1016,11 +1160,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "close_negative",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.620716+00:00",
-    "id": "search-d1162a31a3d3fe008fe3f8ee"
+    "id": "search-d1162a31a3d3fe008fe3f8ee",
+    "decided_at": "2026-11-06T04:09:59.928247+00:00",
+    "reviewed_kind": "close_negative",
+    "decision_note": ""
   },
   {
     "trace_id": "ad8c8972f4fd07ab0c1f201a63ded8a3",
@@ -1038,11 +1185,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.620716+00:00",
-    "id": "search-f33b128159a7c129c763ebce"
+    "id": "search-f33b128159a7c129c763ebce",
+    "decided_at": "2026-11-06T04:08:47.132395+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "1c47899a6556e9393e2caf4055f76d4e",
@@ -1060,11 +1210,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.620716+00:00",
-    "id": "search-0a8d22b8e9b020dc9fb4f2a7"
+    "id": "search-0a8d22b8e9b020dc9fb4f2a7",
+    "decided_at": "2026-11-06T04:08:38.132348+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "927a5dd74184e53b95350af29d3675a2",
@@ -1082,11 +1235,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.620716+00:00",
-    "id": "search-7265e0ff108084a47f93cb6d"
+    "id": "search-7265e0ff108084a47f93cb6d",
+    "decided_at": "2026-11-06T04:08:30.323049+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "97d4f4f6a7b0dccd518908240f2939a6",
@@ -1104,11 +1260,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.622245+00:00",
-    "id": "search-a0349ad24fbe33c3f09541cd"
+    "id": "search-a0349ad24fbe33c3f09541cd",
+    "decided_at": "2026-11-06T04:08:42.765208+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "18289a2e63e9286ced0e1431fd9d68b4",
@@ -1126,11 +1285,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "rejected",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.622245+00:00",
-    "id": "search-02ab9c7284f1be9a1165b5f9"
+    "id": "search-02ab9c7284f1be9a1165b5f9",
+    "decided_at": "2026-11-06T04:08:51.836132+00:00",
+    "reviewed_kind": "negative",
+    "decision_note": ""
   },
   {
     "trace_id": "f7d07a953dc900c452a03cad5a732cec",
@@ -1148,11 +1310,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.622245+00:00",
-    "id": "search-5896f679c8d8aecf433ecac5"
+    "id": "search-5896f679c8d8aecf433ecac5",
+    "decided_at": "2026-11-06T04:08:55.569146+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "28f16ba5cdf95202de80e97575b08fb4",
@@ -1170,11 +1335,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.622245+00:00",
-    "id": "search-80dc52a64141a78edc691ef8"
+    "id": "search-80dc52a64141a78edc691ef8",
+    "decided_at": "2026-11-06T04:08:59.539004+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "7f9d24750e3c80a1857caff169812c98",
@@ -1192,11 +1360,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.622245+00:00",
-    "id": "search-29ee3f503166e632ccea0a6a"
+    "id": "search-29ee3f503166e632ccea0a6a",
+    "decided_at": "2026-11-06T04:10:07.839007+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "996da89cf6476bc43d7215c40eae0ffb",
@@ -1214,11 +1385,14 @@
     "mode": "unsupported_operational_claim",
     "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
     "taxonomy_assignment": true,
-    "status": "pending",
+    "status": "accepted",
     "source": "local_agent_evidence_review",
     "search_id": "operational_claim_f1c9e3e2cf494b92bd049543af8c270f",
     "created_at": "2026-11-06T03:23:33.622245+00:00",
-    "id": "search-d832057b7ee355fa957a11c1"
+    "id": "search-d832057b7ee355fa957a11c1",
+    "decided_at": "2026-11-06T04:10:07.839333+00:00",
+    "reviewed_kind": "positive",
+    "decision_note": ""
   },
   {
     "trace_id": "7115ba3d3bcb6fc110a28a24e05b2d74",

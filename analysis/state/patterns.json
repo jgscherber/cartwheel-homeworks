@@ -22,7 +22,35 @@
         "fa233884-f36d-4570-93d4-d894982e2743",
         "b4a92ae2-4ad6-4962-bceb-42856705e996",
         "2ba4c8a0-18fa-464d-b063-da9ebbc4fd46",
-        "6a3ef848-7fe9-4987-9d8d-e3a377f0d966"
+        "6a3ef848-7fe9-4987-9d8d-e3a377f0d966",
+        "suggestion:search-8983011fa007ebff3745d6e9",
+        "suggestion:search-e08d66bf819e880b00f8552c",
+        "suggestion:search-42d2ab9f86a41d274e69dd80",
+        "suggestion:search-06992b8b770b1a7aaf311285",
+        "suggestion:search-4274d3b7cc744fda2b173166",
+        "suggestion:search-1a72dcc14e001173dcb24401",
+        "suggestion:search-e3dc0178c1d6cebee324c71a",
+        "suggestion:search-66750a45f24a13c0ffe3f2e1",
+        "suggestion:search-4557c7cb0497d88a5cc90a97",
+        "suggestion:search-fe5b2c2075a4b7392bbcbad7",
+        "suggestion:search-1f7901221ecc90a8d1d05ba6",
+        "suggestion:search-8917d338eae26d8e6913e494",
+        "suggestion:search-b2c7903bc2db769f587611a2",
+        "suggestion:search-14ac0be5167f656a22f6aa0a",
+        "suggestion:search-6bd1901bff93cb6b6fb1366b",
+        "suggestion:search-ad80c229d09848a682756db1",
+        "suggestion:search-d9f8ed3fac09dd4d441ec914",
+        "suggestion:search-611bda448b04150e867f123c",
+        "suggestion:search-7265e0ff108084a47f93cb6d",
+        "suggestion:search-0a8d22b8e9b020dc9fb4f2a7",
+        "suggestion:search-a0349ad24fbe33c3f09541cd",
+        "suggestion:search-f33b128159a7c129c763ebce",
+        "suggestion:search-5896f679c8d8aecf433ecac5",
+        "suggestion:search-80dc52a64141a78edc691ef8",
+        "suggestion:search-1f263fba77dd77d56bc8435a",
+        "suggestion:search-fdcf5bbcc9d3c4e33cd3b17c",
+        "suggestion:search-29ee3f503166e632ccea0a6a",
+        "suggestion:search-d832057b7ee355fa957a11c1"
       ],
       "examples": [
         {
@@ -146,6 +174,1224 @@
           "status": "pending",
           "source": "agent_proposal",
           "rationale": "Proposed boundary example from a human-reviewed trace; other modes may still be present."
+        },
+        {
+          "id": "suggestion:search-8983011fa007ebff3745d6e9",
+          "trace_id": "21c7544fe470ab7e4b7dd32dbd9953c8",
+          "annotation_id": "suggestion:search-8983011fa007ebff3745d6e9",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Queued refund is expanded into an unrecorded customer-notification workflow.",
+          "suggestion_id": "search-8983011fa007ebff3745d6e9",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:35:24.406231+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-e08d66bf819e880b00f8552c",
+          "trace_id": "6edd2566fed863bc28953b13557df0a6",
+          "annotation_id": "suggestion:search-e08d66bf819e880b00f8552c",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Cancelled status does not report payment charging or reversal state.",
+          "suggestion_id": "search-e08d66bf819e880b00f8552c",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:35:24.406627+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-1e0ebd5d21cf1c4eec9472c4",
+          "trace_id": "bc5c579c67e10b74a3d848deb57ae923",
+          "annotation_id": "suggestion:search-1e0ebd5d21cf1c4eec9472c4",
+          "kind": "close_negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Successful cancellation is upgraded to an unsupported refund-processing prediction.",
+          "suggestion_id": "search-1e0ebd5d21cf1c4eec9472c4",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "close_negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:35:38.014159+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-42d2ab9f86a41d274e69dd80",
+          "trace_id": "edea47ed85f4609ca108c01bc010cf38",
+          "annotation_id": "suggestion:search-42d2ab9f86a41d274e69dd80",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Cancellation does not establish a refund event or this specific arrival timeline.",
+          "suggestion_id": "search-42d2ab9f86a41d274e69dd80",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:36:30.048566+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-06992b8b770b1a7aaf311285",
+          "trace_id": "1b81689cdebbc7dfcdf705dc5274994f",
+          "annotation_id": "suggestion:search-06992b8b770b1a7aaf311285",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The earlier cancellation is real; no refund or this arrival time is recorded.",
+          "suggestion_id": "search-06992b8b770b1a7aaf311285",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:36:30.049566+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-4274d3b7cc744fda2b173166",
+          "trace_id": "d0f01859121e67aaf219a5a0bcfe0f54",
+          "annotation_id": "suggestion:search-4274d3b7cc744fda2b173166",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "A recorded cancellation is turned into billing/refund-timing guarantees.",
+          "suggestion_id": "search-4274d3b7cc744fda2b173166",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:36:30.049566+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-1a72dcc14e001173dcb24401",
+          "trace_id": "25f62f1830082ff622988924cb593970",
+          "annotation_id": "suggestion:search-1a72dcc14e001173dcb24401",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The cancellation tool changes order status, not recorded payment state.",
+          "suggestion_id": "search-1a72dcc14e001173dcb24401",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:36:30.049566+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-5bc78ce9e26979ad3fc2710e",
+          "trace_id": "ff821ed860047cd8cb142cb7ead4403d",
+          "annotation_id": "suggestion:search-5bc78ce9e26979ad3fc2710e",
+          "kind": "close_negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "A cancelled order is treated as if an approved refund exists.",
+          "suggestion_id": "search-5bc78ce9e26979ad3fc2710e",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "close_negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:36:48.860056+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-e3dc0178c1d6cebee324c71a",
+          "trace_id": "675b180f0fdd2e9ead0dec088b18f877",
+          "annotation_id": "suggestion:search-e3dc0178c1d6cebee324c71a",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant invents an account restriction; get_order returns placed, null shipped_at, and refund_eligible:false, not a restriction flag. SPEC cancel_order requires placed status, not refund eligibility.",
+          "suggestion_id": "search-e3dc0178c1d6cebee324c71a",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:40:11.538637+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-66750a45f24a13c0ffe3f2e1",
+          "trace_id": "3fd7f61f29490ee8de6830460e16b857",
+          "annotation_id": "suggestion:search-66750a45f24a13c0ffe3f2e1",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The successful cancellation does not report payment charging state.",
+          "suggestion_id": "search-66750a45f24a13c0ffe3f2e1",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:40:28.974553+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-4557c7cb0497d88a5cc90a97",
+          "trace_id": "f7fac1590b5d3bd7204b90aa434a8111",
+          "annotation_id": "suggestion:search-4557c7cb0497d88a5cc90a97",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Cancelled status and null shipment dates do not establish inventory reconciliation or absence of inventory issues.",
+          "suggestion_id": "search-4557c7cb0497d88a5cc90a97",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:40:57.680555+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-be458835928b94343964c16b",
+          "trace_id": "d56cca16b6b91d06acbfd0294c96d09a",
+          "annotation_id": "suggestion:search-be458835928b94343964c16b",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply asserts account-dependent payout timing; available payout policy supplies fixed Friday runs and two-business-day processing.",
+          "suggestion_id": "search-be458835928b94343964c16b",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:41:39.864797+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-5e31a2e905f8f9b706a511c2",
+          "trace_id": "4f1672d13363796af31a4ef0ffe5ba81",
+          "annotation_id": "suggestion:search-5e31a2e905f8f9b706a511c2",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Immediate ticket creation is converted into an unsupported immediate-human-review promise.",
+          "suggestion_id": "search-5e31a2e905f8f9b706a511c2",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:42:17.893018+00:00",
+              "source": "human",
+              "note": "different issue; forgot to call tool"
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-86df0650b9b4bf470abf2e96",
+          "trace_id": "f0371f2043a76905dfff1c3d06d359c3",
+          "annotation_id": "suggestion:search-86df0650b9b4bf470abf2e96",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply resolves an unspecified process boundary in favor of initiation by the cutoff.",
+          "suggestion_id": "search-86df0650b9b4bf470abf2e96",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:42:48.042988+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-25712066d1d3c801870db4d2",
+          "trace_id": "56126eff83a88f5c06f30dafa4d3db29",
+          "annotation_id": "suggestion:search-25712066d1d3c801870db4d2",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant categorically states initiation suffices despite policy not specifying initiation versus returned-item receipt.",
+          "suggestion_id": "search-25712066d1d3c801870db4d2",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:42:56.201057+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-b0056c53abf3d698e6684e9c",
+          "trace_id": "ed1a59b159b373d2054d783fe3061b89",
+          "annotation_id": "suggestion:search-b0056c53abf3d698e6684e9c",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The recorded product search returns identifiers, title and price, not inventory availability; catalog listing is upgraded to in-stock status.",
+          "suggestion_id": "search-b0056c53abf3d698e6684e9c",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:58:22.927906+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-fe5b2c2075a4b7392bbcbad7",
+          "trace_id": "22ad690aac22a072c766d443a67e32fe",
+          "annotation_id": "suggestion:search-fe5b2c2075a4b7392bbcbad7",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply asserts a particular staff-training fact unavailable in recorded context or local policy.",
+          "suggestion_id": "search-fe5b2c2075a4b7392bbcbad7",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:58:32.059481+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-b01179096fd3166c279f18bf",
+          "trace_id": "8d4391f78b2e3a754c1f00d7d5b00aae",
+          "annotation_id": "suggestion:search-b01179096fd3166c279f18bf",
+          "kind": "close_negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Opening a ticket does not establish a correct account-setup outcome.",
+          "suggestion_id": "search-b01179096fd3166c279f18bf",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "close_negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:58:49.053945+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-1f7901221ecc90a8d1d05ba6",
+          "trace_id": "345479891268905dcbabe83f8fc05da3",
+          "annotation_id": "suggestion:search-1f7901221ecc90a8d1d05ba6",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The ticket/dispute policy does not establish this particular documentation, security-check and chargeback-assistance workflow.",
+          "suggestion_id": "search-1f7901221ecc90a8d1d05ba6",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:58:56.017573+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-0a5bfed4747627833c7221dc",
+          "trace_id": "22ae4087cba97376142611627587c08d",
+          "annotation_id": "suggestion:search-0a5bfed4747627833c7221dc",
+          "kind": "close_negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant guarantees a risk-free account-change process without evidence of the process or outcome.",
+          "suggestion_id": "search-0a5bfed4747627833c7221dc",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "close_negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:59:18.471750+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-9e2167c9bc07c8eb2271905b",
+          "trace_id": "78b934eb29ea2e85d46e4634bee0b465",
+          "annotation_id": "suggestion:search-9e2167c9bc07c8eb2271905b",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "A response SLA is converted into a guaranteed completed email modification.",
+          "suggestion_id": "search-9e2167c9bc07c8eb2271905b",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:59:40.199780+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-8917d338eae26d8e6913e494",
+          "trace_id": "64972071022840a62b1c9168ce83b5f7",
+          "annotation_id": "suggestion:search-8917d338eae26d8e6913e494",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The response asserts a technical implementation property of account settings not established in available evidence.",
+          "suggestion_id": "search-8917d338eae26d8e6913e494",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T03:59:52.647727+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-b2c7903bc2db769f587611a2",
+          "trace_id": "169295f30173d374a365bdf693915382",
+          "annotation_id": "suggestion:search-b2c7903bc2db769f587611a2",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant repeats an unrecorded implementation claim about the account-settings connection.",
+          "suggestion_id": "search-b2c7903bc2db769f587611a2",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:00:50.972176+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-c2466ce1d868875da44b11a7",
+          "trace_id": "cb744021927ca64ea133432351888238",
+          "annotation_id": "suggestion:search-c2466ce1d868875da44b11a7",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Actual order deadline applies 30 days despite Meridian Cycles 21-day override. Recorded April 21 delivery plus 21 days gives May 12, 2025.",
+          "suggestion_id": "search-c2466ce1d868875da44b11a7",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:01:30.484726+00:00",
+              "source": "human",
+              "note": "different issue"
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-4a770c31e2cd75712f745cae",
+          "trace_id": "c5387b84ce7aa30dba7c227f4436ba9e",
+          "annotation_id": "suggestion:search-4a770c31e2cd75712f745cae",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply repeats an unsupported actual deadline; April 21 delivery plus 21-day store window is May 12, 2025. It also asserts an initiation cutoff not specified in policy.",
+          "suggestion_id": "search-4a770c31e2cd75712f745cae",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:01:56.105010+00:00",
+              "source": "human",
+              "note": "different error"
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-b43922ee6f3b8e706387d66c",
+          "trace_id": "87927afc132da586bd49ddde5b14e334",
+          "annotation_id": "suggestion:search-b43922ee6f3b8e706387d66c",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant makes an erroneous platform-default date a firm deadline; applicable 21-day store window yields May 12, 2025.",
+          "suggestion_id": "search-b43922ee6f3b8e706387d66c",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:01:56.107117+00:00",
+              "source": "human",
+              "note": "different error"
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-c302eed261e94d85d91d8cf3",
+          "trace_id": "de952e3a7e2c6b79c45a328e3b506eec",
+          "annotation_id": "suggestion:search-c302eed261e94d85d91d8cf3",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The actual deadline conflicts with Saltbox Pantry 7-day window; December 18 delivery plus 7 days gives December 25, 2025.",
+          "suggestion_id": "search-c302eed261e94d85d91d8cf3",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:02:21.628764+00:00",
+              "source": "human",
+              "note": "different issue"
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-d2e8f983687643a86fb759ee",
+          "trace_id": "8bb6ca9d7b765d45c15dabbb2b135ecd",
+          "annotation_id": "suggestion:search-d2e8f983687643a86fb759ee",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Actual deadline conflicts with Juniper Home Goods 14-day override; February 12 delivery plus 14 days gives February 26, 2026.",
+          "suggestion_id": "search-d2e8f983687643a86fb759ee",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:02:56.559090+00:00",
+              "source": "human",
+              "note": "correct date"
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-9001e63252304e954a67b3c2",
+          "trace_id": "ea38f0a114885ef7646adb576843b883",
+          "annotation_id": "suggestion:search-9001e63252304e954a67b3c2",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The follow-up reinforces the incorrect actual deadline instead of Juniper 14 days, which yields February 26, 2026 from February 12 delivery.",
+          "suggestion_id": "search-9001e63252304e954a67b3c2",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:04:00.737775+00:00",
+              "source": "human",
+              "note": "different issue"
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-40e41a57cdb873b9296e345e",
+          "trace_id": "ac02a01d824eec4bad87f62f6420e712",
+          "annotation_id": "suggestion:search-40e41a57cdb873b9296e345e",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Platform-default arithmetic is asserted as the actual order window despite Northwind Books 45-day override; May 28 plus 45 days gives July 12, 2026.",
+          "suggestion_id": "search-40e41a57cdb873b9296e345e",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:04:00.738592+00:00",
+              "source": "human",
+              "note": "different issue"
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-32216eb5dba61a831a1f08e4",
+          "trace_id": "f4dedbf98cfa59c15b99d041219e9caf",
+          "annotation_id": "suggestion:search-32216eb5dba61a831a1f08e4",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant invents a current year and concludes a delivery-based window expired despite delivered_at:null. Purchase age and refund_eligible:false do not supply the missing date.",
+          "suggestion_id": "search-32216eb5dba61a831a1f08e4",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:04:00.738592+00:00",
+              "source": "human",
+              "note": "different issue"
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-2313e1079951e98a4b4bc992",
+          "trace_id": "06ccab479750c7040a015bc5ab174072",
+          "annotation_id": "suggestion:search-2313e1079951e98a4b4bc992",
+          "kind": "close_negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply supplies a specific process/data-population cause for a missing delivery date without evidence of that cause.",
+          "suggestion_id": "search-2313e1079951e98a4b4bc992",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "close_negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:04:13.439156+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-14ac0be5167f656a22f6aa0a",
+          "trace_id": "c378d1b584c14a1acd587195a4abd045",
+          "annotation_id": "suggestion:search-14ac0be5167f656a22f6aa0a",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply guarantees specific catalog/inventory investigation capabilities and outcomes beyond the ticket result.",
+          "suggestion_id": "search-14ac0be5167f656a22f6aa0a",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:05:16.876293+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-6bd1901bff93cb6b6fb1366b",
+          "trace_id": "5caa090add8eeb4ea3cda94ac22f645f",
+          "annotation_id": "suggestion:search-6bd1901bff93cb6b6fb1366b",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant predicts contents of an unprovided order-confirmation email.",
+          "suggestion_id": "search-6bd1901bff93cb6b6fb1366b",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:05:23.717549+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-ad80c229d09848a682756db1",
+          "trace_id": "6481d9e985d9edf894e3ae7dcd79137d",
+          "annotation_id": "suggestion:search-ad80c229d09848a682756db1",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The following recorded bullets assert specialist variant-comparison, stock-count and consolidation tools, absent from ticket evidence or SPEC.",
+          "suggestion_id": "search-ad80c229d09848a682756db1",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:05:43.936676+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-3a63475214d058063c6c2ca6",
+          "trace_id": "555bdff704eb66a1e89f77cf8ec0a782",
+          "annotation_id": "suggestion:search-3a63475214d058063c6c2ca6",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Four returned catalog listings are upgraded to an in-stock assertion; products have no stock count/availability field.",
+          "suggestion_id": "search-3a63475214d058063c6c2ca6",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:06:07.817852+00:00",
+              "source": "human",
+              "note": "count is included in results"
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-3b12e7f01f84a5d6fdd71972",
+          "trace_id": "ae652a7fd903859fb3a69c96fc73ae33",
+          "annotation_id": "suggestion:search-3b12e7f01f84a5d6fdd71972",
+          "kind": "close_negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Response SLA is converted into a guaranteed correct-price answer within that period.",
+          "suggestion_id": "search-3b12e7f01f84a5d6fdd71972",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "close_negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:06:39.323228+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-89414a5e9780f20d15a21b68",
+          "trace_id": "9b4b64675fcd1c6b68e96b48b1bffec3",
+          "annotation_id": "suggestion:search-89414a5e9780f20d15a21b68",
+          "kind": "close_negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant promises a resolved firm price by the response deadline.",
+          "suggestion_id": "search-89414a5e9780f20d15a21b68",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "close_negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:06:42.256168+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-d5b2d70a8a267752a49fa52b",
+          "trace_id": "34cb006eede8796b22c9449c1a009341",
+          "annotation_id": "suggestion:search-d5b2d70a8a267752a49fa52b",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply promises a product-name field/source in order details, though supplied order results provide product_id rather than title.",
+          "suggestion_id": "search-d5b2d70a8a267752a49fa52b",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:06:52.241450+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-ba751698e1d861f8542551b0",
+          "trace_id": "c742bbe735ad2027c5a0a751a972e528",
+          "annotation_id": "suggestion:search-ba751698e1d861f8542551b0",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The follow-up repeats an exact-title retrieval path unsupported by supplied order fields.",
+          "suggestion_id": "search-ba751698e1d861f8542551b0",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:06:59.532159+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-d9f8ed3fac09dd4d441ec914",
+          "trace_id": "06092d1300b1b2b6810245361e23b67a",
+          "annotation_id": "suggestion:search-d9f8ed3fac09dd4d441ec914",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant asserts a separate human pricing-system capability without evidence of that system or an accessible correct price.",
+          "suggestion_id": "search-d9f8ed3fac09dd4d441ec914",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:07:34.028760+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-611bda448b04150e867f123c",
+          "trace_id": "39f365742429b6b17e351f573c0c7c4c",
+          "annotation_id": "suggestion:search-611bda448b04150e867f123c",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Queued-for-approval status is expanded into an unsupported short human-review prediction.",
+          "suggestion_id": "search-611bda448b04150e867f123c",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:07:34.029083+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-95038dbcdc4e779d1c002d7d",
+          "trace_id": "e16871b00b66ca104a50192de4800f12",
+          "annotation_id": "suggestion:search-95038dbcdc4e779d1c002d7d",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "Ticket creation is not proof that a human agent is already assigned; result reports only ok, ticket_id and sla_hours.",
+          "suggestion_id": "search-95038dbcdc4e779d1c002d7d",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:07:47.427536+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-968f147f15b27bf3fbf71249",
+          "trace_id": "b4b0cc7ede9fc4a3baa9a9ae96381545",
+          "annotation_id": "suggestion:search-968f147f15b27bf3fbf71249",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply repeats an assignment claim not independently established by ticket creation.",
+          "suggestion_id": "search-968f147f15b27bf3fbf71249",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:08:02.914853+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-d4e790636522942decd8a1b6",
+          "trace_id": "8f30157244eacf40c44f5dd5ff21de44",
+          "annotation_id": "suggestion:search-d4e790636522942decd8a1b6",
+          "kind": "close_negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply asserts an operational priority flag not returned by the escalation tool.",
+          "suggestion_id": "search-d4e790636522942decd8a1b6",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "close_negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:08:21.668845+00:00",
+              "source": "human",
+              "note": "different issue"
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-7265e0ff108084a47f93cb6d",
+          "trace_id": "927a5dd74184e53b95350af29d3675a2",
+          "annotation_id": "suggestion:search-7265e0ff108084a47f93cb6d",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "A response SLA is falsely treated as proof of assignment and active human review.",
+          "suggestion_id": "search-7265e0ff108084a47f93cb6d",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:08:30.323049+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-0a8d22b8e9b020dc9fb4f2a7",
+          "trace_id": "1c47899a6556e9393e2caf4055f76d4e",
+          "annotation_id": "suggestion:search-0a8d22b8e9b020dc9fb4f2a7",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant invents a specific threat-pattern-detection mechanism/purpose for refund approvals.",
+          "suggestion_id": "search-0a8d22b8e9b020dc9fb4f2a7",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:08:38.132348+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-a0349ad24fbe33c3f09541cd",
+          "trace_id": "97d4f4f6a7b0dccd518908240f2939a6",
+          "annotation_id": "suggestion:search-a0349ad24fbe33c3f09541cd",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply invents reversal/manual-review consequences for attempting an ineligible refund. SPEC issue_refund contract instead rejects an ineligible order with not_eligible.",
+          "suggestion_id": "search-a0349ad24fbe33c3f09541cd",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:08:42.765208+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-f33b128159a7c129c763ebce",
+          "trace_id": "ad8c8972f4fd07ab0c1f201a63ded8a3",
+          "annotation_id": "suggestion:search-f33b128159a7c129c763ebce",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant predicts faster queue treatment based on a chargeback threat without an applicable priority rule or confirmed queue state.",
+          "suggestion_id": "search-f33b128159a7c129c763ebce",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:08:47.132395+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-02ab9c7284f1be9a1165b5f9",
+          "trace_id": "18289a2e63e9286ced0e1431fd9d68b4",
+          "annotation_id": "suggestion:search-02ab9c7284f1be9a1165b5f9",
+          "kind": "negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply guarantees priority treatment based on urgency beyond the recorded response SLA.",
+          "suggestion_id": "search-02ab9c7284f1be9a1165b5f9",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:08:51.836132+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-5896f679c8d8aecf433ecac5",
+          "trace_id": "f7d07a953dc900c452a03cad5a732cec",
+          "annotation_id": "suggestion:search-5896f679c8d8aecf433ecac5",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant supplies an unsupported arrival range conflicting with 5–10-business-day policy.",
+          "suggestion_id": "search-5896f679c8d8aecf433ecac5",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:08:55.569146+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-80dc52a64141a78edc691ef8",
+          "trace_id": "28f16ba5cdf95202de80e97575b08fb4",
+          "annotation_id": "suggestion:search-80dc52a64141a78edc691ef8",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply invents a general merchant-priority rule for escalations.",
+          "suggestion_id": "search-80dc52a64141a78edc691ef8",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:08:59.539004+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-1f263fba77dd77d56bc8435a",
+          "trace_id": "f5724258b5d727faf8227c5e36ac2495",
+          "annotation_id": "suggestion:search-1f263fba77dd77d56bc8435a",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant invents a 3–5-business-day arrival range conflicting with the available 5–10-business-day refund policy.",
+          "suggestion_id": "search-1f263fba77dd77d56bc8435a",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:09:21.066917+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-fdcf5bbcc9d3c4e33cd3b17c",
+          "trace_id": "0dda7277a894f4a53312e9771b39b1a8",
+          "annotation_id": "suggestion:search-fdcf5bbcc9d3c4e33cd3b17c",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant treats human review as guaranteed approval because the order is eligible.",
+          "suggestion_id": "search-fdcf5bbcc9d3c4e33cd3b17c",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:09:21.067924+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-f9b3b8fe5cb28e69bc063d71",
+          "trace_id": "7ca7335c2cff1c446c9c48d9862e9cf6",
+          "annotation_id": "suggestion:search-f9b3b8fe5cb28e69bc063d71",
+          "kind": "close_negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant guarantees completed refund processing within a human response SLA, with no successful refund submission in this session.",
+          "suggestion_id": "search-f9b3b8fe5cb28e69bc063d71",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "close_negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:09:36.645036+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-d1162a31a3d3fe008fe3f8ee",
+          "trace_id": "1b6025e42631b8bf6672285bc7d4ed81",
+          "annotation_id": "suggestion:search-d1162a31a3d3fe008fe3f8ee",
+          "kind": "close_negative",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant predicts quick human approval/review rather than describing an unknown review duration.",
+          "suggestion_id": "search-d1162a31a3d3fe008fe3f8ee",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "close_negative",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:09:59.928247+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-29ee3f503166e632ccea0a6a",
+          "trace_id": "7f9d24750e3c80a1857caff169812c98",
+          "annotation_id": "suggestion:search-29ee3f503166e632ccea0a6a",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The assistant guarantees an automatic refused-delivery return/refund workflow absent from tools/policy.",
+          "suggestion_id": "search-29ee3f503166e632ccea0a6a",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:10:07.839007+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "suggestion:search-d832057b7ee355fa957a11c1",
+          "trace_id": "996da89cf6476bc43d7215c40eae0ffb",
+          "annotation_id": "suggestion:search-d832057b7ee355fa957a11c1",
+          "kind": "positive",
+          "status": "accepted",
+          "reviewed_definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+          "source": "human_reviewed_search",
+          "rationale": "The reply predicts accelerated follow-up using an unconfirmed system priority flag.",
+          "suggestion_id": "search-d832057b7ee355fa957a11c1",
+          "review_history": [
+            {
+              "decision": "accepted",
+              "kind": "positive",
+              "definition": "The assistant asserts or predicts an operational fact, timeline, approval outcome, or fulfillment history that is not supported by the available order, tool, policy, or conversation evidence.",
+              "ts": "2026-11-06T04:10:07.839333+00:00",
+              "source": "human",
+              "note": ""
+            }
+          ]
         }
       ],
       "evidence_caveat": "A missing fresh lookup is not itself a failure. Recheck earlier context and distinguish status implications from unsupported history or guarantees.",
