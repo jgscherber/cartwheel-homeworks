@@ -3,6 +3,10 @@
     {
       "judge_id": "unsupported_operational_claim-v0",
       "prompt_hash": "72c2dfc4a815"
+    },
+    {
+      "judge_id": "unsupported_operational_claim-v1",
+      "prompt_hash": "20d84ce14e3c"
     }
   ]
 }
