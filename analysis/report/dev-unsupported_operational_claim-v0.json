@@ -1,21 +1,21 @@
 {
   "judge_id": "unsupported_operational_claim-v0",
   "split": "dev",
-  "tpr": 0.875,
-  "tnr": 0.1429,
+  "tpr": 0.9,
+  "tnr": 0.1667,
   "tpr_interval": [
-    0.5291,
-    0.9776
+    0.5958,
+    0.9821
   ],
   "tnr_interval": [
-    0.0401,
-    0.3994
+    0.047,
+    0.448
   ],
-  "agreement": 0.4091,
-  "tp": 7,
+  "agreement": 0.5,
+  "tp": 9,
   "fn": 1,
   "tn": 2,
-  "fp": 12,
+  "fp": 10,
   "n": 22,
   "disagreements": [
     "06092d1300b1b2b6810245361e23b67a",
@@ -23,12 +23,10 @@
     "345479891268905dcbabe83f8fc05da3",
     "4fd402be6c11467e41295f8a55351241",
     "7115ba3d3bcb6fc110a28a24e05b2d74",
-    "79c6ba6ff317cf2d566a18d0b9800de7",
     "8b163f48b59ed29740dfb72085060a26",
     "dbf32d3e4a240a246fefdd77e004d36b",
     "ecdb4d3b950ad25aa209a2587a4b8715",
     "f7b1c9096a1465d10f396accf50c637b",
-    "f7d07a953dc900c452a03cad5a732cec",
     "f7fac1590b5d3bd7204b90aa434a8111",
     "ff821ed860047cd8cb142cb7ead4403d"
   ],
@@ -36,7 +34,8 @@
   "model": "gpt-4o-mini",
   "prompt_path": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\analysis\\prompts\\unsupported_operational_claim-v0.md",
   "class_counts": {
-    "Pass": 8,
-    "Fail": 14
-  }
+    "Pass": 10,
+    "Fail": 12
+  },
+  "label_review_updated_at": "2026-11-07T17:07:26.571891+00:00"
 }
