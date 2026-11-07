@@ -179,6 +179,14 @@ Use `gpt-4o-mini` as your judge model. Set your OpenAI API key locally. Use the 
 
 In `analysis/run_judges.py`, write `run_development(mode, prompt_path)`. Register the prompt, run it on development traces, and calculate metrics with the helpers below. Save the judge ID and metrics for each version.
 
+For the implemented CLI, run this command from the repository root. `--env-file .env` loads your locally configured `OPENAI_API_KEY`, and `--yes` approves paid development calls. Replace the mode and prompt path if evaluating a different failure mode or prompt version.
+
+```powershell
+uv run --env-file .env python -m analysis.run_judges develop --mode unsupported_operational_claim --prompt analysis\prompts\unsupported_operational_claim-v0.md --yes
+```
+
+Rerunning this command with the same prompt reuses its registered judge and resumes cached batches.
+
 <details>
 <summary>Helper calls for your coding agent to run your judge on development traces</summary>
 
