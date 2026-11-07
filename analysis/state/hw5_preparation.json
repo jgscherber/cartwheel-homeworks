@@ -1,0 +1,16 @@
+{
+  "mode": "unsupported_operational_claim",
+  "aggregation": "any_human_fail_conversation",
+  "trace_source": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\traces\\support_traces.json",
+  "trace_source_sha256": "98609adb62b5ff8e9074e9b49ed33a6940b9b7ef6db4cc2babbb52e24bd33f0c",
+  "labels_sha256": "66c6af381f7b48a3cf7743f9d7210a94ec44635ff527fae6412f1d630675f70e",
+  "inputs_sha256": "c7c6c0fae985fe5b90c8d68b8375b31e8b1dd9db6a3b29544474b31d2b90fbdf",
+  "related_groups": null,
+  "related_groups_reviewed": false,
+  "labeled_conversations": 56,
+  "independent_inputs": 56,
+  "class_counts": {
+    "Pass": 21,
+    "Fail": 35
+  }
+}

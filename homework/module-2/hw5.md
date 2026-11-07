@@ -111,6 +111,8 @@ With that setting, you use the saved export even when you have Langfuse configur
 
 Use `validate-evaluator` for the split. In `analysis/run_judges.py`, write a `split_data(mode)` function using `split_labels`. Use 20% training, 40% development, and 40% test. Run it once and check the class counts before choosing prompt examples.
 
+`mode` is the `snake_case` identifier of the single Homework 4 failure mode you are evaluating, such as `unsupported_operational_claim`. It selects the labels in `analysis\state\hw5_labels\<mode>.jsonl` and the matching mode entry in `analysis\state\splits.json`. It is not the judge model name or a choice between training, development, and test. Use the same mode identifier when exporting labels, preparing inputs, splitting data, and registering the judge.
+
 <details>
 <summary>Helper calls for your coding agent to split your labels</summary>
 
