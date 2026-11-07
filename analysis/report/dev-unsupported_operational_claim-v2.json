@@ -1,0 +1,40 @@
+{
+  "judge_id": "unsupported_operational_claim-v2",
+  "split": "dev",
+  "tpr": 0.8,
+  "tnr": 0.25,
+  "tpr_interval": [
+    0.4902,
+    0.9433
+  ],
+  "tnr_interval": [
+    0.0889,
+    0.5323
+  ],
+  "agreement": 0.5,
+  "tp": 8,
+  "fn": 2,
+  "tn": 3,
+  "fp": 9,
+  "n": 22,
+  "disagreements": [
+    "06ccab479750c7040a015bc5ab174072",
+    "2b838b57d7cd82d00ee763b98121a9dc",
+    "4fd402be6c11467e41295f8a55351241",
+    "5caa090add8eeb4ea3cda94ac22f645f",
+    "7115ba3d3bcb6fc110a28a24e05b2d74",
+    "8b163f48b59ed29740dfb72085060a26",
+    "d35248d83ee61503b42a2e2be5b7b072",
+    "dbf32d3e4a240a246fefdd77e004d36b",
+    "de952e3a7e2c6b79c45a328e3b506eec",
+    "ecdb4d3b950ad25aa209a2587a4b8715",
+    "f7fac1590b5d3bd7204b90aa434a8111"
+  ],
+  "mode": "unsupported_operational_claim",
+  "model": "gpt-4o-mini",
+  "prompt_path": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\analysis\\prompts\\unsupported_operational_claim-v2.md",
+  "class_counts": {
+    "Pass": 10,
+    "Fail": 12
+  }
+}
