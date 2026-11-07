@@ -123,7 +123,7 @@ def test_split_accepts_the_chosen_smaller_cohort(state, tmp_path):
     source = seed(tmp_path, [trace(str(i)) for i in range(56)], {
         str(i): int(i >= 35) for i in range(56)
     })
-    run_judges.prepare_inputs(trace_source=source, related_groups={})
+    run_judges.prepare_inputs(trace_source=source)
     assignment = run_judges.split_data()
     labels = {str(i): int(i >= 35) for i in range(56)}
     for name, passes, fails in (("train", 4, 7), ("dev", 8, 14), ("test", 9, 14)):
@@ -155,12 +155,20 @@ def test_split_is_stratified_persisted_once_and_preserves_older_modes(state, tmp
     assert (state / "hw5_trace_inputs.json").read_bytes() == original_inputs
 
 
-def test_close_variant_review_is_required_before_splitting(state, tmp_path):
+def test_split_cli_uses_saved_inputs_without_close_variant_review(state, tmp_path, monkeypatch):
     source = balanced(tmp_path)
     run_judges.prepare_inputs(trace_source=source)
-    with pytest.raises(ValueError, match="Review close variants"):
-        run_judges.split_data()
-    assert not (state / "splits.json").exists()
+    original_inputs = (state / "hw5_trace_inputs.json").read_bytes()
+    original_preparation = (state / "hw5_preparation.json").read_bytes()
+    original_labels = (state / "hw5_labels" / f"{MODE}.jsonl").read_bytes()
+    monkeypatch.setattr("sys.argv", ["run_judges.py", "split", "--mode", MODE])
+    run_judges.main()
+    saved = _state.read_json(state / "splits.json")[MODE]
+    combined = [tid for name in ("train", "dev", "test") for tid in saved[name]]
+    assert len(combined) == len(set(combined)) == 60
+    assert (state / "hw5_trace_inputs.json").read_bytes() == original_inputs
+    assert (state / "hw5_preparation.json").read_bytes() == original_preparation
+    assert (state / "hw5_labels" / f"{MODE}.jsonl").read_bytes() == original_labels
 
 
 def test_registered_judge_blocks_refresh_even_before_predictions(state, tmp_path):

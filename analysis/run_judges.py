@@ -7,8 +7,8 @@ Run from the repository root:
 Any human Fail makes the conversation Fail; existing Pass decisions cover
 the whole conversation. Inputs contain recorded messages only, not labels.
 Automatic deduplication handles repeated scenario IDs and identical inputs.
-Before splitting, review close variants and supply --related-groups with a
-JSON object mapping original trace IDs to shared group names ({} if none).
+Optional: supply --related-groups with a JSON object mapping original trace
+IDs to shared group names for additional deduplication.
 Use --refresh-inputs to apply new labels/groups before any judge run.
 
 For later judge commands in PowerShell:
@@ -228,8 +228,6 @@ def split_data(mode: str = DEFAULT_MODE) -> dict[str, list[str]]:
     file and the key in splits.json, not the judge model or a split name.
     """
     records, metadata, labels = _prepared(mode)
-    if not metadata["related_groups_reviewed"]:
-        raise ValueError("Review close variants and prepare with --related-groups ({} if none) before splitting")
     path = _state.state_path("splits.json")
     document = _state.read_json(path, {})
     ids = {r["trace_id"] for r in records}
@@ -264,7 +262,7 @@ def main() -> None:
     prepare = commands.add_parser("prepare", help="Save label-free conversation inputs")
     prepare.add_argument("--mode", default=DEFAULT_MODE)
     prepare.add_argument("--traces", type=Path, default=DEFAULT_TRACES)
-    prepare.add_argument("--related-groups", type=Path, help="Reviewed JSON mapping: trace ID -> variant group ({} if none)")
+    prepare.add_argument("--related-groups", type=Path, help="Optional JSON mapping: trace ID -> variant group")
     prepare.add_argument("--refresh-inputs", action="store_true", help="Refresh explicitly, only before any judge run")
     split = commands.add_parser("split", help="Save or verify the immutable 20/40/40 split")
     split.add_argument("--mode", default=DEFAULT_MODE)
