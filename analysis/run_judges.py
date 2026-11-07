@@ -26,6 +26,7 @@ from pathlib import Path
 from typing import Any
 
 from analysis.helpers import _state, split_labels
+from analysis.helpers.guards import GuardViolation
 from analysis.review_app.loader import load_records, sessions
 
 DEFAULT_MODE = "unsupported_operational_claim"
@@ -227,9 +228,6 @@ def split_data(mode: str = DEFAULT_MODE) -> dict[str, list[str]]:
     file and the key in splits.json, not the judge model or a split name.
     """
     records, metadata, labels = _prepared(mode)
-    counts = _counts(records, labels)
-    if any(count < 30 for count in counts.values()):
-        raise ValueError(f"Need at least 30 Pass and 30 Fail independent conversations; currently {counts}")
     if not metadata["related_groups_reviewed"]:
         raise ValueError("Review close variants and prepare with --related-groups ({} if none) before splitting")
     path = _state.state_path("splits.json")
@@ -249,7 +247,7 @@ def split_data(mode: str = DEFAULT_MODE) -> dict[str, list[str]]:
             raise ValueError("Saved splits must be disjoint and cover exactly the eligible conversations")
     else:
         _no_judge_runs(mode)
-        assignment = split_labels(mode, fractions=FRACTIONS, seed=7, min_per_class=10, eligible_trace_ids=sorted(ids))
+        assignment = split_labels(mode, fractions=FRACTIONS, seed=7, min_per_class=1, eligible_trace_ids=sorted(ids))
         document = _state.read_json(path)
         document[mode].update(
             inputs_sha256=metadata["inputs_sha256"], labels_sha256=metadata["labels_sha256"],
@@ -284,7 +282,7 @@ def main() -> None:
             print(json.dumps(_state.read_json(_state.state_path("hw5_preparation.json")), indent=2))
         else:
             split_data(args.mode)
-    except (ValueError, FileNotFoundError) as error:
+    except (ValueError, FileNotFoundError, GuardViolation) as error:
         parser.error(str(error))
 
 

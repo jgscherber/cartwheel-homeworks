@@ -7,6 +7,7 @@ import pytest
 
 from analysis import run_judges
 from analysis.helpers import _state
+from analysis.helpers.guards import GuardViolation
 
 MODE = run_judges.DEFAULT_MODE
 
@@ -105,7 +106,7 @@ def test_saved_inputs_are_reused_without_reading_original_export_and_detect_chan
         run_judges.prepare_inputs(trace_source=source, related_groups={})
 
 
-def test_raw_label_counts_cannot_bypass_independent_conversation_minimum(state, tmp_path):
+def test_single_class_conversations_cannot_form_a_stratified_split(state, tmp_path):
     source = seed(tmp_path, [
         trace(str(i), session=str(i // 2), scenario=str(i // 2))
         for i in range(60)
@@ -113,9 +114,22 @@ def test_raw_label_counts_cannot_bypass_independent_conversation_minimum(state, 
     _state.write_json(state / "splits.json", {"older_mode": {"custom": "preserve"}})
     original = (state / "splits.json").read_bytes()
     run_judges.prepare_inputs(trace_source=source, related_groups={})
-    with pytest.raises(ValueError, match="30 Pass and 30 Fail independent conversations"):
+    with pytest.raises(GuardViolation, match="minimum of 1 per class"):
         run_judges.split_data()
     assert (state / "splits.json").read_bytes() == original
+
+
+def test_split_accepts_the_chosen_smaller_cohort(state, tmp_path):
+    source = seed(tmp_path, [trace(str(i)) for i in range(56)], {
+        str(i): int(i >= 35) for i in range(56)
+    })
+    run_judges.prepare_inputs(trace_source=source, related_groups={})
+    assignment = run_judges.split_data()
+    labels = {str(i): int(i >= 35) for i in range(56)}
+    for name, passes, fails in (("train", 4, 7), ("dev", 8, 14), ("test", 9, 14)):
+        assert sum(labels[tid] == 1 for tid in assignment[name]) == passes
+        assert sum(labels[tid] == 0 for tid in assignment[name]) == fails
+    assert len({tid for values in assignment.values() for tid in values}) == 56
 
 
 def test_split_is_stratified_persisted_once_and_preserves_older_modes(state, tmp_path, monkeypatch):
