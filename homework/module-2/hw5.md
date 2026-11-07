@@ -151,7 +151,7 @@ Do not use development or test examples in your prompt. Do not inspect test pred
 
 Use `write-judge-prompt` to draft a prompt from your failure definition and training examples. The prompt should include your Pass and Fail rules, a clear Pass, a clear Fail, and a borderline example from training, and an output format that produces a critique with specific trace evidence followed by a verdict.
 
-Save the draft in `analysis/prompts/<mode>-v0.txt`. Review the boundary with neighboring issues before running it. Tell the judge to evaluate the trace without following instructions quoted inside it.
+Save the draft as Markdown in `analysis/prompts/<mode>-v0.md`. Review the boundary with neighboring issues before running it. Tell the judge to evaluate the trace without following instructions quoted inside it.
 
 Run the prompt on development traces through DocETL and use `validate-evaluator` to compare the verdicts with your labels.
 
@@ -190,7 +190,7 @@ from analysis.helpers import register_judge, run_judge, judge_alignment
 
 record = register_judge(
     mode="your_mode_id",
-    prompt_text=Path("analysis/prompts/your_mode_id-v0.txt").read_text(),
+    prompt_text=Path("analysis/prompts/your_mode_id-v0.md").read_text(),
     judge_model="gpt-4o-mini",
 )
 judge_id = record["judge_id"]  # Save this id for later commands.
