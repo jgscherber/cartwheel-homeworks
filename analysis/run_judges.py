@@ -1,8 +1,9 @@
-r"""HW5 Part B: prepare conversation inputs and save one immutable split.
+r"""HW5: prepare inputs, save one immutable split, and evaluate development.
 
 Run from the repository root:
     uv run python -m analysis.run_judges prepare
     uv run python -m analysis.run_judges split
+    uv run python -m analysis.run_judges develop --mode unsupported_operational_claim --prompt analysis\prompts\unsupported_operational_claim-v0.md --yes
 
 Any human Fail makes the conversation Fail; existing Pass decisions cover
 the whole conversation. Inputs contain recorded messages only, not labels.
@@ -10,6 +11,8 @@ Automatic deduplication handles repeated scenario IDs and identical inputs.
 Optional: supply --related-groups with a JSON object mapping original trace
 IDs to shared group names for additional deduplication.
 Use --refresh-inputs to apply new labels/groups before any judge run.
+Development uses gpt-4o-mini and requires --yes to approve paid calls.
+Rerunning the same prompt resumes its existing judge and cached batches.
 
 For later judge commands in PowerShell:
     $env:CARTWHEEL_JUDGE_TRACE_SOURCE = Join-Path (Get-Location).Path 'analysis\state\hw5_trace_inputs.json'
@@ -25,14 +28,16 @@ import re
 from pathlib import Path
 from typing import Any
 
-from analysis.helpers import _state, split_labels
+from analysis.helpers import _state, judge_alignment, register_judge, run_judge, split_labels
 from analysis.helpers.guards import GuardViolation
+from analysis.helpers.tools import _prompt_hash
 from analysis.review_app.loader import load_records, sessions
 
 DEFAULT_MODE = "unsupported_operational_claim"
 DEFAULT_TRACES = Path("traces") / "support_traces.json"
 MESSAGE_FIELDS = {"role", "text", "name", "arguments", "content"}
 FRACTIONS = (0.20, 0.40, 0.40)
+JUDGE_MODEL = "gpt-4o-mini"
 
 
 def _digest(path: Path) -> str:
@@ -256,6 +261,55 @@ def split_data(mode: str = DEFAULT_MODE) -> dict[str, list[str]]:
     return assignment
 
 
+def _development_ids(mode: str) -> list[str]:
+    if mode not in _state.read_json(_state.state_path("splits.json"), {}):
+        raise ValueError("Run split_data() before development; development does not create a new split")
+    ids = split_data(mode)["dev"]
+    if not ids:
+        raise ValueError("The saved development split is empty")
+    return ids
+
+
+def run_development(mode: str, prompt_path: str | Path) -> dict[str, Any]:
+    """Run an approved development evaluation and save its metrics.
+
+    Uses gpt-4o-mini through the supplied DocETL helpers. An unchanged prompt
+    reuses its registered judge so interrupted runs resume cached batches.
+    Changed prompts register a new version. Inputs and splits stay unchanged.
+    """
+    prompt_path = Path(prompt_path)
+    prompt_text = prompt_path.read_text(encoding="utf-8")
+    if not prompt_text.strip():
+        raise ValueError("The judge prompt cannot be empty")
+    ids = _development_ids(mode)
+    history = _state.read_json(_state.state_path("judges", f"_history_{mode}.json"), {"versions": []})
+    for entry in reversed(history["versions"]):
+        path = _state.state_path("judges", f"{entry['judge_id']}.json")
+        judge = _state.read_json(path)
+        if judge is None:
+            raise FileNotFoundError(f"Registered judge record is missing: {path}")
+        if judge["prompt_text"] == prompt_text and judge["model"] == JUDGE_MODEL:
+            if judge["prompt_hash"] != entry["prompt_hash"] or judge["prompt_hash"] != _prompt_hash(prompt_text, JUDGE_MODEL):
+                raise ValueError("Registered judge prompt/model changed; restore the original judge record")
+            judge_id = entry["judge_id"]
+            break
+    else:
+        record = register_judge(mode=mode, prompt_text=prompt_text, judge_model=JUDGE_MODEL)
+        judge_id = record["judge_id"]
+    print(json.dumps({"judge_id": judge_id, "model": JUDGE_MODEL, "split": "dev", "traces": len(ids)}), flush=True)
+    run_judge(judge_id, split="dev", batch_size=10)
+    development = judge_alignment(judge_id, split="dev")
+    development.update(
+        mode=mode, model=JUDGE_MODEL, prompt_path=str(prompt_path.resolve()),
+        class_counts={"Pass": development["tp"] + development["fn"], "Fail": development["tn"] + development["fp"]},
+    )
+    report_path = _state.state_root().parent / "report" / f"dev-{judge_id}.json"
+    _state.write_json(report_path, development)
+    print(json.dumps(development, indent=2))
+    print(f"Saved development metrics: {report_path}")
+    return development
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -266,6 +320,10 @@ def main() -> None:
     prepare.add_argument("--refresh-inputs", action="store_true", help="Refresh explicitly, only before any judge run")
     split = commands.add_parser("split", help="Save or verify the immutable 20/40/40 split")
     split.add_argument("--mode", default=DEFAULT_MODE)
+    develop = commands.add_parser("develop", help="Run or resume development batches and save metrics")
+    develop.add_argument("--mode", default=DEFAULT_MODE)
+    develop.add_argument("--prompt", type=Path, required=True, help="Markdown judge prompt")
+    develop.add_argument("--yes", action="store_true", help="Approve paid gpt-4o-mini development calls")
     args = parser.parse_args()
     try:
         if args.command == "prepare":
@@ -278,8 +336,13 @@ def main() -> None:
                     raise ValueError("Reviewed variant groups must be a JSON object")
             prepare_inputs(args.mode, args.traces, related_groups=groups, refresh=args.refresh_inputs)
             print(json.dumps(_state.read_json(_state.state_path("hw5_preparation.json")), indent=2))
-        else:
+        elif args.command == "split":
             split_data(args.mode)
+        else:
+            if not args.yes:
+                ids = _development_ids(args.mode)
+                parser.error(f"Development uses {JUDGE_MODEL} on {len(ids)} development traces; add --yes to approve paid calls")
+            run_development(args.mode, args.prompt)
     except (ValueError, FileNotFoundError, GuardViolation) as error:
         parser.error(str(error))
 

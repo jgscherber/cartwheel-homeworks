@@ -6,7 +6,7 @@ from unittest.mock import Mock
 import pytest
 
 from analysis import run_judges
-from analysis.helpers import _state
+from analysis.helpers import _state, scale
 from analysis.helpers.guards import GuardViolation
 
 MODE = run_judges.DEFAULT_MODE
@@ -186,3 +186,140 @@ def test_invalid_labels_do_not_create_judge_inputs(state, tmp_path):
     with pytest.raises(ValueError, match="integer Pass=1"):
         run_judges.prepare_inputs(trace_source=source)
     assert not (state / "hw5_trace_inputs.json").exists()
+
+
+def test_development_saves_metrics_critiques_and_reuses_or_versions_prompts(state, tmp_path, monkeypatch):
+    source = balanced(tmp_path)
+    run_judges.prepare_inputs(trace_source=source)
+    assignment = run_judges.split_data()
+    preserved = {path: path.read_bytes() for path in (
+        state / "splits.json", state / "hw5_trace_inputs.json",
+        state / "hw5_preparation.json", state / "hw5_labels" / f"{MODE}.jsonl",
+    )}
+    labels = {str(i): int(i >= 30) for i in range(60)}
+    flipped = {next(tid for tid in assignment["dev"] if labels[tid] == value) for value in (0, 1)}
+    calls = []
+
+    def classify(prompt, model, ids):
+        assert model == "gpt-4o-mini"
+        assert set(ids) <= set(assignment["dev"])
+        calls.append(list(ids))
+        batch = scale.JudgeBatch()
+        for tid in ids:
+            batch[tid] = 1 - labels[tid] if tid in flipped else labels[tid]
+            batch.critiques[tid] = f"Recorded evidence for request {tid}."
+        return batch
+
+    monkeypatch.setattr(scale, "classify_store", classify)
+    prompt = tmp_path / "mode-v0.md"
+    prompt.write_text("Initial judge prompt.", encoding="utf-8")
+    result = run_judges.run_development(MODE, prompt)
+    assert (result["tp"], result["fn"], result["tn"], result["fp"]) == (11, 1, 11, 1)
+    assert result["tpr"] == result["tnr"] == 0.9167
+    assert result["class_counts"] == {"Pass": 12, "Fail": 12}
+    assert set(result["disagreements"]) == flipped
+    for rate in ("tpr", "tnr"):
+        low, high = result[f"{rate}_interval"]
+        assert 0 < low < result[rate] < high < 1
+    assert [len(ids) for ids in calls] == [10, 10, 4]
+    report_path = tmp_path / "report" / f"dev-{result['judge_id']}.json"
+    assert _state.read_json(report_path) == result
+    judge = _state.read_json(state / "judges" / f"{result['judge_id']}.json")
+    assert set(judge["predictions"][judge["prompt_hash"]]) == set(assignment["dev"])
+    assert set(judge["critiques"][judge["prompt_hash"]]) == set(assignment["dev"])
+    assert run_judges.run_development(MODE, prompt)["judge_id"] == result["judge_id"]
+    assert len(calls) == 3
+    original_report = report_path.read_bytes()
+    revised_prompt = tmp_path / "mode-v1.md"
+    revised_prompt.write_text("Revised judge prompt.", encoding="utf-8")
+    revised = run_judges.run_development(MODE, revised_prompt)
+    assert revised["judge_id"] != result["judge_id"]
+    assert report_path.read_bytes() == original_report
+    assert len(_state.read_json(state / "judges" / f"_history_{MODE}.json")["versions"]) == 2
+    assert all(path.read_bytes() == content for path, content in preserved.items())
+
+
+def test_interrupted_development_resumes_same_judge_and_only_missing_batches(state, tmp_path, monkeypatch):
+    source = balanced(tmp_path)
+    run_judges.prepare_inputs(trace_source=source)
+    assignment = run_judges.split_data()
+    prompt = tmp_path / "mode-v0.md"
+    prompt.write_text("Initial judge prompt.", encoding="utf-8")
+    calls = []
+
+    def classify(prompt, model, ids):
+        calls.append(list(ids))
+        if len(calls) == 2:
+            raise RuntimeError("Interrupted development batch")
+        return {tid: int(int(tid) >= 30) for tid in ids}
+
+    monkeypatch.setattr(scale, "classify_store", classify)
+    with pytest.raises(RuntimeError, match="Interrupted development batch"):
+        run_judges.run_development(MODE, prompt)
+    history = _state.read_json(state / "judges" / f"_history_{MODE}.json")
+    judge_id = history["versions"][0]["judge_id"]
+    assert not (tmp_path / "report" / f"dev-{judge_id}.json").exists()
+    result = run_judges.run_development(MODE, prompt)
+    assert result["judge_id"] == judge_id
+    assert result["n"] == len(assignment["dev"])
+    assert result["tpr"] == result["tnr"] == 1
+    assert not (set(calls[0]) & {tid for batch in calls[2:] for tid in batch})
+    assert _state.read_json(state / "judges" / f"_history_{MODE}.json") == history
+
+
+@pytest.mark.parametrize("problem", ["missing_split", "changed_inputs", "changed_split", "empty_prompt", "changed_judge"])
+def test_development_rejects_invalid_inputs_before_registration_or_calls(state, tmp_path, monkeypatch, problem):
+    source = balanced(tmp_path)
+    run_judges.prepare_inputs(trace_source=source)
+    prompt = tmp_path / "mode-v0.md"
+    prompt.write_text("Initial judge prompt.", encoding="utf-8")
+    if problem != "missing_split":
+        run_judges.split_data()
+    if problem == "changed_inputs":
+        path = state / "hw5_trace_inputs.json"
+        inputs = _state.read_json(path)
+        inputs[0]["trace"][0]["text"] = "Changed input."
+        _state.write_json(path, inputs)
+    elif problem == "changed_split":
+        path = state / "splits.json"
+        saved = _state.read_json(path)
+        saved[MODE]["dev"].reverse()
+        _state.write_json(path, saved)
+    elif problem == "empty_prompt":
+        prompt.write_text(" \n", encoding="utf-8")
+    elif problem == "changed_judge":
+        record = run_judges.register_judge(MODE, prompt.read_text(), run_judges.JUDGE_MODEL)
+        path = state / "judges" / f"{record['judge_id']}.json"
+        judge = _state.read_json(path)
+        judge["prompt_text"] = "Tampered judge prompt."
+        _state.write_json(path, judge)
+        prompt.write_text(judge["prompt_text"], encoding="utf-8")
+    register = Mock(side_effect=AssertionError("Must not register a judge"))
+    backend = Mock(side_effect=AssertionError("Must not call a model"))
+    monkeypatch.setattr(run_judges, "register_judge", register)
+    monkeypatch.setattr(scale, "classify_store", backend)
+    with pytest.raises(ValueError):
+        run_judges.run_development(MODE, prompt)
+    register.assert_not_called()
+    backend.assert_not_called()
+
+
+def test_development_cli_requires_paid_call_approval(state, tmp_path, monkeypatch, capsys):
+    source = balanced(tmp_path)
+    run_judges.prepare_inputs(trace_source=source)
+    run_judges.split_data()
+    prompt = tmp_path / "mode-v0.md"
+    prompt.write_text("Initial judge prompt.", encoding="utf-8")
+    run = Mock()
+    monkeypatch.setattr(run_judges, "run_development", run)
+    args = ["run_judges.py", "develop", "--mode", MODE, "--prompt", str(prompt)]
+    monkeypatch.setattr("sys.argv", args)
+    with pytest.raises(SystemExit) as error:
+        run_judges.main()
+    assert error.value.code == 2
+    assert "gpt-4o-mini on 24 development traces" in capsys.readouterr().err
+    run.assert_not_called()
+    assert not (state / "judges").exists()
+    monkeypatch.setattr("sys.argv", args + ["--yes"])
+    run_judges.main()
+    run.assert_called_once_with(MODE, prompt)
