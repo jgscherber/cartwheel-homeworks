@@ -1,0 +1,37 @@
+{
+  "judge_id": "unsupported_operational_claim-v3",
+  "split": "dev",
+  "tpr": 0.8,
+  "tnr": 0.5,
+  "tpr_interval": [
+    0.4902,
+    0.9433
+  ],
+  "tnr_interval": [
+    0.2538,
+    0.7462
+  ],
+  "agreement": 0.6364,
+  "tp": 8,
+  "fn": 2,
+  "tn": 6,
+  "fp": 6,
+  "n": 22,
+  "disagreements": [
+    "06092d1300b1b2b6810245361e23b67a",
+    "2b838b57d7cd82d00ee763b98121a9dc",
+    "56126eff83a88f5c06f30dafa4d3db29",
+    "5caa090add8eeb4ea3cda94ac22f645f",
+    "7115ba3d3bcb6fc110a28a24e05b2d74",
+    "ecdb4d3b950ad25aa209a2587a4b8715",
+    "f7d07a953dc900c452a03cad5a732cec",
+    "f7fac1590b5d3bd7204b90aa434a8111"
+  ],
+  "mode": "unsupported_operational_claim",
+  "model": "gpt-4o-mini",
+  "prompt_path": "C:\\Repos\\AI-evals-course\\cartwheel-homeworks\\analysis\\prompts\\unsupported_operational_claim-v3.md",
+  "class_counts": {
+    "Pass": 10,
+    "Fail": 12
+  }
+}
