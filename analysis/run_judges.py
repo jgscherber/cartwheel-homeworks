@@ -30,6 +30,7 @@ from typing import Any
 
 from analysis.helpers import _state, judge_alignment, register_judge, run_judge, split_labels
 from analysis.helpers.guards import GuardViolation
+from analysis.helpers.hw5 import label_rows
 from analysis.helpers.tools import _prompt_hash
 from analysis.review_app.loader import load_records, sessions
 
@@ -55,7 +56,7 @@ def _labels(mode: str) -> dict[str, int]:
     if not path.exists():
         raise FileNotFoundError(f"Export HW5 human labels first: {path}")
     current = {}
-    for row in _state.read_jsonl(path):
+    for row in label_rows(_state.state_root(), mode):
         if row.get("superseded_by"):
             continue
         if not isinstance(row.get("trace_id"), str) or not row["trace_id"]:

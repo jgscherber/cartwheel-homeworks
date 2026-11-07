@@ -79,6 +79,14 @@ th, td { padding: 10px; border: 1px solid var(--line); text-align: left; vertica
 .graph a { cursor: pointer; }
 .suggestion-row { border-left: 3px dashed #6d28d9; }
 .suggestion-rationale { background: #f3eef9; border-left-color: #6d28d9; }
+.development-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.development-human, .development-judge { padding: 14px; border: 1px solid var(--line); }
+.development-human { background: #fff8d5; border-left: 4px solid #9b7800; }
+.development-judge { background: #f3eef9; border-left: 4px solid #6d28d9; }
+.development-judge .evidence-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.development-review { display: grid; gap: 10px; margin-top: 16px; }
+.development-review label { display: block; }
+.development-review textarea { display: block; }
 a { color: #174c95; }
 [hidden] { display: none !important; }
 @media (max-width: 1100px) {
@@ -88,6 +96,7 @@ a { color: #174c95; }
   .margin { height: auto !important; }
 }
 @media (max-width: 700px) {
+  .development-comparison { grid-template-columns: minmax(0, 1fr); }
   .layout { display: block; }
   #navigator { position: static; height: auto; max-height: 260px; border-bottom: 1px solid var(--line); }
   main { padding: 12px; }

@@ -36,6 +36,7 @@ from pathlib import Path
 from typing import Any
 
 from . import _state, guards, scale, selection
+from .hw5 import alignment, label_rows, wilson_interval as _wilson_interval
 
 # ---------------------------------------------------------------------------
 # small shared utilities
@@ -52,21 +53,6 @@ def _prompt_hash(prompt_text: str, model: str) -> str:
     prompt on a different judge model is a different classifier."""
     digest = hashlib.sha256(f"{model}\n{prompt_text}".encode("utf-8")).hexdigest()
     return digest[:12]
-
-
-def _wilson_interval(successes: int, total: int, z: float = 1.96) -> list[float | None]:
-    """Return a two sided Wilson interval for one binomial rate."""
-    if total <= 0:
-        return [None, None]
-    rate = successes / total
-    denominator = 1 + (z * z / total)
-    center = (rate + (z * z / (2 * total))) / denominator
-    margin = (
-        z
-        * math.sqrt((rate * (1 - rate) / total) + (z * z / (4 * total * total)))
-        / denominator
-    )
-    return [round(max(0.0, center - margin), 4), round(min(1.0, center + margin), 4)]
 
 
 # ---------------------------------------------------------------------------
@@ -93,7 +79,7 @@ def _load_labels(mode: str) -> list[dict[str, Any]]:
     # HW5 exports use Pass=1. Keep the internal failure flags expected by the
     # existing search/report helpers, without rewriting HW4 annotations.
     hw5_path = _state.state_path("hw5_labels", f"{mode}.jsonl")
-    rows = _state.read_jsonl(hw5_path if hw5_path.exists() else _labels_path(mode))
+    rows = label_rows(_state.state_root(), mode) if hw5_path.exists() else _state.read_jsonl(_labels_path(mode))
     # A record is dead once it carries a ``superseded_by`` pointer (Artifact L:
     # the field is set on the old record when a flip appends its replacement).
     # Nothing is overwritten, so the file keeps the full flip history; this
@@ -627,52 +613,16 @@ def judge_alignment(judge_id: str, split: str) -> dict[str, Any]:
             f"'{split}' traces; run run_judge(judge_id, split='{split}') first."
         )
 
-    tp = fn = tn = fp = 0
-    disagreements: list[str] = []
-    for tid in ids:
-        if tid not in labels_by_trace:
-            continue
-        # Mode files store 1 when the named failure is present. Evaluation
-        # statistics use 1 for Pass and 0 for Fail throughout Module 2.
-        label = 1 - int(labels_by_trace[tid])
-        pred = 1 - int(preds[tid])
-        if label == 1 and pred == 1:
-            tp += 1
-        elif label == 1 and pred == 0:
-            fn += 1
-            disagreements.append(tid)
-        elif label == 0 and pred == 0:
-            tn += 1
-        else:
-            fp += 1
-            disagreements.append(tid)
-
-    tpr = tp / (tp + fn) if (tp + fn) else 0.0
-    tnr = tn / (tn + fp) if (tn + fp) else 0.0
-    total = tp + fn + tn + fp
-    agreement = (tp + tn) / total if total else 0.0
-
-    result = {
-        "judge_id": judge_id,
-        "split": split,
-        "tpr": round(tpr, 4),
-        "tnr": round(tnr, 4),
-        "tpr_interval": _wilson_interval(tp, tp + fn),
-        "tnr_interval": _wilson_interval(tn, tn + fp),
-        "agreement": round(agreement, 4),
-        "tp": tp,
-        "fn": fn,
-        "tn": tn,
-        "fp": fp,
-        "n": total,
-        "disagreements": disagreements,
-    }
+    result = {"judge_id": judge_id, "split": split, **alignment(
+        {tid: 1 - int(labels_by_trace[tid]) for tid in ids},
+        {tid: 1 - int(preds[tid]) for tid in ids}, ids,
+    )}
 
     # Running on dev during refinement logs a hill-climbing row. A frozen
     # version is done iterating, so it is not re-logged (that would duplicate
     # the row already recorded when the version was tuned).
     if split == "dev" and not guards.is_frozen(judge):
-        _append_iteration_row(judge, tpr, tnr)
+        _append_iteration_row(judge, result["tpr"], result["tnr"])
 
     return result
 

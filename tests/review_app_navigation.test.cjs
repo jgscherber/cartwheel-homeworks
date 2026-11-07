@@ -549,3 +549,105 @@ test("select all ignores excluded and stale suggestions, and true negatives do n
   assert.equal(ui.run("taxonomyCounts(modes()[0]).negative"), 0);
   assert.equal(ui.run("taxonomyCounts(modes()[0]).trueNegative"), 1);
 });
+
+function developmentFixture(ui) {
+  ui.run(`
+    const devRows = [
+      {trace_id: "a", human_label: 0, original_label: 0, judge_label: 1, critique: "<img onerror=alert(1)> Tool confirms it.",
+        disagreement: true, needs_review: true, review: null, review_current: false, review_history: []},
+      {trace_id: "b", human_label: 1, original_label: 1, judge_label: 1, critique: "Grounded.",
+        disagreement: false, needs_review: false, review: null, review_current: false, review_history: []},
+      {trace_id: "c", human_label: 1, original_label: 1, judge_label: 0, critique: "Missing support.",
+        disagreement: true, needs_review: false, review: {decision: "judge_wrong", note: "Tool supports it."}, review_current: true,
+        review_history: [{decision: "judge_wrong", note: "Tool supports it.", ts: "Now"}]}
+    ].map(row => ({...row, trace: [{role: "user", text: "Question <script>"}],
+      evidence: [{quote: "Selected words", note: "My evidence note"}], human_note: "", correction: null}));
+    data.development = {errors: [], judges: [{judge_id: "mode-v0", mode: "mode", model: "gpt-4o-mini",
+      rows: devRows, definition: "Grounding only.", boundary: "Sourced ranges pass.",
+      current_definition: "Grounding only.", current_boundary: "Sourced ranges pass.", label_corrections_allowed: true,
+      metrics: {tp: 1, fn: 1, tn: 0, fp: 1, tpr: .5, tnr: 0, tpr_interval: [.09, .91], tnr_interval: [0, .79]}}]};
+    renderDevelopment(document.querySelector("#main"));
+  `);
+}
+
+test("development review compares HW5 labels and critiques, escapes evidence, and filters unresolved disagreements", () => {
+  const ui = app();
+  developmentFixture(ui);
+  let html = ui.elements.get("#main").innerHTML;
+  assert(html.includes("Your HW5 label: Fail (0)"));
+  assert(html.includes("Judge verdict: Pass (1)"));
+  assert(html.includes("&lt;img onerror=alert(1)&gt;"));
+  assert(!html.includes("<img"));
+  assert(html.includes("Question &lt;script&gt;"));
+  assert(html.includes("Selected words") && html.includes("My evidence note"));
+  assert(html.includes("95% Wilson"));
+  assert(!html.includes('id="development-b"') && !html.includes('id="development-c"'));
+  ui.change({id: "development-filter", value: "disagreements"});
+  ui.run('renderDevelopment(document.querySelector("#main"))');
+  html = ui.elements.get("#main").innerHTML;
+  assert(html.includes('id="development-a"') && html.includes('id="development-c"'));
+  assert(!html.includes('id="development-b"'));
+  ui.change({id: "development-filter", value: "all"});
+  ui.run('renderDevelopment(document.querySelector("#main"))');
+  assert(ui.elements.get("#main").innerHTML.includes('id="development-b"'));
+});
+
+test("development label corrections require an explicit value and submit only an HW5 human review", async () => {
+  const ui = app();
+  developmentFixture(ui);
+  ui.change({dataset: {devField: "decision", devTrace: "a"}, value: "label_wrong"});
+  ui.change({dataset: {devField: "note", devTrace: "a"}, value: "The result supports it."});
+  await ui.click({devSave: "a"});
+  assert.equal(ui.saves.length, 0);
+  assert(ui.elements.get("#error").textContent.includes("Explicitly choose"));
+  ui.change({dataset: {devField: "corrected_label", devTrace: "a"}, value: "1"});
+  await ui.click({devSave: "a"});
+  assert.equal(ui.saves.length, 1);
+  assert.equal(ui.saves[0].action, "development_review");
+  assert.equal(ui.saves[0].judge_id, "mode-v0");
+  assert.equal(ui.saves[0].decision, "label_wrong");
+  assert.equal(ui.saves[0].corrected_label, 1);
+  assert.equal(ui.saves[0].trace_id, "a");
+  assert.equal(ui.run("developmentDrafts.size"), 0);
+});
+
+test("development drafts survive version navigation and failed saves; completed reviews leave the unresolved filter", async () => {
+  const ui = app();
+  developmentFixture(ui);
+  ui.change({dataset: {devField: "decision", devTrace: "a"}, value: "judge_wrong"});
+  ui.change({dataset: {devField: "note", devTrace: "a"}, value: "My draft evidence"});
+  ui.run('data.development.judges.push({...data.development.judges[0], judge_id: "mode-v1"})');
+  ui.change({id: "development-judge", value: "mode-v1"});
+  ui.run('renderDevelopment(document.querySelector("#main"))');
+  assert(!ui.elements.get("#main").innerHTML.includes("My draft evidence"));
+  ui.change({id: "development-judge", value: "mode-v0"});
+  ui.run('renderDevelopment(document.querySelector("#main"))');
+  assert(ui.elements.get("#main").innerHTML.includes("My draft evidence"));
+  ui.run('act = async () => { throw new Error("State changed"); }');
+  await ui.click({devSave: "a"});
+  assert.equal(ui.run('developmentDrafts.get("mode-v0:a").note'), "My draft evidence");
+  assert.equal(ui.elements.get("#error").textContent, "State changed");
+  ui.run('act = async payload => { saves.push(payload); data.development.judges[0].rows[0].needs_review = false; return {ok: true}; }');
+  await ui.click({devSave: "a"});
+  ui.run('renderDevelopment(document.querySelector("#main"))');
+  assert(!ui.elements.get("#main").innerHTML.includes('id="development-a"'));
+  assert(ui.elements.get("#main").innerHTML.includes("No cases match this filter"));
+});
+
+test("development pending and data-error states are explicit, and frozen labels disable corrections", () => {
+  const ui = app();
+  developmentFixture(ui);
+  ui.run(`
+    data.development.judges[0].rows[1].judge_label = null;
+    data.development.judges[0].metrics = null;
+    data.development.judges[0].label_corrections_allowed = false;
+    developmentFilter = "pending";
+    renderDevelopment(document.querySelector("#main"));
+  `);
+  assert(ui.elements.get("#main").innerHTML.includes("Pending prediction"));
+  assert(ui.elements.get("#main").innerHTML.includes("Critique") || ui.elements.get("#main").innerHTML.includes("Judge critique"));
+  ui.run('developmentFilter = "unreviewed"; renderDevelopment(document.querySelector("#main"));');
+  assert(ui.elements.get("#main").innerHTML.includes('value="label_wrong" disabled'));
+  ui.run('data.development = {judges: [], errors: ["Saved split changed"]}; renderDevelopment(document.querySelector("#main"));');
+  assert(ui.elements.get("#main").innerHTML.includes("Saved split changed"));
+});

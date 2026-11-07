@@ -212,6 +212,10 @@ Save the metrics to `analysis/report/dev-<judge_id>.json`. Keep your judge recor
 
 In your HW4 review interface, display the judge verdict and critique beside your human label. Filter for disagreements and inspect every one before editing the prompt. For each disagreement, decide whether the judge is wrong (fix the prompt), your label is wrong (fix the label and recalculate), or the definition is unclear (clarify the boundary and recheck affected labels).
 
+The implemented interface has an **HW5 development** tab. Select a judge version and use **Disagreements needing review** to work through pending assessments, or **All development cases** to inspect agreements and saved reviews. The tab shows the exact saved conversation, human evidence, judge verdict, critique, and development metrics; it never exposes test predictions.
+
+Save your cause and evidence for each disagreement. **My label is wrong** requires an explicit corrected Pass/Fail choice and recalculates development metrics for completed versions of that mode. Decisions and corrections are recorded in `analysis/state/hw5_reviews.json`; the original HW4 labels and HW5 export remain unchanged, and the helpers apply the saved corrections when calculating alignment. Label corrections are locked once a judge is frozen or test predictions exist for that mode. Judge-wrong and definition-unclear decisions record your assessment without automatically editing the prompt or taxonomy.
+
 Register each revised prompt as a new version. Make at most two revisions. Explain why you stopped revising.
 
 ## Part D, freeze and test

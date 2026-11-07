@@ -2,6 +2,8 @@
 
 let data, currentSession, view = "conversation", pending = null, busy = false, recoveryKey = null, hideNoted = false;
 const suggestionSelection = new Set();
+let developmentJudge = null, developmentFilter = "unreviewed";
+const developmentDrafts = new Map();
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -105,6 +107,7 @@ function render() {
   if (view === "taxonomy") renderTaxonomy(main);
   if (view === "labels") renderLabels(main);
   if (view === "suggestions") renderSuggestions(main);
+  if (view === "development") renderDevelopment(main);
   if (view === "progress") renderProgress(main);
   if (view === "map") renderMap(main);
 }
@@ -468,6 +471,76 @@ function renderLabels(main) {
       }).join("")}</tbody></table>`).join("") || "<p>Include a trace from this conversation in the review set to label it.</p>"}`;
 }
 
+function developmentVerdict(value) {
+  return value === 1 ? "Pass (1)" : value === 0 ? "Fail (0)" : "Not evaluated";
+}
+
+function developmentCases(judge) {
+  return judge.rows.filter(row => developmentFilter === "all"
+    || (developmentFilter === "unreviewed" && row.needs_review)
+    || (developmentFilter === "disagreements" && row.disagreement)
+    || (developmentFilter === "pending" && row.judge_label === null));
+}
+
+function renderDevelopment(main) {
+  const state = data.development || {judges: [], errors: []};
+  const judges = state.judges;
+  if (!judges.some(j => j.judge_id === developmentJudge)) developmentJudge = judges[0]?.judge_id || null;
+  const judge = judges.find(j => j.judge_id === developmentJudge);
+  const errors = state.errors.map(error => `<p class="requirement-warning">${esc(error)}</p>`).join("");
+  if (!judge) {
+    main.innerHTML = `<h2>HW5 development review</h2>${errors}<p>No prepared HW5 development judge is available. Save your inputs and split, then run the development command. Refresh state when predictions are saved.</p>`;
+    return;
+  }
+  const counts = {
+    evaluated: judge.rows.filter(r => r.judge_label !== null).length,
+    disagreements: judge.rows.filter(r => r.disagreement).length,
+    unreviewed: judge.rows.filter(r => r.needs_review).length
+  };
+  const metric = judge.metrics;
+  const rate = (value, interval) => `${(value * 100).toFixed(1)}% (95% Wilson: ${interval.map(v => v === null ? "undefined" : `${(v * 100).toFixed(1)}%`).join(" to ")})`;
+  main.innerHTML = `<h2>HW5 development review</h2>${errors}
+    <p>Human Pass = 1; Fail = 0. These are conversation-level HW5 labels, not the HW4 Present/Absent convention. Only development verdicts are loaded; test predictions remain hidden.</p>
+    <div class="toolbar">
+      <label>Judge version <select id="development-judge">${judges.map(j => `<option value="${esc(j.judge_id)}"${j.judge_id === developmentJudge ? " selected" : ""}>${esc(j.judge_id)} - ${esc(j.model)}</option>`).join("")}</select></label>
+      <label>Cases <select id="development-filter">${[["unreviewed", "Disagreements needing review"], ["disagreements", "All disagreements"], ["all", "All development cases"], ["pending", "Not yet evaluated"]].map(([value, text]) => `<option value="${value}"${value === developmentFilter ? " selected" : ""}>${text}</option>`).join("")}</select></label>
+    </div>
+    <section class="panel">
+      <strong>${counts.evaluated} / ${judge.rows.length} evaluated; ${counts.disagreements} disagreements; ${counts.unreviewed} still need review.</strong>
+      <p><strong>Failure definition:</strong> ${esc(judge.definition)}</p><p><strong>Boundary:</strong> ${esc(judge.boundary)}</p>
+      ${judge.current_definition !== judge.definition || judge.current_boundary !== judge.boundary ? `<p class="requirement-warning">The taxonomy definition or boundary changed since these labels were exported. Recheck affected labels and the next prompt version.</p><p>${esc(judge.current_definition)} ${esc(judge.current_boundary)}</p>` : ""}
+      ${metric ? `<p>TP ${metric.tp}; FN ${metric.fn}; TN ${metric.tn}; FP ${metric.fp}. Human Pass ${metric.tp + metric.fn}; Fail ${metric.tn + metric.fp}.</p><p>TPR ${rate(metric.tpr, metric.tpr_interval)}<br>TNR ${rate(metric.tnr, metric.tnr_interval)}</p>` : "<p>Metrics are pending until every development case has a verdict. Completed cases can be reviewed now.</p>"}
+      <p>Judge wrong: revise the prompt separately after inspecting disagreements. Definition unclear: clarify the taxonomy and recheck affected labels. Neither decision automatically edits your prompt or definition.</p>
+      <p>Label wrong: explicitly choose a corrected conversation label. It is saved with history and recalculates development metrics for all completed versions of this mode. Original HW4 and exported HW5 labels remain unchanged.</p>
+      ${!judge.label_corrections_allowed ? '<p class="requirement-warning">Label corrections are locked because a judge is frozen or test predictions exist for this mode.</p>' : ""}
+    </section>
+    ${developmentCases(judge).map(row => {
+      const key = `${judge.judge_id}:${row.trace_id}`;
+      const draft = developmentDrafts.get(key) || {decision: "", note: "", corrected_label: ""};
+      const review = row.review;
+      return `<section class="panel development-case" id="development-${esc(row.trace_id)}">
+        <h3>${traceLink(row.trace_id)} <span class="badge">${row.judge_label === null ? "Pending prediction" : row.disagreement ? "Disagreement" : "Agreement"}</span></h3>
+        <div class="development-comparison">
+          <div class="development-human"><strong>Your HW5 label: ${developmentVerdict(row.human_label)}</strong>
+            ${row.correction ? `<p>Original export: ${developmentVerdict(row.original_label)}. Human correction: ${esc(row.correction.note)}</p>` : ""}
+            ${row.human_note ? `<p>${esc(row.human_note)}</p>` : ""}
+            ${(row.evidence || []).map(e => `<div class="taxonomy-evidence taxonomy-selected-text"><div class="evidence-label">Selected evidence</div><p class="evidence-text">${esc(e.quote || "")}</p></div><div class="taxonomy-evidence taxonomy-human-note"><div class="evidence-label">Human-reviewed note</div><p class="evidence-text">${esc(e.human_review?.note || e.note || "")}</p></div>`).join("")}
+          </div>
+          <div class="development-judge"><strong>Judge verdict: ${developmentVerdict(row.judge_label)}</strong><div class="evidence-label">Judge critique</div><p class="evidence-text">${esc(row.critique || "Critique not yet saved.")}</p></div>
+        </div>
+        <details><summary>Exact saved conversation evaluated by this judge</summary>${row.trace.map(m => `<div class="message"><div class="role">${esc(m.role)} ${esc(m.name || "")}</div><pre>${esc(evidenceText(m))}</pre></div>`).join("")}</details>
+        ${review ? `<p><strong>Saved review:</strong> ${esc(review.decision.replaceAll("_", " "))} - ${esc(review.note)} ${row.review_current ? "" : '<span class="badge">Stale: evidence, labels, or definition changed</span>'}</p><button data-dev-reset="${esc(row.trace_id)}">Reset review status (keeps label corrections)</button>` : ""}
+        ${row.disagreement && row.judge_label !== null && row.critique.trim() ? `<div class="development-review">
+          <label>Cause <select data-dev-field="decision" data-dev-trace="${esc(row.trace_id)}">${[["", "Choose your assessment"], ["judge_wrong", "Judge is wrong - revise prompt"], ["label_wrong", "My label is wrong - correct and recalculate"], ["definition_unclear", "Definition is unclear - clarify boundary"]].map(([value, text]) => `<option value="${value}"${draft.decision === value ? " selected" : ""}${value === "label_wrong" && !judge.label_corrections_allowed ? " disabled" : ""}>${text}</option>`).join("")}</select></label>
+          <label>Corrected label (only for label wrong) <select data-dev-field="corrected_label" data-dev-trace="${esc(row.trace_id)}"${!judge.label_corrections_allowed ? " disabled" : ""}>${[["", "Explicitly choose a correction"], ["1", "Pass (1)"], ["0", "Fail (0)"]].map(([value, text]) => `<option value="${value}"${draft.corrected_label === value ? " selected" : ""}>${text}</option>`).join("")}</select></label>
+          <label>Your evidence and reason <textarea data-dev-field="note" data-dev-trace="${esc(row.trace_id)}">${esc(draft.note)}</textarea></label>
+          <button data-dev-save="${esc(row.trace_id)}">Save review / apply explicit label correction</button>
+        </div>` : ""}
+        ${row.review_history.length ? `<details><summary>Human review history (${row.review_history.length})</summary>${row.review_history.map(r => `<p>${esc(r.ts)}: ${esc(r.decision.replaceAll("_", " "))} - ${esc(r.note)}${r.corrected_label === undefined ? "" : `; corrected to ${developmentVerdict(r.corrected_label)}`}</p>`).join("")}</details>` : ""}
+      </section>`;
+    }).join("") || "<p>No cases match this filter. Select all development cases to inspect agreements and saved reviews.</p>"}`;
+}
+
 function suggestionControls(s) {
   if (!reviewableSuggestion(s)) return '<p class="requirement-warning">Excluded or changed/unapproved definition: re-search before reviewing this suggestion.</p>';
   return `<button data-decision="accepted" data-suggestion="${esc(s.id)}">${s.taxonomy_assignment ? "Accept as positive" : "Accept as note"}</button>
@@ -611,6 +684,21 @@ document.addEventListener("click", async event => {
       else { cancelNote(); currentSession = button.dataset.session; render(); }
     }
     if (button.id === "refresh") await refresh();
+    if (button.dataset.devSave) {
+      const key = `${developmentJudge}:${button.dataset.devSave}`;
+      const draft = developmentDrafts.get(key) || {};
+      if (!draft.decision || !draft.note?.trim()) throw new Error("Choose a cause and record your evidence before saving.");
+      const payload = {action: "development_review", judge_id: developmentJudge,
+        trace_id: button.dataset.devSave, decision: draft.decision, note: draft.note};
+      if (draft.decision === "label_wrong") {
+        if (!["0", "1"].includes(draft.corrected_label)) throw new Error("Explicitly choose Pass (1) or Fail (0).");
+        payload.corrected_label = Number(draft.corrected_label);
+      }
+      await act(payload);
+      developmentDrafts.delete(key);
+    }
+    if (button.dataset.devReset) await act({action: "development_review", judge_id: developmentJudge,
+      trace_id: button.dataset.devReset, decision: "pending"});
     if (button.dataset.goTrace) { event.preventDefault(); goTrace(button.dataset.goTrace); }
     if (button.dataset.labelTrace) goTrace(button.dataset.labelTrace, "labels");
     if (button.dataset.goMode) {
@@ -669,8 +757,24 @@ document.addEventListener("click", async event => {
   } catch (error) { fail(error); }
 });
 
+function rememberDevelopmentDraft(target) {
+  if (!target.dataset?.devField) return;
+  const key = `${developmentJudge}:${target.dataset.devTrace}`;
+  developmentDrafts.set(key, {...(developmentDrafts.get(key) || {decision: "", note: "", corrected_label: ""}),
+    [target.dataset.devField]: target.value});
+}
+document.addEventListener("input", event => rememberDevelopmentDraft(event.target));
 $("#search").addEventListener("input", renderNavigator);
 document.addEventListener("change", event => {
+  if (event.target.id === "development-judge") {
+    developmentJudge = event.target.value;
+    render();
+  }
+  if (event.target.id === "development-filter") {
+    developmentFilter = event.target.value;
+    render();
+  }
+  rememberDevelopmentDraft(event.target);
   if (event.target.id === "hide-noted") {
     hideNoted = event.target.checked;
     render();

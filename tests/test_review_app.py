@@ -17,6 +17,7 @@ import pytest
 from analysis.helpers import _state
 from analysis.helpers.langfuse_io import LangfuseNotConfigured
 from analysis.review_app import server as review_server
+from analysis.review_app import development
 from analysis.review_app.loader import graph, load_records, sessions
 from analysis.review_app.server import Conflict, ReviewStore, make_server, parse_args
 
@@ -66,6 +67,164 @@ def prepare_label(store):
         {"name": "unconfirmed_write", "status": "final", "definition": "Claims a write succeeded without confirmation"},
         {"name": "candidate_only", "status": "candidate"},
     ]})
+
+
+@pytest.fixture
+def development_store(tmp_path, monkeypatch):
+    records = load(tmp_path, [trace(letter * 32, session=f"session-{letter}") for letter in "abcd"])
+    root = tmp_path / "state"
+    monkeypatch.setenv("CARTWHEEL_ANALYSIS_STATE", str(root))
+    value = ReviewStore(records, root, offline_reason="Development fixture")
+    mode = "unsupported_operational_claim"
+    _state.write_json(root / "patterns.json", {"modes": [{
+        "name": mode, "definition": "Unsupported operational claim.", "boundary": "Grounded statements pass.",
+    }]})
+    inputs = [{"trace_id": t["trace_id"], "trace": t["trace"]} for t in records]
+    _state.write_json(root / "hw5_trace_inputs.json", inputs)
+    _state.write_jsonl(root / "hw5_labels" / f"{mode}.jsonl", [
+        {"trace_id": letter * 32, "mode": mode, "label": int(letter in "ac"),
+         "label_convention": "pass_positive", "definition": "Unsupported operational claim.",
+         "boundary": "Grounded statements pass.", "evidence": [{"quote": f"Evidence {letter}", "note": "Human-reviewed note"}]}
+        for letter in "abcd"
+    ])
+    metadata = {
+        "mode": mode, "inputs_sha256": development.digest(root / "hw5_trace_inputs.json"),
+        "labels_sha256": development.digest(root / "hw5_labels" / f"{mode}.jsonl"),
+    }
+    _state.write_json(root / "hw5_preparation.json", metadata)
+    assignment = {"train": ["a" * 32], "dev": ["b" * 32, "c" * 32], "test": ["d" * 32]}
+    _state.write_json(root / "splits.json", {mode: {
+        **assignment, **metadata, "seed": 7, "fractions": [0.2, 0.4, 0.4],
+        "assignment_sha256": development.fingerprint(assignment),
+    }})
+    prompt = "Judge the recorded evidence."
+    prompt_hash = review_server.development._prompt_hash(prompt, "gpt-4o-mini")
+    _state.write_json(root / "judges" / f"{mode}-v0.json", {
+        "judge_id": f"{mode}-v0", "mode": mode, "model": "gpt-4o-mini", "version": 0,
+        "prompt_text": prompt, "prompt_hash": prompt_hash, "status": "draft", "label_convention": "pass_positive",
+        "predictions": {prompt_hash: {"b" * 32: 1, "c" * 32: 0}},
+        "critiques": {prompt_hash: {"b" * 32: "Supported by the tool.", "c" * 32: "Claim not supported."}},
+    })
+    return value
+
+
+def test_development_snapshot_matches_hw5_convention_and_never_exposes_test_verdicts(development_store):
+    value = development_store
+    mode = "unsupported_operational_claim"
+    path = value.root / "judges" / f"{mode}-v0.json"
+    doc = _state.read_json(path)
+    doc["status"] = "frozen"
+    doc["predictions"][doc["prompt_hash"]]["d" * 32] = 1
+    doc["critiques"][doc["prompt_hash"]]["d" * 32] = "SECRET HELD-OUT CRITIQUE"
+    _state.write_json(path, doc)
+    state = value.snapshot()["development"]
+    assert state["errors"] == []
+    judge = state["judges"][0]
+    assert [r["trace_id"] for r in judge["rows"]] == ["b" * 32, "c" * 32]
+    assert [(r["human_label"], r["judge_label"]) for r in judge["rows"]] == [(0, 1), (1, 0)]
+    assert all(r["needs_review"] for r in judge["rows"])
+    assert judge["metrics"]["fp"] == judge["metrics"]["fn"] == 1
+    assert judge["metrics"]["tp"] == judge["metrics"]["tn"] == 0
+    assert not judge["label_corrections_allowed"]
+    assert "SECRET HELD-OUT" not in json.dumps(state)
+    assert "d" * 32 not in json.dumps(state)
+
+
+def test_development_review_history_and_resets_do_not_edit_labels_or_prompt(development_store):
+    value = development_store
+    original = {path: path.read_bytes() for path in value.root.rglob("*") if path.is_file()}
+    jid = "unsupported_operational_claim-v0"
+    for decision in ("judge_wrong", "definition_unclear", "pending"):
+        change(value, "development_review", judge_id=jid, trace_id="b" * 32, decision=decision, note="My evidence.")
+    row = value.snapshot()["development"]["judges"][0]["rows"][0]
+    assert [r["decision"] for r in row["review_history"]] == ["judge_wrong", "definition_unclear", "pending"]
+    assert row["needs_review"]
+    assert all(path.read_bytes() == content for path, content in original.items())
+
+
+def test_development_label_correction_preserves_exports_and_recalculates_all_versions(development_store):
+    from analysis.helpers import judge_alignment, tools
+
+    value = development_store
+    mode = "unsupported_operational_claim"
+    old_path = value.root / "judges" / f"{mode}-v0.json"
+    judge = _state.read_json(old_path)
+    revised = {**judge, "judge_id": f"{mode}-v1", "version": 1}
+    _state.write_json(value.root / "judges" / f"{mode}-v1.json", revised)
+    original = {path: path.read_bytes() for path in value.root.rglob("*") if path.is_file()}
+    result = change(value, "development_review", judge_id=f"{mode}-v0", trace_id="b" * 32,
+                    decision="label_wrong", corrected_label=1, note="The tool supports the statement.")
+    assert set(result["metrics_updated"]) == {f"{mode}-v0", f"{mode}-v1"}
+    row = value.snapshot()["development"]["judges"][0]["rows"][0]
+    assert row["human_label"] == 1 and row["original_label"] == 0
+    assert row["disagreement"] is False
+    for version in (0, 1):
+        report = _state.read_json(value.root.parent / "report" / f"dev-{mode}-v{version}.json")
+        assert (report["tp"], report["fn"], report["fp"], report["tn"]) == (1, 1, 0, 0)
+        assert report["tpr"] == 0.5
+        assert report["class_counts"] == {"Pass": 2, "Fail": 0}
+    assert all(path.read_bytes() == content for path, content in original.items())
+    assert next(row for row in tools._load_labels(mode) if row["trace_id"] == "b" * 32)["label"] == 0
+    assert judge_alignment(f"{mode}-v0", "dev")["tp"] == 1
+    reviewed = next(j for j in value.snapshot()["development"]["judges"] if j["judge_id"] == f"{mode}-v0")["rows"][0]
+    assert reviewed["review_current"] and not reviewed["needs_review"]
+
+
+@pytest.mark.parametrize("problem", ["test_case", "no_note", "boolean_label", "same_label", "frozen", "missing_critique"])
+def test_development_invalid_decisions_make_no_writes(development_store, problem):
+    value = development_store
+    payload = {"judge_id": "unsupported_operational_claim-v0", "trace_id": "b" * 32,
+               "decision": "label_wrong", "corrected_label": 1, "note": "My evidence."}
+    if problem == "test_case":
+        payload["trace_id"] = "d" * 32
+    elif problem == "no_note":
+        payload["note"] = " "
+    elif problem == "boolean_label":
+        payload["corrected_label"] = True
+    elif problem == "same_label":
+        payload["corrected_label"] = 0
+    else:
+        path = value.root / "judges" / "unsupported_operational_claim-v0.json"
+        doc = _state.read_json(path)
+        if problem == "frozen":
+            doc["status"] = "frozen"
+        else:
+            doc["critiques"][doc["prompt_hash"]].pop("b" * 32)
+        _state.write_json(path, doc)
+    original = {path: path.read_bytes() for path in value.root.rglob("*") if path.is_file()}
+    with pytest.raises(ValueError):
+        change(value, "development_review", **payload)
+    assert all(path.read_bytes() == content for path, content in original.items())
+    assert not (value.root / "hw5_reviews.json").exists()
+
+
+def test_development_partial_predictions_are_pending_and_reviews_become_stale(development_store):
+    value = development_store
+    change(value, "development_review", judge_id="unsupported_operational_claim-v0", trace_id="b" * 32,
+           decision="judge_wrong", note="Missing support.")
+    path = value.root / "judges" / "unsupported_operational_claim-v0.json"
+    doc = _state.read_json(path)
+    doc["critiques"][doc["prompt_hash"]]["b" * 32] = "A changed critique."
+    doc["predictions"][doc["prompt_hash"]].pop("c" * 32)
+    _state.write_json(path, doc)
+    judge = value.snapshot()["development"]["judges"][0]
+    assert judge["metrics"] is None
+    assert not judge["rows"][0]["review_current"] and judge["rows"][0]["needs_review"]
+    assert judge["rows"][1]["judge_label"] is None
+    assert not judge["rows"][1]["needs_review"]
+
+
+def test_development_revision_detects_new_predictions_and_preserves_review_drafts(development_store):
+    value = development_store
+    revision = value.revision()
+    path = value.root / "judges" / "unsupported_operational_claim-v0.json"
+    doc = _state.read_json(path)
+    doc["critiques"][doc["prompt_hash"]]["b" * 32] += " Updated."
+    _state.write_json(path, doc)
+    assert value.revision() != revision
+    with pytest.raises(Conflict):
+        value.mutate({"revision": revision, "action": "development_review",
+                      "judge_id": doc["judge_id"], "trace_id": "b" * 32, "decision": "judge_wrong", "note": "Draft"})
 
 
 @pytest.fixture

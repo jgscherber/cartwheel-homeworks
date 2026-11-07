@@ -19,6 +19,7 @@ from typing import Any
 
 from analysis.helpers import _state, langfuse_io, selection
 from analysis.review_app.loader import graph, load_records, sessions
+from analysis.review_app import development
 
 ASSETS = Path(__file__).parent
 DEFAULT_EXPORT = ASSETS.parent.parent / "traces" / "support_traces.json"
@@ -69,10 +70,13 @@ class ReviewStore:
         paths = [self.root / name for name in (
             "annotations.json", "patterns.json", "suggestions.json", "sample_manifest.json",
             "sampling_exclusions.json",
+            "splits.json", "hw5_preparation.json", "hw5_trace_inputs.json", "hw5_reviews.json",
         )]
         paths += sorted((self.root / "labels").glob("*.jsonl"))
+        paths += sorted((self.root / "hw5_labels").glob("*.jsonl"))
+        paths += sorted((self.root / "judges").glob("*.json"))
         for path in paths:
-            digest.update(path.name.encode())
+            digest.update(str(path.relative_to(self.root)).encode())
             if path.exists():
                 digest.update(path.read_bytes())
         return digest.hexdigest()
@@ -113,6 +117,7 @@ class ReviewStore:
                 "revision": self.revision(), "sessions": self.conversations,
                 "annotations": annotations, "patterns": patterns, "suggestions": suggestions,
                 "manifest": manifest, "labels": labels, "graph": self.graph,
+                "development": development.load(self.root),
                 "excluded_trace_ids": sorted(selection.excluded_trace_ids(self.root)),
                 "identity": hashlib.sha256(f"{self.root.resolve()}:{self.source}".encode()).hexdigest(),
                 "legacy_identity": (
@@ -135,6 +140,8 @@ class ReviewStore:
             if payload.get("revision") != self.revision():
                 raise Conflict("State changed. Refresh before saving; your draft remains in the browser backup.")
             action = payload.get("action")
+            if action == "development_review":
+                return development.save(self.root, payload)
             if action == "patterns":
                 patterns = payload.get("patterns")
                 names = []
